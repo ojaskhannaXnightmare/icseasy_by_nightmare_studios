@@ -1298,3 +1298,197 @@
 .btn-shimmer-hover:hover::after {
   left: 100%;
 }
+
+/* ========================================
+   Round 4: Enhanced styling utilities
+   ======================================== */
+
+/* Animated gradient divider — thicker with glow */
+.gradient-divider-glow {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.4), transparent);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.15), 0 0 16px rgba(168, 85, 247, 0.1);
+  margin: 1.5rem 0;
+}
+
+/* Enhanced glass card with animated gradient border */
+.glass-card-enhanced {
+  position: relative;
+  background: rgba(15, 15, 25, 0.75);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+.glass-card-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.25), rgba(0, 240, 255, 0.15));
+  background-size: 300% 300%;
+  animation: gradient-shift 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.glass-card-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* Section heading with gradient accent line */
+.section-heading-accent {
+  position: relative;
+  display: inline-block;
+}
+
+.section-heading-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #00f0ff, #a855f7);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.section-heading-accent:hover::after {
+  width: 100%;
+}
+
+/* Neon text glow on hover */
+.text-glow-hover {
+  transition: text-shadow 0.3s ease;
+}
+
+.text-glow-hover:hover {
+  text-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
+}
+
+/* Floating action button glow */
+.fab-glow {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.fab-glow::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.fab-glow:hover::after {
+  opacity: 0.4;
+}
+
+/* Achievement unlocked shimmer */
+.achievement-unlocked {
+  position: relative;
+  overflow: hidden;
+}
+
+.achievement-unlocked::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    transparent 40%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 60%
+  );
+  transform: rotate(30deg);
+  animation: achievement-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes achievement-shimmer {
+  0%, 100% { transform: rotate(30deg) translateX(-100%); }
+  50% { transform: rotate(30deg) translateX(100%); }
+}
+
+/* Enhanced setting section card */
+.setting-card {
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-card:hover {
+  border-color: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 240, 255, 0.05);
+}
+
+/* Welcome text typing animation */
+.welcome-text-reveal {
+  animation: text-reveal 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes text-reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Chart container enhanced with subtle glow */
+.chart-container-glow {
+  position: relative;
+}
+
+.chart-container-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), transparent, rgba(168, 85, 247, 0.08));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Quick action icon bounce on hover */
+.quick-action-bounce {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-action-bounce:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Progress ring animation */
+.progress-ring-animated {
+  transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle noise texture overlay */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}

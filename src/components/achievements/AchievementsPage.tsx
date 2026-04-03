@@ -210,7 +210,7 @@ export default function AchievementsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="glass rounded-2xl p-5 sm:p-6 card-glow mb-8"
+              className="glass-card rounded-2xl p-5 sm:p-6 card-glow stat-card-lift mb-8"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -236,6 +236,7 @@ export default function AchievementsPage() {
               </div>
             </motion.div>
 
+            <div className="gradient-divider my-4" />
             {/* Filter Tabs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -253,7 +254,7 @@ export default function AchievementsPage() {
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
                     className={cn(
-                      'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border',
+                      'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 border btn-shimmer-hover',
                       activeTab === tab.key
                         ? 'bg-[#00f0ff]/10 text-[#00f0ff] border-[#00f0ff]/20 shadow-[0_0_20px_rgba(0,240,255,0.1)]'
                         : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border-transparent'
@@ -266,6 +267,7 @@ export default function AchievementsPage() {
               })}
             </motion.div>
 
+            <div className="gradient-divider my-4" />
             {/* Achievement Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence mode="popLayout">
@@ -283,7 +285,7 @@ export default function AchievementsPage() {
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.3, delay: 0.05 * Math.min(index, 12) }}
                       className={cn(
-                        'relative glass rounded-2xl p-5 border transition-all duration-300 group',
+                        'relative glass-card rounded-2xl p-5 border transition-all duration-300 group',
                         isUnlocked
                           ? 'card-glow hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]'
                           : 'opacity-60 border-white/5 hover:opacity-80'
@@ -292,7 +294,7 @@ export default function AchievementsPage() {
                         isUnlocked
                           ? {
                               borderColor: `${achievement.color}30`,
-                              boxShadow: `0 0 20px ${achievement.color}08, inset 0 1px 0 ${achievement.color}10`,
+                              boxShadow: `0 0 30px ${achievement.color}15, 0 0 60px ${achievement.color}08, inset 0 1px 0 ${achievement.color}15`,
                             }
                           : undefined
                       }

@@ -23,6 +23,9 @@ import {
   BarChart3,
   History,
   Settings,
+  CalendarDays,
+  Zap,
+  TrendingUp,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -58,6 +61,9 @@ const navItems: NavItem[] = [
   { icon: Award, label: 'Achievements', page: 'achievements' },
   { icon: Users, label: 'Friends', page: 'friends' },
   { icon: MessageSquare, label: 'Groups', page: 'groups' },
+  { icon: CalendarDays, label: 'Study Planner', page: 'planner' },
+  { icon: Zap, label: 'Daily Challenge', page: 'challenge' },
+  { icon: TrendingUp, label: 'Progress Reports', page: 'reports' },
   { icon: Settings, label: 'Settings', page: 'settings' },
   { icon: User, label: 'Profile', page: 'profile' },
 ]

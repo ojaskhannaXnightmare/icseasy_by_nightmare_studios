@@ -30,6 +30,9 @@ import FlashcardsPage from '@/components/flashcards/FlashcardsPage'
 import QuizHistory from '@/components/quiz/QuizHistory'
 import AnalyticsPage from '@/components/analytics/AnalyticsPage'
 import SettingsPage from '@/components/settings/SettingsPage'
+import StudyPlanner from '@/components/planner/StudyPlanner'
+import DailyChallenge from '@/components/challenge/DailyChallenge'
+import ProgressReports from '@/components/reports/ProgressReports'
 import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 
 
@@ -57,6 +60,9 @@ const authenticatedPages: PageType[] = [
   'flashcards',
   'analytics',
   'settings',
+  'planner',
+  'challenge',
+  'reports',
 ]
 
 function AppRouter() {
@@ -79,10 +85,10 @@ function AppRouter() {
       }
     }
     validateSession()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   // Read localStorage for onboarding status (SSR-safe via useSyncExternalStore)
- const onboardedValue = useSyncExternalStore(
+  const onboardedValue = useSyncExternalStore(
     (onStoreChange) => {
       window.addEventListener('storage', onStoreChange)
       return () => window.removeEventListener('storage', onStoreChange)
@@ -167,6 +173,15 @@ function AppRouter() {
 
           {/* Settings */}
           {currentPage === 'settings' && <SettingsPage />}
+
+          {/* Study Planner */}
+          {currentPage === 'planner' && <StudyPlanner />}
+
+          {/* Daily Challenge */}
+          {currentPage === 'challenge' && <DailyChallenge />}
+
+          {/* Progress Reports */}
+          {currentPage === 'reports' && <ProgressReports />}
         </motion.div>
       </AnimatePresence>
 

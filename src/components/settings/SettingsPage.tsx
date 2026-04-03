@@ -383,6 +383,7 @@ export default function SettingsPage() {
           </div>
         </motion.div>
 
+        <div className="gradient-divider my-4" />
         {/* Notifications */}
         <motion.div variants={itemVariants} className="glass-card rounded-xl p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
@@ -440,6 +441,7 @@ export default function SettingsPage() {
           </div>
         </motion.div>
 
+        <div className="gradient-divider my-4" />
         {/* Appearance */}
         <motion.div variants={itemVariants} className="glass-card rounded-xl p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
@@ -466,6 +468,7 @@ export default function SettingsPage() {
           </div>
         </motion.div>
 
+        <div className="gradient-divider my-4" />
         {/* Account */}
         <motion.div variants={itemVariants} className="glass-card rounded-xl p-6 mb-8">
           <div className="flex items-center gap-3 mb-6">
@@ -497,20 +500,20 @@ export default function SettingsPage() {
                 placeholder="Current password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground/50 focus-visible:border-[#00f0ff]/50 focus-visible:ring-[#00f0ff]/20"
+                className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground/50 focus-visible:border-[#00f0ff]/50 focus-visible:ring-[#00f0ff]/20 input-lift"
               />
               <Input
                 type="password"
                 placeholder="New password (min. 6 characters)"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground/50 focus-visible:border-[#00f0ff]/50 focus-visible:ring-[#00f0ff]/20"
+                className="bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground/50 focus-visible:border-[#00f0ff]/50 focus-visible:ring-[#00f0ff]/20 input-lift"
               />
               <Button
                 onClick={handleChangePassword}
                 disabled={changingPassword || !currentPassword || !newPassword}
                 variant="outline"
-                className="w-full sm:w-auto border-white/10 hover:bg-white/5 hover:border-white/20 text-foreground transition-all"
+                className="w-full sm:w-auto border-white/10 hover:bg-white/5 hover:border-white/20 text-foreground transition-all btn-shimmer-hover"
               >
                 {changingPassword ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -574,7 +577,7 @@ export default function SettingsPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-[#00f0ff] to-[#a855f7] text-[#0a0a0f] font-semibold hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all duration-300 hover:scale-[1.02]"
+            className="bg-gradient-to-r from-[#00f0ff] to-[#a855f7] text-[#0a0a0f] font-semibold hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all duration-300 hover:scale-[1.02] btn-shimmer-hover"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

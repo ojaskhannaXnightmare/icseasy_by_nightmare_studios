@@ -283,7 +283,7 @@ export default function Dashboard() {
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold">
-            Welcome back, <span className="gradient-text">{user?.name || 'Student'}</span>
+            Welcome back, <span className="gradient-text text-gradient-animated">{user?.name || 'Student'}</span>
           </h1>
           <p className="text-muted-foreground mt-1">
             Ready to continue your learning journey?
@@ -306,7 +306,7 @@ export default function Dashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: (index + 1) * 0.1 }}
-                className="glass rounded-xl p-4 sm:p-5 card-glow"
+                className="glass-card rounded-xl p-4 sm:p-5 stat-card-lift card-glow"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div
@@ -328,6 +328,7 @@ export default function Dashboard() {
           })}
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Chart + Quick Actions */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Activity Chart */}
@@ -414,7 +415,7 @@ export default function Dashboard() {
                   <button
                     key={action.label}
                     onClick={() => setCurrentPage(action.page)}
-                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/15 hover:bg-white/8 transition-all duration-200 group"
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/15 hover:bg-white/8 transition-all duration-200 group btn-shimmer-hover"
                   >
                     <div
                       className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
@@ -432,11 +433,13 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Daily Goals */}
         <div className="mb-8">
           <DailyGoals />
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Your Subjects - Progress Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -542,6 +545,7 @@ export default function Dashboard() {
           )}
         </motion.div>
 
+        <div className="gradient-divider my-4" />
         {/* Recent Activity */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

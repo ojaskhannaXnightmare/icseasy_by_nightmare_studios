@@ -13,6 +13,11 @@ import {
   Layers,
   MoreHorizontal,
   X,
+  Timer,
+  Trophy,
+  CalendarDays,
+  Zap,
+  TrendingUp,
 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { cn } from '@/lib/utils'
@@ -29,6 +34,9 @@ const moreNavItems = [
   { icon: FileText, label: 'Notes', page: 'notes' as const },
   { icon: BarChart3, label: 'Analytics', page: 'analytics' as const },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' as const },
+  { icon: CalendarDays, label: 'Planner', page: 'planner' as const },
+  { icon: Zap, label: 'Daily Challenge', page: 'challenge' as const },
+  { icon: TrendingUp, label: 'Reports', page: 'reports' as const },
 ]
 
 export default function BottomNav() {
@@ -47,6 +55,9 @@ export default function BottomNav() {
       'notes': ['notes', 'research'],
       'analytics': ['analytics'],
       'flashcards': ['flashcards'],
+      'planner': ['planner'],
+      'challenge': ['challenge'],
+      'reports': ['reports'],
     }
     return relatedPages[page]?.includes(currentPage) || false
   }

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type PageType = 'landing' | 'login' | 'signup' | 'dashboard' | 'tutor' | 'subjects' | 'subject-detail' | 'notes' | 'research' | 'quiz-setup' | 'quiz-active' | 'quiz-results' | 'quiz-history' | 'friends' | 'messages' | 'groups' | 'profile' | 'group-chat' | 'timer' | 'leaderboard' | 'achievements' | 'flashcards' | 'analytics' | 'settings'
+export type PageType = 'landing' | 'login' | 'signup' | 'dashboard' | 'tutor' | 'subjects' | 'subject-detail' | 'notes' | 'research' | 'quiz-setup' | 'quiz-active' | 'quiz-results' | 'quiz-history' | 'friends' | 'messages' | 'groups' | 'profile' | 'group-chat' | 'timer' | 'leaderboard' | 'achievements' | 'flashcards' | 'analytics' | 'settings' | 'planner' | 'challenge' | 'reports'
 
 export interface User {
   id: string

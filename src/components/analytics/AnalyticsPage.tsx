@@ -267,7 +267,7 @@ export default function AnalyticsPage() {
         <motion.div variants={itemVariants} className="mb-8">
           <button
             onClick={() => setCurrentPage('dashboard')}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#00f0ff] transition-colors mb-4 group"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[#00f0ff] transition-colors mb-4 group btn-shimmer-hover"
           >
             <ChevronRight className="w-4 h-4 rotate-180 transition-transform group-hover:-translate-x-0.5" />
             Back to Dashboard
@@ -322,7 +322,7 @@ export default function AnalyticsPage() {
               <motion.div
                 key={stat.label}
                 variants={itemVariants}
-                className="glass rounded-xl p-4 sm:p-5 card-glow"
+                className="glass-card rounded-xl p-4 sm:p-5 stat-card-lift card-glow"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div
@@ -341,12 +341,13 @@ export default function AnalyticsPage() {
           })}
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Charts Row: Subject Performance + Score Distribution */}
         <div className="grid lg:grid-cols-2 gap-6 mb-8">
           {/* Subject Performance Bar Chart */}
           <motion.div
             variants={itemVariants}
-            className="glass rounded-xl p-5 sm:p-6 card-glow"
+            className="glass-card rounded-xl p-5 sm:p-6 card-glow"
           >
             <div className="flex items-center gap-2.5 mb-6">
               <div className="w-8 h-8 rounded-lg bg-[#a855f7]/15 flex items-center justify-center">
@@ -399,7 +400,7 @@ export default function AnalyticsPage() {
           {/* Score Distribution */}
           <motion.div
             variants={itemVariants}
-            className="glass rounded-xl p-5 sm:p-6 card-glow"
+            className="glass-card rounded-xl p-5 sm:p-6 card-glow"
           >
             <div className="flex items-center gap-2.5 mb-6">
               <div className="w-8 h-8 rounded-lg bg-[#00f0ff]/15 flex items-center justify-center">
@@ -441,12 +442,13 @@ export default function AnalyticsPage() {
           </motion.div>
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Monthly Activity Trend + Most Active Day */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {/* Monthly Activity Area Chart */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-2 glass rounded-xl p-5 sm:p-6 card-glow"
+            className="lg:col-span-2 glass-card rounded-xl p-5 sm:p-6 card-glow"
           >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2.5">
@@ -602,6 +604,7 @@ export default function AnalyticsPage() {
           </motion.div>
         </div>
 
+        <div className="gradient-divider my-4" />
         {/* Quick Insights */}
         <motion.div variants={itemVariants}>
           <div className="flex items-center gap-2.5 mb-4">
