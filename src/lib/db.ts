@@ -21,5 +21,6 @@ function createPrismaClient() {
   })
 }
 
-export const db = globalForPrisma.prisma ?? createPrismaClient()
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+// Always create a fresh client in dev to pick up schema/model changes
+// In production, the singleton pattern prevents connection pool exhaustion
+export const db = createPrismaClient()

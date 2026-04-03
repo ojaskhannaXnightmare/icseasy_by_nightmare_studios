@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Bot, Brain, BookOpen, FileText, BrainCircuit,
@@ -375,6 +375,17 @@ export default function OnboardingTour() {
     setVisible(false)
     localStorage.setItem('icseasy-onboarded', 'true')
   }, [])
+
+  // Dismiss on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        dismiss()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [dismiss])
 
   const handleNext = useCallback(() => {
     if (step < TOTAL_STEPS) {

@@ -238,7 +238,7 @@ export default function ResearchTool() {
                   </div>
                   <div className="flex-[2]">
                     <Label className="text-gray-400 text-sm mb-1.5 block">Research Topic</Label>
-                    <div className={`relative transition-all duration-200 ${searchFocused ? 'search-focused' : ''}`}>
+                    <div className={`relative transition-all duration-200 ${searchFocused ? 'search-focused' : ''} search-input-animated`}>
                       <motion.div
                         className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none"
                         animate={{
@@ -266,7 +266,7 @@ export default function ResearchTool() {
                   <Button
                     onClick={doResearch}
                     disabled={researching || !topic.trim()}
-                    className="btn-neon-solid gap-2 px-6 w-full sm:w-auto"
+                    className={`btn-neon-solid gap-2 px-6 w-full sm:w-auto ${researching ? 'btn-pulse-loading' : ''}`}
                   >
                     {researching ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Researching...</>
@@ -326,7 +326,7 @@ export default function ResearchTool() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -20, scale: 0.98 }}
                   transition={{ duration: 0.4 }}
-                  className="glass-card rounded-xl overflow-hidden"
+                  className="glass-card rounded-xl overflow-hidden result-card-hover"
                 >
                   <div className="flex items-center justify-between p-4 border-b border-white/5 gradient-header-bar">
                     <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ export default function ResearchTool() {
                         transition={{ delay: index * 0.03 }}
                         whileHover={{ scale: 1.02, x: 3 }}
                         onClick={() => loadFromHistory(entry)}
-                        className="w-full text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-all group shimmer-border"
+                        className="w-full text-left p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-all group shimmer-border result-card-hover"
                       >
                         <p className="text-sm text-gray-300 truncate group-hover:text-white transition-colors">
                           {entry.topic}

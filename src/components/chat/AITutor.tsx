@@ -22,24 +22,8 @@ const suggestedPrompts = [
 
 function LoadingDots() {
   return (
-    <div className="flex items-center gap-1.5 px-4 py-3">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="w-2.5 h-2.5 rounded-full bg-[#00f0ff]/70"
-          animate={{
-            opacity: [0.2, 1, 0.2],
-            scale: [0.7, 1.2, 0.7],
-            y: [4, -4, 4],
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            delay: i * 0.15,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
+    <div className="flex items-center gap-1.5 px-4 py-3 typing-dots">
+      <span /><span /><span />
     </div>
   )
 }
@@ -219,7 +203,7 @@ export default function AITutor() {
                       whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleSend(prompt)}
-                      className="text-left p-3.5 rounded-xl glass border border-white/5 hover:border-[#00f0ff]/30 hover:bg-[#00f0ff]/5 transition-all duration-200 text-sm text-muted-foreground hover:text-foreground group shimmer-border"
+                      className="text-left p-3.5 rounded-xl glass border border-white/5 hover:border-[#00f0ff]/30 hover:bg-[#00f0ff]/5 transition-all duration-200 text-sm text-muted-foreground hover:text-foreground group shimmer-border btn-shimmer-hover"
                     >
                       <span className="text-[#00f0ff] mr-2 opacity-60 group-hover:opacity-100 transition-opacity">
                         &rarr;
@@ -237,13 +221,13 @@ export default function AITutor() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} message-stagger`}
                   >
                     <div
                       className={`max-w-[85%] sm:max-w-[75%] ${
                         msg.role === 'user'
                           ? 'bg-gradient-to-br from-[#00f0ff]/20 to-[#00f0ff]/10 border border-[#00f0ff]/25 rounded-2xl rounded-br-md px-4 py-3 message-glow'
-                          : 'glass-card rounded-2xl rounded-bl-md px-4 py-3 message-glow'
+                          : 'glass-card rounded-2xl rounded-bl-md px-4 py-3 message-glow response-sparkle'
                       }`}
                     >
                       {msg.role === 'assistant' && (
@@ -295,7 +279,7 @@ export default function AITutor() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="glass-strong border-t border-white/5 px-4 sm:px-6 py-4 relative z-10"
+        className="glass-strong border-t border-white/5 px-4 sm:px-6 py-4 relative z-10 chat-input-glow"
       >
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <div className="flex-1 relative">

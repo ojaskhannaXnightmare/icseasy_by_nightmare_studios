@@ -1,6 +1,6 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore, type PageType } from '@/store/useStore'
 import LandingPage from '@/components/landing/LandingPage'
@@ -30,6 +30,7 @@ import FlashcardsPage from '@/components/flashcards/FlashcardsPage'
 import QuizHistory from '@/components/quiz/QuizHistory'
 import AnalyticsPage from '@/components/analytics/AnalyticsPage'
 import SettingsPage from '@/components/settings/SettingsPage'
+import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 
 
 
@@ -59,7 +60,26 @@ const authenticatedPages: PageType[] = [
 ]
 
 function AppRouter() {
-  const { currentPage, user } = useStore()
+  const { currentPage, user, logout, setCurrentPage } = useStore()
+
+  // Validate token on mount — clear stale sessions
+  useEffect(() => {
+    const validateSession = async () => {
+      const state = useStore.getState()
+      if (state.user && state.token) {
+        try {
+          const res = await fetch('/api/profile')
+          if (!res.ok) {
+            // Token is invalid/expired — clear session
+            logout()
+          }
+        } catch {
+          // Network error — keep session (might be offline)
+        }
+      }
+    }
+    validateSession()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Read localStorage for onboarding status (SSR-safe via useSyncExternalStore)
  const onboardedValue = useSyncExternalStore(
@@ -92,6 +112,9 @@ function AppRouter() {
       {showOnboarding && <OnboardingTour />}
 
       {needsSidebar && <Sidebar />}
+
+      {/* Keyboard Shortcuts Overlay */}
+      {needsSidebar && <KeyboardShortcuts />}
 
       {/* Page Router with Transitions */}
       <AnimatePresence mode="wait">
@@ -149,6 +172,22 @@ function AppRouter() {
 
       {/* Bottom Navigation (mobile only) */}
       {needsSidebar && <BottomNav />}
+
+      {/* Floating keyboard shortcuts hint — mobile only */}
+      {needsSidebar && (
+        <button
+          onClick={() => {
+            // Dispatch Ctrl+K event to trigger the shortcuts modal
+            window.dispatchEvent(
+              new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true })
+            )
+          }}
+          className="lg:hidden fixed bottom-24 right-4 z-50 w-10 h-10 rounded-full glass-card flex items-center justify-center shadow-lg hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] transition-all duration-200 active:scale-95"
+          aria-label="Open keyboard shortcuts"
+        >
+          <span className="text-sm font-mono font-bold text-[#00f0ff]/70">?</span>
+        </button>
+      )}
     </div>
   )
 }

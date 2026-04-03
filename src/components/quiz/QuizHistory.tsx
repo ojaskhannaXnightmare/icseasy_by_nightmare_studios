@@ -90,7 +90,7 @@ function StatCard({ icon, label, value, color, delay }: {
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, duration: 0.4, ease: 'easeOut' }}
-      className="glass-card rounded-xl p-5 relative overflow-hidden"
+      className="glass-card rounded-xl p-5 relative overflow-hidden stat-card-lift"
     >
       <div className="flex items-start justify-between">
         <div>
@@ -137,7 +137,7 @@ function EmptyState() {
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         className="relative mb-6"
       >
-        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#00f0ff]/10 to-[#a855f7]/10 border border-white/10 flex items-center justify-center">
+        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#00f0ff]/10 to-[#a855f7]/10 border border-white/10 flex items-center justify-center orbital-enhanced">
           <History className="w-12 h-12 text-gray-600" />
         </div>
         <motion.div
@@ -257,7 +257,7 @@ export default function QuizHistory() {
           <div className="flex items-center gap-3 mb-6">
             <Filter className="w-4 h-4 text-gray-500" />
             <Select value={subjectFilter} onValueChange={setSubjectFilter}>
-              <SelectTrigger className="w-48 glass bg-white/5 border-white/10 text-white h-9">
+              <SelectTrigger className="w-48 glass bg-white/5 border-white/10 text-white h-9 filter-neon">
                 <SelectValue placeholder="Filter by subject" />
               </SelectTrigger>
               <SelectContent className="glass-strong border-white/10 bg-[#0f0f19]">
@@ -316,7 +316,7 @@ export default function QuizHistory() {
                                 initial={{ width: 0 }}
                                 animate={{ width: `${pct}%` }}
                                 transition={{ delay: index * 0.04 + 0.2, duration: 0.6, ease: 'easeOut' }}
-                                className={`h-full rounded-full ${colors.bar}`}
+                                className={`h-full rounded-full ${colors.bar} score-bar-neon`}
                               />
                             </div>
                           </div>

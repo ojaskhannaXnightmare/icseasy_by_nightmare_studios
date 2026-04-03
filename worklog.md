@@ -195,3 +195,169 @@ ICSEasy is a comprehensive AI-powered ICSE learning platform built with Next.js 
 - Created OnboardingTour component (4 steps, localStorage persistence, SSR-safe)
 - Integrated into page.tsx with `useSyncExternalStore`
 - Added password strength meter to signup form (4 levels with animated bar)
+
+---
+## Task ID: 6-a — Global Keyboard Shortcuts System
+### Work Task
+Create a keyboard shortcuts overlay/hotkey system for the app, including a modal component, custom hook, and integration into the main layout.
+
+### Work Summary
+Created a comprehensive keyboard shortcuts system with three files:
+
+**1. `/src/hooks/useKeyboardShortcuts.ts`** — Custom hook that:
+- Listens for global keydown events
+- `Ctrl+K` / `Cmd+K` toggles the shortcuts modal (works in all contexts, even inside inputs)
+- `?` / `Shift+/` opens shortcuts modal (when not in input)
+- Number keys `0-9` navigate to corresponding pages (when modal open, or directly when not in input)
+- Letter keys `N` (Notes), `Q` (Quiz), `T` (Timer) trigger navigation when not in input and modal is closed
+- `Escape` closes modal when open, or navigates back via `navigateBack()` when not in input
+- All shortcuts are guarded by `isInputFocused()` check (INPUT, TEXTAREA, SELECT, contentEditable)
+- Only triggers when user is authenticated
+- Returns `{ isOpen, toggle, close, executeShortcut }`
+
+**2. `/src/components/KeyboardShortcuts.tsx`** — Modal overlay component:
+- Full-screen `glass-strong` backdrop with Framer Motion fade animation
+- Centered `glass-card` modal (max-w-md) with scale + translate animation
+- Search input with magnifying glass icon for real-time filtering
+- Shortcuts grouped by category (Navigation, Quick Actions, System) with color-coded headers and icons
+- 16 total shortcuts with key badges (monospace, rounded, bg-white/10)
+- Keyboard arrow navigation (↑/↓) with Enter to select
+- Highlights current page with "Current" badge
+- Shows "Navigate" and "Select" hints in footer
+- Empty state when search returns no results
+- Auto-focuses search input on open, resets on close
+
+**3. Integration changes:**
+- `page.tsx`: Added `KeyboardShortcuts` component rendered for authenticated pages, plus a floating `?` button (lg:hidden) for mobile
+- `Sidebar.tsx`: Added a subtle `?` keyboard shortcut hint above the Logout button (desktop only, when not collapsed)
+
+**Verification:**
+- `npm run lint` — 0 errors (1 pre-existing warning unrelated to changes)
+- Dev server compiles successfully with no Turbopack errors
+
+---
+## Task ID: 7 — Styling Enhancement Agent (6 Components)
+### Work Task
+Enhance styling with more details across 6 pages: AI Tutor, Smart Notes, Quiz Active, Quiz Results, Research Tool, and Quiz History. Add new CSS utility classes and apply minimal className/wrapper changes to each component.
+
+### Work Summary
+Added 20+ new CSS utility classes to globals.css and enhanced all 6 components with targeted styling improvements:
+
+**New CSS Classes Added:**
+- `chat-input-glow` — Gradient animated border on chat input bottom
+- `typing-dots span` — Three bouncing dots with cyan/purple/pink neon glow
+- `timer-critical` — Red pulse animation for low-time display
+- `score-ring-rotate` — Rotating conic-gradient for score ring backdrop
+- `option-btn` / `option-btn-selected` — Enhanced option buttons with hover/select glow
+- `message-stagger` — Slide-in animation for chat messages
+- `response-sparkle` — Subtle sparkle character on AI response bubbles
+- `progress-glow` — Blurred glow trail on progress bars
+- `question-card-border` — Animated gradient top border on question card
+- `review-item-glow` — Hover glow on quiz review items
+- `tab-animated` — Underline indicator for tab navigation
+- `search-input-animated` — Focus-expanding gradient bottom border
+- `result-card-hover` — Gradient border mask on hover
+- `btn-pulse-loading` — Pulsing glow while button is loading
+- `stat-card-lift` — Enhanced hover lift effect
+- `score-bar-neon` — Neon glow trail on score bars
+- `orbital-enhanced` — Dual-ring orbital animation for empty states
+- `filter-neon` — Neon border on focus for filter dropdowns
+- `btn-shimmer-hover` — Shimmer sweep on button hover
+
+**Component Changes (all minimal — className additions only):**
+1. **AITutor.tsx** — `chat-input-glow` on input area, `typing-dots` CSS-driven dots replacing framer-motion, `message-stagger` on messages, `response-sparkle` on AI bubbles, `btn-shimmer-hover` on suggestion chips
+2. **NotesPage.tsx** — `btn-shimmer-hover` on Generate Note button, `tab-animated` on TabsList, `orbital-enhanced` on empty state icon
+3. **QuizActive.tsx** — `timer-critical` when elapsed ≥30s, `progress-glow` on progress bar, `question-card-border` on question card, `option-btn`/`option-btn-selected` on option buttons, `btn-shimmer-hover` on Next button
+4. **QuizResults.tsx** — `score-ring-rotate` conic-gradient behind score ring, varied confetti sizes (4 patterns × 8 colors), `btn-shimmer-hover` on Try Again, `review-item-glow` on review items
+5. **ResearchTool.tsx** — `search-input-animated` on topic input, `btn-pulse-loading` on Research button during loading, `result-card-hover` on result card and history items
+6. **QuizHistory.tsx** — `stat-card-lift` on stat cards, `score-bar-neon` on score bars, `orbital-enhanced` on empty state, `filter-neon` on filter dropdown
+
+**Verification:**
+- `bun run lint` — 0 new errors (1 pre-existing error in StudyTimer.tsx unrelated to changes)
+- Dev server compiles and renders successfully
+
+---
+## Task ID: 6-b — Study Streak Tracking System
+### Work Task
+Create a study streak tracking system with API endpoint, widget component, Zustand store integration, and dashboard embedding.
+
+### Work Summary
+
+**1. Created `/src/app/api/streak/route.ts`** — GET endpoint (auth-protected):
+- Verifies JWT token via `verifyToken` from `@/lib/auth`
+- Compares user's `lastActive` date with today using date-only strings (`toISOString().split('T')[0]`)
+- Streak logic: same day = no change, yesterday = increment, older = reset to 1
+- Updates `lastActive` to today, `streak` to new value, `isOnline = true`
+- `shouldNotify` field: true when streak crosses a milestone (3, 7, 14, 30, 60, 100) compared to previous streak
+- `longestStreak` tracked in `studyPrefs` JSON field: `Math.max(existing, current)`
+- Returns: `{ streak, lastActive, longestStreak, shouldNotify }`
+- Edge case handling: null lastActive (first time), negative day diff (timezone edge)
+
+**2. Created `/src/components/StreakWidget.tsx`** — Compact widget component:
+- Fetches `/api/streak` on mount via `authFetch`, syncs to Zustand store
+- Displays current streak with animated flame icon (pulse when streak > 0)
+- Color coding: 0 days (gray), 1-2 (white), 3-6 (cyan), 7-13 (purple), 14+ (gold)
+- Background glow and border styling matches streak color tier
+- Shows longest streak with trophy icon
+- Milestone celebration overlay with dismiss button (triggered by `shouldNotify`)
+- Motivational messages per streak tier
+- "Active today ✓" badge, loading state, zero-streak encouragement text
+- Glass-card with neon styling, fully responsive
+
+**3. Modified `/src/store/useStore.ts`** — Added streak state:
+- `streak: number` (default 0) + `setStreak` action
+- `longestStreak: number` (default 0) + `setLongestStreak` action
+- Both fields added to `partialize` for localStorage persistence
+
+**4. Modified `/src/components/dashboard/Dashboard.tsx`** — Dashboard integration:
+- Imported `StreakWidget` component
+- Replaced the old static "Day Streak" stat card (which read from user.streak) with the new interactive `StreakWidget`
+- StreakWidget placed as first item in the stats grid (col-span-1)
+- Remaining stat cards (Notes, Quizzes, Avg Score) fill the remaining 3 columns
+- Cleaned up unused imports (Flame, Trophy, History, Code2, Languages)
+
+**Verification:**
+- `bun run lint` — 0 new errors (pre-existing issues in StudyTimer.tsx and page.tsx unrelated)
+- Dev server compiles successfully (200 responses on `/`)
+
+---
+## Task ID: 6-c — Pomodoro Session Persistence + Analytics Integration
+### Work Task
+Add database-backed study session tracking for the Pomodoro timer, including a new Prisma model, REST API, timer integration, and analytics enhancement.
+
+### Work Summary
+
+**1. Prisma Schema Changes** (`prisma/schema.prisma`):
+- Added `StudySession` model with fields: `id`, `userId`, `type` (focus/break), `duration` (seconds), `createdAt`
+- Added `@@index([userId, createdAt])` for efficient queries
+- Added `studySessions StudySession[]` relation to `User` model
+- Ran `bun run db:push` — schema synced successfully
+
+**2. Created `/src/app/api/study-sessions/route.ts`** — Two endpoints:
+- `POST` (auth-protected): Creates a new StudySession record. Validates `type` must be "focus" or "break", `duration` must be positive number. Returns created session with 201 status.
+- `GET` (auth-protected): Returns sessions ordered by `createdAt desc`. Supports query params: `?limit=50&offset=0&type=focus`. Returns aggregated data: `totalFocusMinutes`, `totalBreakMinutes`, `todayFocusMinutes`. Uses parallel Prisma queries (findMany + 3 aggregates) for performance.
+
+**3. Modified `/src/components/timer/StudyTimer.tsx`** — Timer integration:
+- Added `toast` from `sonner` and `authFetch` from `@/lib/api`
+- Added `todayFocusMinutes` state, loaded from server on component mount via async effect
+- Added `fetchTodayFocus` callback that queries `/api/study-sessions?limit=1` for `todayFocusMinutes`
+- Added `saveSession` callback that POSTs to `/api/study-sessions` when a timer completes (focus or break)
+- Shows sonner toast: "Focus session saved! +X minutes" with 🔥 or "Break session logged" with ☕
+- After saving, refreshes `todayFocusMinutes` from server
+- Updated "Total focus time" section to show "Today's focus time" with real server-backed minutes instead of estimated `sessions * 25`
+- Progress bar now tracks against real today's focus time toward a 2-hour daily goal
+- Section shows even when `sessions === 0` if `todayFocusMinutes > 0` (for returning users)
+
+**4. Modified `/src/app/api/analytics/route.ts`** — Analytics enhancement:
+- Added `studySessions` to the parallel data fetch (5 queries now: notes, quizzes, sessions, focusAgg, todayFocusAgg)
+- `totalStudyTime` now uses real focus session data when available, falls back to estimate (notes×15 + quizzes×25)
+- Study sessions included in "Most Active Day" calculation
+- Added new response fields: `todayFocusMinutes`, `totalFocusSessions`, `totalBreakSessions`, `totalFocusMinutes`, `totalBreakMinutes`
+- All existing response fields preserved — no breaking changes
+
+**5. Prisma Models**: 13 total (added StudySession as 13th)
+
+**Verification:**
+- `bun run lint` — 0 errors, 1 pre-existing warning (page.tsx)
+- `bun run db:push` — Schema synced successfully
+- Dev server compiles with no errors

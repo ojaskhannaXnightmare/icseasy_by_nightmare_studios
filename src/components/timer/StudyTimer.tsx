@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, ChevronRight, Clock, Zap, Coffee, Volume2, VolumeX } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { useStore } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 type TimerMode = 'focus' | 'break'
 
@@ -35,6 +37,7 @@ export default function StudyTimer() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [isRunning, setIsRunning] = useState(false)
   const [sessions, setSessions] = useState(0)
+  const [todayFocusMinutes, setTodayFocusMinutes] = useState(0)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -45,13 +48,70 @@ export default function StudyTimer() {
   const minutes = Math.floor(remainingSeconds / 60)
   const seconds = remainingSeconds % 60
 
+  // Fetch today's focus minutes from the server
+  const fetchTodayFocus = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/study-sessions?limit=1')
+      if (res.ok) {
+        const data = await res.json()
+        setTodayFocusMinutes(data.todayFocusMinutes || 0)
+      }
+    } catch {
+      // Silent fail
+    }
+  }, [])
+
+  // Save session to database
+  const saveSession = useCallback(async (sessionType: TimerMode, durationSeconds: number) => {
+    try {
+      await authFetch('/api/study-sessions', {
+        method: 'POST',
+        body: JSON.stringify({ type: sessionType, duration: durationSeconds }),
+      })
+      const minutes = Math.round(durationSeconds / 60)
+      if (sessionType === 'focus') {
+        toast.success(`Focus session saved! +${minutes} minutes`, {
+          description: 'Keep up the great work! 🔥',
+        })
+      } else {
+        toast.success('Break session logged', {
+          description: 'You deserve it! ☕',
+        })
+      }
+      // Refresh today's focus time
+      fetchTodayFocus()
+    } catch {
+      // Silently fail — don't interrupt the user experience
+    }
+  }, [fetchTodayFocus])
+
+  // Load today's focus time on mount
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const res = await authFetch('/api/study-sessions?limit=1')
+        if (res.ok && !cancelled) {
+          const data = await res.json()
+          setTodayFocusMinutes(data.todayFocusMinutes || 0)
+        }
+      } catch {
+        // Silent fail
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
+
   const handleComplete = useCallback(() => {
     setIsRunning(false)
     if (soundEnabled) playBeep()
     if (mode === 'focus') {
       setSessions((prev) => prev + 1)
     }
-  }, [mode, soundEnabled])
+    // Save the completed session to the database
+    saveSession(mode, totalSeconds)
+  }, [mode, soundEnabled, totalSeconds, saveSession])
 
   useEffect(() => {
     if (isRunning) {
@@ -387,7 +447,7 @@ export default function StudyTimer() {
                   {sessions}
                 </motion.span>
                 <span className="text-xs text-muted-foreground">
-                  {sessions === 1 ? 'session' : 'sessions'} today
+                  {sessions === 1 ? 'session' : 'sessions'} completed
                 </span>
                 {sessions > 0 && (
                   <span
@@ -428,26 +488,26 @@ export default function StudyTimer() {
             </div>
           </div>
 
-          {sessions > 0 && (
+          {(sessions > 0 || todayFocusMinutes > 0) && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               className="mt-4 pt-4 border-t border-white/5"
             >
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Total focus time</span>
-                <span className="text-[#00f0ff] font-medium">{sessions * 25} minutes</span>
+                <span>Today's focus time</span>
+                <span className="text-[#00f0ff] font-medium">{todayFocusMinutes} minutes</span>
               </div>
               {/* Mini progress bar */}
               <div className="mt-3 h-1.5 rounded-full bg-white/5 overflow-hidden">
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-purple-400"
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((sessions * 25) / 120 * 100, 100)}%` }}
+                  animate={{ width: `${Math.min(todayFocusMinutes / 120 * 100, 100)}%` }}
                   transition={{ duration: 0.8, ease: 'easeOut' }}
                 />
               </div>
-              <p className="text-[10px] text-gray-600 mt-1">{Math.min((sessions * 25) / 120 * 100, 100).toFixed(0)}% of 2-hour goal</p>
+              <p className="text-[10px] text-gray-600 mt-1">{Math.min(todayFocusMinutes / 120 * 100, 100).toFixed(0)}% of 2-hour daily goal</p>
             </motion.div>
           )}
         </motion.div>

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
-  Flame,
   FileText,
   Brain,
   TrendingUp,
@@ -12,14 +11,10 @@ import {
   Search,
   Pencil,
   Clock,
-  Trophy,
   Atom,
   FlaskConical,
   Calculator,
-  History,
   Globe,
-  Code2,
-  Languages,
   Leaf,
   Landmark,
   Monitor,
@@ -30,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store/useStore'
 import DailyGoals from './DailyGoals'
+import StreakWidget from '@/components/StreakWidget'
 import { authFetch } from '@/lib/api'
 import {
   AreaChart,
@@ -107,13 +103,6 @@ interface ActivityData {
 }
 
 const statsCards = [
-  {
-    key: 'streak',
-    label: 'Day Streak',
-    icon: Flame,
-    color: '#f59e0b',
-    getValue: (user: { streak?: number } | null) => String(user?.streak || 0),
-  },
   {
     key: 'notes',
     label: 'Total Notes',
@@ -303,6 +292,11 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Streak Widget */}
+          <div className="col-span-1">
+            <StreakWidget />
+          </div>
+          {/* Stat Cards */}
           {statsCards.map((stat, index) => {
             const Icon = stat.icon
             const value = stat.getValue(user, totalNotes, totalQuizzes, avgScore)
@@ -311,7 +305,7 @@ export default function Dashboard() {
                 key={stat.key}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: (index + 1) * 0.1 }}
                 className="glass rounded-xl p-4 sm:p-5 card-glow"
               >
                 <div className="flex items-center justify-between mb-3">

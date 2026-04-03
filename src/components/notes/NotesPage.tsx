@@ -85,7 +85,7 @@ function EmptyNotesState({ searchQuery, onGenerate }: { searchQuery: string; onG
         />
         {/* Center icon container */}
         <motion.div
-          className="absolute inset-6 rounded-2xl bg-gradient-to-br from-[#00f0ff]/10 to-[#a855f7]/10 flex items-center justify-center floating"
+          className="absolute inset-6 rounded-2xl bg-gradient-to-br from-[#00f0ff]/10 to-[#a855f7]/10 flex items-center justify-center floating orbital-enhanced"
           style={{ boxShadow: '0 0 30px rgba(0,240,255,0.08)' }}
         >
           <NotebookPen className="w-10 h-10 text-[#00f0ff]/60" />
@@ -309,7 +309,7 @@ export default function NotesPage() {
           </Button>
           <Button
             onClick={() => setShowGenerateDialog(true)}
-            className="btn-neon-solid gap-2 px-4 py-2"
+            className="btn-neon-solid gap-2 px-4 py-2 btn-shimmer-hover"
           >
             <Plus className="w-4 h-4" />
             Generate Note
@@ -338,9 +338,9 @@ export default function NotesPage() {
         </div>
       </div>
 
-      {/* Tabs — with animated underline */}
+      {/* Tabs — with animated underline indicator */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="glass bg-transparent p-1 h-auto flex-wrap gap-1 mb-6">
+        <TabsList className="glass bg-transparent p-1 h-auto flex-wrap gap-1 mb-6 tab-animated">
           <TabsTrigger
             value="all"
             className="data-[state=active]:bg-cyan-500/15 data-[state=active]:text-cyan-400 data-[state=active]:border-cyan-500/30 rounded-lg px-4 py-2 text-gray-400 border border-transparent transition-all text-sm"

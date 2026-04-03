@@ -99,7 +99,7 @@ export default function QuizActive() {
             <Badge className="bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs">{quizTopic}</Badge>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-sm text-gray-400">
+            <div className={`flex items-center gap-1.5 text-sm ${elapsedTime >= 30 ? 'timer-critical' : 'text-gray-400'}`}>
               <Clock className="w-4 h-4" />
               {formatTime(elapsedTime)}
             </div>
@@ -108,7 +108,7 @@ export default function QuizActive() {
             </div>
           </div>
         </div>
-        <Progress value={(answeredCount / totalQuestions) * 100} className="h-2 bg-white/5" />
+        <Progress value={(answeredCount / totalQuestions) * 100} className="h-2 bg-white/5 progress-glow" />
       </div>
 
       {/* Navigation Dots */}
@@ -138,7 +138,7 @@ export default function QuizActive() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -30 }}
           transition={{ duration: 0.2 }}
-          className="glass rounded-2xl p-6 md:p-8 mb-6 neon-border"
+          className="glass rounded-2xl p-6 md:p-8 mb-6 neon-border question-card-border"
         >
           <div className="flex items-start gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center shrink-0 border border-cyan-500/20">
@@ -157,9 +157,9 @@ export default function QuizActive() {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => handleSelectOption(idx)}
-                className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-4 group ${
+                className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-4 group option-btn ${
                   selectedAnswer === idx
-                    ? 'border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_20px_rgba(0,240,255,0.08)]'
+                    ? 'border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_20px_rgba(0,240,255,0.08)] option-btn-selected'
                     : 'border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-white/20'
                 }`}
               >
@@ -206,7 +206,7 @@ export default function QuizActive() {
         </div>
 
         {currentIndex < totalQuestions - 1 ? (
-          <Button onClick={handleNext} className="btn-neon gap-2">
+          <Button onClick={handleNext} disabled={selectedAnswer === null} className="btn-neon gap-2 btn-shimmer-hover">
             Next
             <ChevronRight className="w-4 h-4" />
           </Button>

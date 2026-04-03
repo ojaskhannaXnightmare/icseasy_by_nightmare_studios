@@ -132,6 +132,12 @@ interface AppState {
   totalQuizzes: number
   avgScore: number
   setStats: (notes: number, quizzes: number, avgScore: number) => void
+
+  // Streak
+  streak: number
+  setStreak: (streak: number) => void
+  longestStreak: number
+  setLongestStreak: (longestStreak: number) => void
 }
 
 export const useStore = create<AppState>()(
@@ -212,6 +218,12 @@ export const useStore = create<AppState>()(
         totalQuizzes: quizzes,
         avgScore: avgScore,
       }),
+
+      // Streak
+      streak: 0,
+      setStreak: (streak) => set({ streak }),
+      longestStreak: 0,
+      setLongestStreak: (longestStreak) => set({ longestStreak }),
     }),
     {
       name: 'icseasy-store',
@@ -223,6 +235,8 @@ export const useStore = create<AppState>()(
         totalNotes: state.totalNotes,
         totalQuizzes: state.totalQuizzes,
         avgScore: state.avgScore,
+        streak: state.streak,
+        longestStreak: state.longestStreak,
       }),
     }
   )

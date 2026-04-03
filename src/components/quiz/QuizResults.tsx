@@ -167,10 +167,10 @@ export default function QuizResults() {
               }}
               className="absolute"
               style={{
-                width: i % 3 === 0 ? 8 : i % 3 === 1 ? 6 : 10,
-                height: i % 3 === 0 ? 8 : 14,
-                borderRadius: i % 2 === 0 ? '50%' : '2px',
-                backgroundColor: ['#00f0ff', '#a855f7', '#ec4899', '#22c55e', '#f59e0b', '#3b82f6'][i % 6],
+                width: i % 4 === 0 ? 8 : i % 4 === 1 ? 5 : i % 4 === 2 ? 10 : 6,
+                height: i % 4 === 0 ? 8 : i % 4 === 1 ? 12 : i % 4 === 2 ? 5 : 16,
+                borderRadius: i % 3 === 0 ? '50%' : i % 3 === 1 ? '2px' : '0',
+                backgroundColor: ['#00f0ff', '#a855f7', '#ec4899', '#22c55e', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'][i % 8],
               }}
             />
           ))}
@@ -203,6 +203,10 @@ export default function QuizResults() {
               style={{ backgroundColor: scoreInfo.color }}
               animate={{ opacity: [0.15, 0.25, 0.15] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            {/* Rotating conic gradient behind ring */}
+            <div className="absolute inset-[-8px] rounded-full score-ring-rotate opacity-30"
+              style={{ background: 'conic-gradient(from 0deg, #00f0ff, #a855f7, #ec4899, #22c55e, #00f0ff)', filter: 'blur(3px)' }}
             />
             <svg width="180" height="180" className="transform -rotate-90">
               <defs>
@@ -317,7 +321,7 @@ export default function QuizResults() {
           className="flex flex-wrap items-center justify-center gap-3 mb-8"
         >
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button onClick={handleRetry} className="btn-neon gap-2 px-5 shadow-[0_0_20px_rgba(0,240,255,0.15)]">
+            <Button onClick={handleRetry} className="btn-neon gap-2 px-5 shadow-[0_0_20px_rgba(0,240,255,0.15)] btn-shimmer-hover">
               <RotateCcw className="w-4 h-4" /> Try Again
             </Button>
           </motion.div>
@@ -355,7 +359,7 @@ export default function QuizResults() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.1 + index * 0.06 }}
                 whileHover={{ scale: 1.01 }}
-                className="glass-card rounded-xl overflow-hidden"
+                className="glass-card rounded-xl overflow-hidden review-item-glow"
               >
                 <button
                   onClick={() => setExpandedQuestion(expandedQuestion === index ? null : index)}

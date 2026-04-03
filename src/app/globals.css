@@ -955,3 +955,346 @@
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
+
+/* ========================================
+   Task 7: Enhanced styling utilities
+   ======================================== */
+
+/* Chat input gradient border */
+.chat-input-glow {
+  position: relative;
+}
+
+.chat-input-glow::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), rgba(168, 85, 247, 0.3), transparent);
+  animation: gradient-shift 4s ease infinite;
+  background-size: 200% 100%;
+}
+
+/* Typing indicator dots */
+.typing-dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00f0ff;
+  margin: 0 2px;
+  animation: typing-bounce 1.4s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+  background: #a855f7;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+  background: #ec4899;
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* Timer pulse when low */
+.timer-critical {
+  animation: timer-critical-pulse 1s ease-in-out infinite;
+  color: #ef4444;
+}
+
+@keyframes timer-critical-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Score ring rotation */
+.score-ring-rotate {
+  animation: score-ring-spin 8s linear infinite;
+}
+
+@keyframes score-ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Enhanced option button */
+.option-btn {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.option-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(168, 85, 247, 0.05));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.option-btn:hover::before {
+  opacity: 1;
+}
+
+/* Message stagger animation */
+.message-stagger {
+  animation: message-slide-in 0.3s ease-out;
+}
+
+@keyframes message-slide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Sparkle response effect */
+.response-sparkle {
+  position: relative;
+}
+
+.response-sparkle::after {
+  content: '✦';
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  font-size: 10px;
+  color: #00f0ff;
+  animation: sparkle-fade 2s ease-in-out infinite;
+}
+
+@keyframes sparkle-fade {
+  0%, 100% { opacity: 0; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+/* Enhanced progress bar with glow */
+.progress-glow {
+  position: relative;
+}
+
+.progress-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: inherit;
+  filter: blur(8px);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+/* Animated question card top border */
+.question-card-border {
+  position: relative;
+  overflow: visible;
+}
+
+.question-card-border::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.6), transparent);
+  background-size: 200% 100%;
+  animation: gradient-shift 3s ease infinite;
+  border-radius: 1px;
+}
+
+/* Option button selected glow */
+.option-btn-selected {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.12), 0 0 40px rgba(168, 85, 247, 0.06);
+}
+
+.option-btn-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(168, 85, 247, 0.05));
+  pointer-events: none;
+}
+
+/* Review item hover glow */
+.review-item-glow {
+  transition: all 0.3s ease;
+}
+
+.review-item-glow:hover {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.06), 0 0 30px rgba(168, 85, 247, 0.04);
+  border-color: rgba(0, 240, 255, 0.15);
+}
+
+/* Tab underline animated */
+.tab-animated {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-animated::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f0ff, #a855f7);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.tab-animated:hover::after,
+.tab-animated[data-active='true']::after {
+  width: 70%;
+}
+
+/* Search input animated focus border */
+.search-input-animated {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.search-input-animated::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, #00f0ff, #a855f7);
+  transition: all 0.3s ease;
+}
+
+.search-input-animated:focus-within::after {
+  left: 0;
+  right: 0;
+}
+
+/* Result card gradient border hover */
+.result-card-hover {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.result-card-hover::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.25));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.result-card-hover:hover::before {
+  opacity: 1;
+}
+
+/* Button pulse while loading */
+.btn-pulse-loading {
+  animation: btn-pulse-load 1.5s ease-in-out infinite;
+}
+
+@keyframes btn-pulse-load {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.3), 0 0 60px rgba(168, 85, 247, 0.15); }
+}
+
+/* Stat card hover lift enhanced */
+.stat-card-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(0, 240, 255, 0.1), 0 0 0 1px rgba(0, 240, 255, 0.08);
+}
+
+/* Score bar neon glow trail */
+.score-bar-neon {
+  position: relative;
+}
+
+.score-bar-neon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: inherit;
+  filter: blur(6px);
+  opacity: 0.6;
+  border-radius: inherit;
+}
+
+/* Orbital empty state enhanced */
+.orbital-enhanced {
+  position: relative;
+}
+
+.orbital-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 240, 255, 0.15);
+  animation: orbital-spin 15s linear infinite;
+}
+
+.orbital-enhanced::after {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  border-radius: 50%;
+  border: 1px dashed rgba(168, 85, 247, 0.1);
+  animation: orbital-spin 25s linear infinite reverse;
+}
+
+/* Filter dropdown neon focus */
+.filter-neon:focus-within {
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.08);
+}
+
+/* Button shimmer on hover */
+.btn-shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.btn-shimmer-hover:hover::after {
+  left: 100%;
+}

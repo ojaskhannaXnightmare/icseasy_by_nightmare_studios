@@ -359,6 +359,16 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
 
       <Separator className="bg-white/5" />
 
+      {/* Keyboard shortcut hint */}
+      {!collapsed && (
+        <div className="px-3 py-2">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.02] text-muted-foreground/50 text-xs">
+            <kbd className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded bg-white/10 border border-white/10 text-[10px] font-mono">?</kbd>
+            <span>Press for shortcuts</span>
+          </div>
+        </div>
+      )}
+
       {/* Logout */}
       <div className="p-3">
         <button
