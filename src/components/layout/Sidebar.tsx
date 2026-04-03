@@ -18,6 +18,8 @@ import {
   Bell,
   Timer,
   Trophy,
+  Award,
+  Layers,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -44,8 +46,10 @@ const navItems: NavItem[] = [
   { icon: FileText, label: 'Notes', page: 'notes' },
   { icon: Search, label: 'Research', page: 'research' },
   { icon: Brain, label: 'Quiz', page: 'quiz-setup' },
+  { icon: Layers, label: 'Flashcards', page: 'flashcards' },
   { icon: Timer, label: 'Study Timer', page: 'timer' },
   { icon: Trophy, label: 'Leaderboard', page: 'leaderboard' },
+  { icon: Award, label: 'Achievements', page: 'achievements' },
   { icon: Users, label: 'Friends', page: 'friends' },
   { icon: MessageSquare, label: 'Groups', page: 'groups' },
   { icon: User, label: 'Profile', page: 'profile' },

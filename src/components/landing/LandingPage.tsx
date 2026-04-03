@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Bot, BookOpen, Brain, Sparkles, ChevronRight, Zap, UserPlus, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -59,11 +59,26 @@ const features = [
 ]
 
 const stats = [
-  { value: '10,000+', label: 'Students' },
-  { value: '8', label: 'ICSE Subjects' },
-  { value: '500+', label: 'Quiz Questions' },
-  { value: '24/7', label: 'AI Available' },
+  { target: 10000, suffix: '+', label: 'Students' },
+  { target: 8, suffix: '', label: 'ICSE Subjects' },
+  { target: 500, suffix: '+', label: 'Quiz Questions' },
+  { target: 24, suffix: '/7', label: 'AI Available' },
 ]
+
+function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    const step = Math.max(1, Math.floor(target / 40))
+    const timer = setInterval(() => {
+      setCount(prev => {
+        if (prev >= target) { clearInterval(timer); return target }
+        return Math.min(prev + step, target)
+      })
+    }, 30)
+    return () => clearInterval(timer)
+  }, [target])
+  return <>{count.toLocaleString()}{suffix}</>
+}
 
 // How It Works steps
 const howItWorksSteps = [
@@ -273,7 +288,9 @@ export default function LandingPage() {
           >
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold neon-text-cyan">{stat.value}</div>
+                <div className="text-2xl sm:text-3xl font-bold neon-text-cyan">
+                  <AnimatedCounter target={stat.target} suffix={stat.suffix} />
+                </div>
                 <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
               </div>
             ))}

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useStore } from '@/store/useStore'
 import { authFetch } from '@/lib/api'
+import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 
 const suggestedPrompts = [
@@ -93,6 +94,7 @@ export default function AITutor() {
       }
       addChatMessage(assistantMessage)
     } catch {
+      toast.error('Failed to get response. Please try again.')
       addChatMessage({
         id: `error-${chatMessages.length + 2}`,
         role: 'assistant' as const,
@@ -169,16 +171,35 @@ export default function AITutor() {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f0ff]/20 to-[#a855f7]/20 flex items-center justify-center mb-5">
                   <Sparkles className="w-8 h-8 text-[#00f0ff]" />
                 </div>
-                <h2 className="text-xl font-bold mb-2">How can I help you?</h2>
+                <motion.h2
+                  className="text-xl font-bold mb-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  How can I help you?
+                </motion.h2>
                 <p className="text-sm text-muted-foreground mb-8 max-w-md">
                   I&apos;m your AI tutor specialized in ICSE subjects. Ask me about any topic and I&apos;ll help you understand it better.
                 </p>
 
                 {/* Suggested Prompts */}
-                <div className="grid sm:grid-cols-2 gap-3 w-full max-w-lg">
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.08 } },
+                  }}
+                  className="grid sm:grid-cols-2 gap-3 w-full max-w-lg"
+                >
                   {suggestedPrompts.map((prompt) => (
-                    <button
+                    <motion.button
                       key={prompt}
+                      variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        visible: { opacity: 1, y: 0 },
+                      }}
                       onClick={() => handleSend(prompt)}
                       className="text-left p-3 rounded-xl glass border border-white/5 hover:border-[#00f0ff]/20 hover:bg-[#00f0ff]/5 transition-all duration-200 text-sm text-muted-foreground hover:text-foreground group"
                     >
@@ -186,9 +207,9 @@ export default function AITutor() {
                         &rarr;
                       </span>
                       {prompt}
-                    </button>
+                    </motion.button>
                   ))}
-                </div>
+                </motion.div>
               </motion.div>
             ) : (
               <div className="space-y-4">

@@ -279,3 +279,35 @@
   color: #a855f7;
   text-decoration: underline;
 }
+
+/* Rotating gradient border for subject cards */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotate-gradient {
+  0% { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+.subject-card-glow {
+  position: relative;
+}
+
+.subject-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--angle, 0deg), #00f0ff, #a855f7, #ec4899, #00f0ff);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.subject-card-glow:hover::before {
+  opacity: 0.5;
+  animation: rotate-gradient 3s linear infinite;
+}

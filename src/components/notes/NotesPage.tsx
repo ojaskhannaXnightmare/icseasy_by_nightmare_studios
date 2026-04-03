@@ -23,6 +23,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore, type NoteData } from '@/store/useStore'
 import { authFetch } from '@/lib/api'
+import { toast } from 'sonner'
 import { GenerateNoteDialog } from './GenerateNoteDialog'
 
 const SUBJECTS = [
@@ -57,7 +58,7 @@ export default function NotesPage() {
       const res = await authFetch('/api/notes')
       if (res.ok) {
         const data = await res.json()
-        setNotes(data)
+        setNotes(data.notes || [])
       }
     } catch {
       // fallback empty
@@ -97,6 +98,7 @@ export default function NotesPage() {
         if (selectedNote?.id === note.id) {
           setSelectedNote(prev => prev ? { ...prev, isBookmarked: !prev.isBookmarked } : null)
         }
+        toast.success(!note.isBookmarked ? 'Bookmark added' : 'Bookmark removed')
       }
     } catch {
       // silent fail
@@ -110,6 +112,7 @@ export default function NotesPage() {
       if (res.ok) {
         setNotes(prev => prev.filter(n => n.id !== deleteId))
         if (selectedNote?.id === deleteId) setSelectedNote(null)
+        toast.success('Note deleted')
       }
     } catch {
       // silent fail
@@ -137,8 +140,22 @@ export default function NotesPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen p-4 md:p-6 lg:p-8 max-w-7xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-7xl mx-auto"
     >
+      {/* Animated orbs */}
+      <motion.div
+        className="fixed top-24 left-[15%] w-56 h-56 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)' }}
+        animate={{ y: [0, 25, 0], scale: [1, 1.08, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="fixed bottom-32 right-[10%] w-60 h-60 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 70%)' }}
+        animate={{ y: [0, -20, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+      />
+
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">

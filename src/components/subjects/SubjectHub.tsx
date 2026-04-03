@@ -232,7 +232,7 @@ export default function SubjectHub() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
                 onClick={() => handleSubjectClick(subject)}
-                className="glass rounded-xl p-5 card-glow text-left group relative overflow-hidden"
+                className="glass rounded-xl p-5 card-glow subject-card-glow text-left group relative overflow-hidden"
               >
                 {/* Hover gradient overlay */}
                 <div

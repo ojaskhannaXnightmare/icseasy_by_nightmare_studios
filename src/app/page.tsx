@@ -1,5 +1,6 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
 import { useStore, type PageType } from '@/store/useStore'
 import LandingPage from '@/components/landing/LandingPage'
 import LoginForm from '@/components/auth/LoginForm'
@@ -22,6 +23,8 @@ import GroupChat from '@/components/social/GroupChat'
 import ProfilePage from '@/components/profile/ProfilePage'
 import StudyTimer from '@/components/timer/StudyTimer'
 import LeaderboardPage from '@/components/leaderboard/LeaderboardPage'
+import AchievementsPage from '@/components/achievements/AchievementsPage'
+import FlashcardsPage from '@/components/flashcards/FlashcardsPage'
 
 
 
@@ -43,6 +46,8 @@ const authenticatedPages: PageType[] = [
   'profile',
   'timer',
   'leaderboard',
+  'achievements',
+  'flashcards',
 ]
 
 function AppRouter() {
@@ -66,35 +71,52 @@ function AppRouter() {
     <div className="min-h-screen">
       {needsSidebar && <Sidebar />}
 
-      {/* Page Router */}
-      {currentPage === 'dashboard' && <Dashboard />}
-      {currentPage === 'tutor' && <AITutor />}
-      {currentPage === 'subjects' && <SubjectHub />}
-      {currentPage === 'subject-detail' && <SubjectDetail />}
+      {/* Page Router with Transitions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentPage}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="min-h-screen"
+        >
+          {currentPage === 'dashboard' && <Dashboard />}
+          {currentPage === 'tutor' && <AITutor />}
+          {currentPage === 'subjects' && <SubjectHub />}
+          {currentPage === 'subject-detail' && <SubjectDetail />}
 
-      {/* Notes & Research */}
-      {currentPage === 'notes' && <NotesPage />}
-      {currentPage === 'research' && <ResearchTool />}
+          {/* Notes & Research */}
+          {currentPage === 'notes' && <NotesPage />}
+          {currentPage === 'research' && <ResearchTool />}
 
-      {/* Quiz */}
-      {currentPage === 'quiz-setup' && <QuizSetup />}
-      {currentPage === 'quiz-active' && <QuizActive />}
-      {currentPage === 'quiz-results' && <QuizResults />}
+          {/* Quiz */}
+          {currentPage === 'quiz-setup' && <QuizSetup />}
+          {currentPage === 'quiz-active' && <QuizActive />}
+          {currentPage === 'quiz-results' && <QuizResults />}
 
-      {/* Social */}
-      {currentPage === 'friends' && <FriendsPage />}
-      {currentPage === 'messages' && <ChatPage />}
-      {currentPage === 'groups' && <GroupsPage />}
-      {currentPage === 'group-chat' && <GroupChat />}
+          {/* Social */}
+          {currentPage === 'friends' && <FriendsPage />}
+          {currentPage === 'messages' && <ChatPage />}
+          {currentPage === 'groups' && <GroupsPage />}
+          {currentPage === 'group-chat' && <GroupChat />}
 
-      {/* Profile */}
-      {currentPage === 'profile' && <ProfilePage />}
+          {/* Profile */}
+          {currentPage === 'profile' && <ProfilePage />}
 
-      {/* Study Timer */}
-      {currentPage === 'timer' && <StudyTimer />}
+          {/* Study Timer */}
+          {currentPage === 'timer' && <StudyTimer />}
 
-      {/* Leaderboard */}
-      {currentPage === 'leaderboard' && <LeaderboardPage />}
+          {/* Leaderboard */}
+          {currentPage === 'leaderboard' && <LeaderboardPage />}
+
+          {/* Achievements */}
+          {currentPage === 'achievements' && <AchievementsPage />}
+
+          {/* Flashcards */}
+          {currentPage === 'flashcards' && <FlashcardsPage />}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Bottom Navigation (mobile only) */}
       {needsSidebar && <BottomNav />}

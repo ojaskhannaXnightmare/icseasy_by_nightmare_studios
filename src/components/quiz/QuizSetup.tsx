@@ -52,12 +52,19 @@ const SUBJECT_ICONS_BG: Record<string, string> = {
 
 const QUESTION_COUNTS = [5, 10, 15, 20]
 
+const DIFFICULTY_OPTIONS = [
+  { value: 'easy', label: 'Easy', color: 'text-green-400 border-green-500/50 bg-green-500/10' },
+  { value: 'medium', label: 'Medium', color: 'text-amber-400 border-amber-500/50 bg-amber-500/10' },
+  { value: 'hard', label: 'Hard', color: 'text-red-400 border-red-500/50 bg-red-500/10' },
+]
+
 export default function QuizSetup() {
   const { setCurrentPage, setQuizQuestions, selectedSubject, setSelectedSubject } = useStore()
   const [subjects, setSubjects] = useState<SubjectData[]>([])
   const [selectedSubjectName, setSelectedSubjectName] = useState('')
   const [selectedTopic, setSelectedTopic] = useState('')
   const [questionCount, setQuestionCount] = useState(10)
+  const [difficulty, setDifficulty] = useState('medium')
   const [starting, setStarting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [attempts, setAttempts] = useState<QuizAttemptData[]>([])
@@ -124,7 +131,7 @@ export default function QuizSetup() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen p-4 md:p-6 lg:p-8 max-w-5xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-5xl mx-auto"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
@@ -164,11 +171,11 @@ export default function QuizSetup() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => setSelectedSubjectName(subject.name)}
-                className={`group p-4 rounded-xl border bg-gradient-to-br transition-all duration-300 ${
+                className={`group p-4 rounded-xl border bg-gradient-to-br transition-all duration-300 relative overflow-hidden ${
                   selectedSubjectName === subject.name
                     ? SUBJECT_COLORS[subject.name]
                     : `from-white/5 to-transparent border-white/10 text-gray-400 hover:border-white/20 hover:text-white`
-                }`}
+                } ${selectedSubjectName === subject.name ? 'shadow-[0_0_20px_rgba(0,240,255,0.15),0_0_40px_rgba(168,85,247,0.1)]' : ''}`}
               >
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${
                   selectedSubjectName === subject.name
@@ -225,6 +232,26 @@ export default function QuizSetup() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Difficulty Selector */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-400">Difficulty Level</label>
+            <div className="grid grid-cols-3 gap-2">
+              {DIFFICULTY_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => setDifficulty(opt.value)}
+                  className={`py-2.5 rounded-lg text-sm font-medium transition-all border ${
+                    difficulty === opt.value
+                      ? opt.color
+                      : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
 

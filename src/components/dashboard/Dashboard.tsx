@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store/useStore'
+import DailyGoals from './DailyGoals'
 import {
   AreaChart,
   Area,
@@ -210,6 +211,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200)
+    fetch('/api/seed').catch(() => {})
     return () => clearTimeout(timer)
   }, [])
 
@@ -220,6 +222,20 @@ export default function Dashboard() {
       {/* Background glows */}
       <div className="fixed top-0 right-0 w-96 h-96 bg-[#00f0ff]/3 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/4 w-96 h-96 bg-[#a855f7]/3 rounded-full blur-[150px] pointer-events-none" />
+
+      {/* Animated orbs */}
+      <motion.div
+        className="fixed top-20 right-[20%] w-64 h-64 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 70%)' }}
+        animate={{ y: [0, -30, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="fixed bottom-20 left-[30%] w-72 h-72 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%)' }}
+        animate={{ y: [0, 20, 0], scale: [1, 1.05, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+      />
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Welcome */}
@@ -374,11 +390,16 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
+        {/* Daily Goals */}
+        <div className="mb-8">
+          <DailyGoals />
+        </div>
+
         {/* Your Subjects - Progress Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
           className="mb-8"
         >
           <div className="flex items-center justify-between mb-4">

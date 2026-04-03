@@ -115,7 +115,7 @@ export default function QuizResults() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen p-4 md:p-6 lg:p-8 max-w-3xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-3xl mx-auto"
     >
       {/* Confetti */}
       {showConfetti && (

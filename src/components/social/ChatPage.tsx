@@ -135,7 +135,7 @@ export default function ChatPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen flex items-center justify-center"
+        className="min-h-screen lg:pl-[260px] flex items-center justify-center"
       >
         <div className="text-center">
           <p className="text-gray-400 mb-4">No friend selected</p>
@@ -151,7 +151,7 @@ export default function ChatPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="h-screen flex flex-col max-w-3xl mx-auto"
+      className="h-screen lg:pl-[260px] flex flex-col max-w-3xl mx-auto"
     >
       {/* Chat Header */}
       <div className="glass-strong p-4 flex items-center gap-3 border-b border-white/5 shrink-0">

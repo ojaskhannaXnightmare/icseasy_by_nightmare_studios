@@ -110,3 +110,145 @@ ICSEasy is a fully functional AI-powered ICSE learning platform built with Next.
 6. **LOW: Add email verification** for signup
 7. **LOW: Add rate limiting** on API routes
 8. **LOW: Improve mobile responsive** layout for Quiz Active page
+
+---
+
+## Task ID: fix-bugs-phase3 - Bug Fix Agent
+### Work Task
+Fix 6 critical QA bugs found in ICSEasy including NotesPage crash, sidebar navigation, missing padding, prop mismatches, and API response parsing issues.
+
+### Work Summary
+Fixed all 6 bugs with minimal targeted edits. No files were rewritten. Changes:
+
+1. **Bug 1 (NotesPage crash)**: The `/api/notes` GET returns `{ notes: [...] }` but NotesPage was doing `setNotes(data)` which stored the entire object instead of the array. Fixed to `setNotes(data.notes || [])`.
+
+2. **Bug 2 & 3 (Sidebar padding)**: 12 page components were missing `lg:pl-[260px]` padding and `pt-14 lg:pt-0` for mobile top bar clearance. This caused pages to render behind the sidebar and overlap with the mobile hamburger button. Fixed all affected components:
+   - `NotesPage.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `QuizSetup.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `QuizActive.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0` (both wrapper and fallback state)
+   - `QuizResults.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `FriendsPage.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `ChatPage.tsx` — added `lg:pl-[260px]` (both main view and no-selection fallback)
+   - `GroupsPage.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `GroupChat.tsx` — added `lg:pl-[260px]` (both main view and no-selection fallback)
+   - `ProfilePage.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+   - `ResearchTool.tsx` — added `lg:pl-[260px] pt-14 lg:pt-0`
+
+3. **Bug 4 (GenerateNoteDialog props)**: No bug found — props interface correctly accepts `open`, `onOpenChange`, `onNoteCreated` and uses them properly.
+
+4. **Bug 5 (FriendsPage parsing)**: API returns `pendingRequests` with `sender` field but FriendsPage was mapping `r.user` instead of `r.sender`. Fixed to `r.sender`.
+
+5. **Bug 6 (ProfilePage parsing)**: API returns `{ user: { name, bio, ... }, stats: { ... } }` but ProfilePage was reading `data.name`, `data.bio` etc. directly. Fixed to read `data.user?.name`, `data.user?.bio`, `data.user?.studyPrefs`.
+
+### Verification
+- ✅ ESLint: 0 errors
+- ✅ Dev server: Compiling successfully (GET / 200)
+
+---
+## Task ID: seed-features-phase3 - Seed Database & Add Features Agent
+### Work Task
+Seed local SQLite database with 8 ICSE subjects + 80 topics, add sonner toast notifications to 6 components, verify loading states, and auto-seed on Dashboard mount.
+
+### Work Summary
+Completed all 4 tasks:
+
+**TASK 1: Seed API Route**
+- Created `/src/app/api/seed/route.ts` — GET handler that creates 8 subjects with icons, colors, descriptions, and 10 topics each (80 total).
+- Idempotent: checks `subject.count()` first, returns "Already seeded" if data exists.
+- Successfully tested: First call returns `{"message":"Seeded successfully","subjects":8,"topics":80}`, subsequent calls return `{"message":"Already seeded","subjects":8,"topics":80}`.
+- Subjects seeded: Physics (Atom, #00f0ff), Chemistry (FlaskConical, #a855f7), Mathematics (Calculator, #ec4899), Biology (Leaf, #22c55e), English (BookOpen, #f59e0b), History (Landmark, #ef4444), Geography (Globe, #06b6d4), Computer Science (Monitor, #8b5cf6).
+- `/api/subjects` now returns real data from SQLite instead of empty arrays.
+
+**TASK 2: Toast Notifications (sonner)**
+Added `import { toast } from 'sonner'` and toast calls to 6 components:
+1. **NotesPage** — `toast.success('Bookmark added' / 'Bookmark removed')` on toggle, `toast.success('Note deleted')` on delete
+2. **ProfilePage** — `toast.success('Profile updated successfully')` on save
+3. **FriendsPage** — `toast.success('Friend request sent')` on add, `toast.success('Friend request accepted' / 'Friend request rejected')` on accept/reject
+4. **GroupsPage** — `toast.success('Group created successfully')` on create
+5. **ResearchTool** — `toast.success('Research saved as note')` on save
+6. **AITutor** — `toast.error('Failed to get response. Please try again.')` on catch
+
+**TASK 3: Loading States**
+Verified FriendsPage and GroupsPage already have `loading` state with Skeleton placeholders — no changes needed. ResearchTool has loading skeletons during research. All confirmed working.
+
+**TASK 4: Auto-Seed on Dashboard**
+Added `fetch('/api/seed').catch(() => {})` inside Dashboard's existing `useEffect` so data is seeded on first dashboard load.
+
+### Files Modified
+- `src/app/api/seed/route.ts` — NEW: Seed API route
+- `src/components/notes/NotesPage.tsx` — Added toast import + 2 toast calls
+- `src/components/profile/ProfilePage.tsx` — Added toast import + 1 toast call
+- `src/components/social/FriendsPage.tsx` — Added toast import + 3 toast calls
+- `src/components/social/GroupsPage.tsx` — Added toast import + 1 toast call
+- `src/components/notes/ResearchTool.tsx` — Added toast import + 1 toast call
+- `src/components/chat/AITutor.tsx` — Added toast import + 1 toast call
+- `src/components/dashboard/Dashboard.tsx` — Added auto-seed fetch in useEffect
+
+### Verification
+- ✅ ESLint: 0 errors
+- ✅ Dev server: Compiling successfully
+- ✅ Seed route tested: 8 subjects, 80 topics created
+- ✅ Seed idempotent: Second call returns "Already seeded"
+- ✅ `/api/subjects` returns real data with topics
+- ✅ Resolves worklog issues #2 (no seeded data) and #5 (no error toasts)
+
+---
+## Task ID: new-features-phase3 - New Features Agent
+### Work Task
+Add 4 new features to ICSEasy: Achievements/Badges page, Daily Goals dashboard widget, Flashcards study tool, and integrate all into the app's routing and navigation.
+
+### Work Summary
+Completed all 4 tasks with 2 new page components, 1 new widget component, and 3 updated existing files.
+
+**TASK 1: Achievements/Badges System**
+- Created `/src/components/achievements/AchievementsPage.tsx`
+- 12 pre-computed achievements with icons, descriptions, categories, and unlock states
+- 2 unlocked by default (First Steps, Subject Explorer), 10 locked
+- Progress bar showing "2/12 Achievements Unlocked" with percentage
+- Filter tabs: All, Unlocked, Locked with counts
+- Grid layout: 3 cols desktop, 2 cols mobile, 1 col smallest
+- Unlocked: colored border glow, neon icon with drop-shadow, check badge, hover scale effect
+- Locked: opacity-50, lock overlay, muted colors
+- Category badges on each card (Quiz, Notes, Social, Study, AI, Research, Explore)
+- Motivational message at bottom based on progress
+- Full dark neon cyberpunk theme with framer-motion animations
+
+**TASK 2: Daily Goals Widget**
+- Created `/src/components/dashboard/DailyGoals.tsx`
+- 4 pre-computed daily goals with statuses (not_started, in_progress, completed)
+- Compact glass-effect card with progress bar at top
+- Each goal: status icon (CheckCircle2/Loader2/Circle), title, subtitle, status badge
+- Animated progress bar with gradient
+- Integrated into Dashboard.tsx between Quick Actions and Your Subjects sections
+
+**TASK 3: Flashcards Feature**
+- Created `/src/components/flashcards/FlashcardsPage.tsx`
+- 24 pre-computed flashcards (3 per subject, 8 subjects)
+- Subject selector chips at top with colored active states
+- 3D flip card animation using framer-motion (perspective: 1200px, rotateY)
+- Front: Question with decorative gradient; Back: Answer in neon accent color
+- Navigation: Previous/Next buttons + dot indicators
+- Keyboard shortcuts: Space (flip), Arrow keys (navigate)
+- Reset button to go back to first card
+- Keyboard hint display at bottom
+- Card counter showing "Card X of Y" per subject
+
+**TASK 4: Store, Sidebar, and page.tsx Integration**
+- Updated `src/store/useStore.ts`: Added 'achievements' and 'flashcards' to PageType union
+- Updated `src/components/layout/Sidebar.tsx`: Added Award icon (Achievements) and Layers icon (Flashcards) nav items, imported from lucide-react
+- Updated `src/app/page.tsx`: Imported AchievementsPage and FlashcardsPage, added to authenticatedPages array, added rendering conditions
+
+### Files Created
+- `src/components/achievements/AchievementsPage.tsx` — NEW: Achievements page
+- `src/components/dashboard/DailyGoals.tsx` — NEW: Daily goals widget
+- `src/components/flashcards/FlashcardsPage.tsx` — NEW: Flashcards study tool
+
+### Files Modified
+- `src/store/useStore.ts` — Added 'achievements' | 'flashcards' to PageType
+- `src/components/layout/Sidebar.tsx` — Added 2 nav items + imported Award, Layers icons
+- `src/components/dashboard/Dashboard.tsx` — Imported and rendered DailyGoals widget
+- `src/app/page.tsx` — Imported new pages, added to authenticatedPages and routing
+
+### Verification
+- ✅ ESLint: 0 errors
+- ✅ Dev server: Compiling successfully (GET / 200)

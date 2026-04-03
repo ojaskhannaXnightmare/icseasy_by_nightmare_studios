@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dialog'
 import { useStore, type GroupData } from '@/store/useStore'
 import { authFetch } from '@/lib/api'
+import { toast } from 'sonner'
 
 export default function GroupsPage() {
   const { setCurrentPage, setSelectedGroup } = useStore()
@@ -62,6 +63,7 @@ export default function GroupsPage() {
       if (res.ok) {
         setShowCreateDialog(false)
         setGroupName('')
+        toast.success('Group created successfully')
         loadGroups()
       } else {
         setError(data.error || 'Failed to create group')
@@ -98,7 +100,7 @@ export default function GroupsPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen p-4 md:p-6 lg:p-8 max-w-4xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-4xl mx-auto"
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
