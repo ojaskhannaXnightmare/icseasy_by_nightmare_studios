@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch sessions + aggregated totals in parallel
-    const [sessions, totals] = await Promise.all([
+    const [sessions, focusTotals, breakTotals] = await Promise.all([
       db.studySession.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -83,8 +83,6 @@ export async function GET(request: NextRequest) {
       }),
     ])
 
-    const [_focusTotals, _breakTotals] = totals
-
     // Today's focus minutes (UTC-based day boundary)
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
@@ -98,8 +96,8 @@ export async function GET(request: NextRequest) {
       _sum: { duration: true },
     })
 
-    const totalFocusMinutes = Math.round((_focusTotals._sum.duration || 0) / 60)
-    const totalBreakMinutes = Math.round((_breakTotals._sum.duration || 0) / 60)
+    const totalFocusMinutes = Math.round((focusTotals._sum.duration || 0) / 60)
+    const totalBreakMinutes = Math.round((breakTotals._sum.duration || 0) / 60)
     const todayFocusMinutes = Math.round((todaySessions._sum.duration || 0) / 60)
 
     return NextResponse.json({
