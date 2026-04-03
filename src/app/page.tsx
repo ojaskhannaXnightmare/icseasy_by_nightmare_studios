@@ -25,7 +25,9 @@ import StudyTimer from '@/components/timer/StudyTimer'
 import LeaderboardPage from '@/components/leaderboard/LeaderboardPage'
 import AchievementsPage from '@/components/achievements/AchievementsPage'
 import FlashcardsPage from '@/components/flashcards/FlashcardsPage'
+import QuizHistory from '@/components/quiz/QuizHistory'
 import AnalyticsPage from '@/components/analytics/AnalyticsPage'
+import SettingsPage from '@/components/settings/SettingsPage'
 
 
 
@@ -40,6 +42,7 @@ const authenticatedPages: PageType[] = [
   'quiz-setup',
   'quiz-active',
   'quiz-results',
+  'quiz-history',
   'friends',
   'messages',
   'groups',
@@ -50,6 +53,7 @@ const authenticatedPages: PageType[] = [
   'achievements',
   'flashcards',
   'analytics',
+  'settings',
 ]
 
 function AppRouter() {
@@ -96,6 +100,7 @@ function AppRouter() {
           {currentPage === 'quiz-setup' && <QuizSetup />}
           {currentPage === 'quiz-active' && <QuizActive />}
           {currentPage === 'quiz-results' && <QuizResults />}
+          {currentPage === 'quiz-history' && <QuizHistory />}
 
           {/* Social */}
           {currentPage === 'friends' && <FriendsPage />}
@@ -120,6 +125,9 @@ function AppRouter() {
 
           {/* Analytics */}
           {currentPage === 'analytics' && <AnalyticsPage />}
+
+          {/* Settings */}
+          {currentPage === 'settings' && <SettingsPage />}
         </motion.div>
       </AnimatePresence>
 

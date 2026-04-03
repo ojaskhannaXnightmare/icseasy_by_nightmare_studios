@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
@@ -21,6 +21,8 @@ import {
   Award,
   Layers,
   BarChart3,
+  History,
+  Settings,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -33,6 +35,7 @@ import {
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
+import { authFetch } from '@/lib/api'
 
 interface NavItem {
   icon: React.ElementType
@@ -47,6 +50,7 @@ const navItems: NavItem[] = [
   { icon: FileText, label: 'Notes', page: 'notes' },
   { icon: Search, label: 'Research', page: 'research' },
   { icon: Brain, label: 'Quiz', page: 'quiz-setup' },
+  { icon: History, label: 'Quiz History', page: 'quiz-history' },
   { icon: BarChart3, label: 'Analytics', page: 'analytics' },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' },
   { icon: Timer, label: 'Study Timer', page: 'timer' },
@@ -54,49 +58,133 @@ const navItems: NavItem[] = [
   { icon: Award, label: 'Achievements', page: 'achievements' },
   { icon: Users, label: 'Friends', page: 'friends' },
   { icon: MessageSquare, label: 'Groups', page: 'groups' },
+  { icon: Settings, label: 'Settings', page: 'settings' },
   { icon: User, label: 'Profile', page: 'profile' },
 ]
 
-const sampleNotifications = [
-  {
-    id: '1',
-    title: 'Quiz Score Updated',
-    message: 'You scored 92% on Physics - Laws of Motion',
-    time: '5 min ago',
-    color: '#00f0ff',
-    read: false,
-  },
-  {
-    id: '2',
-    title: 'Friend Request',
-    message: 'Priya Patel wants to connect with you',
-    time: '1 hour ago',
-    color: '#a855f7',
-    read: false,
-  },
-  {
-    id: '3',
-    title: 'Study Streak',
-    message: 'You\'re on a 7-day streak! Keep it going!',
-    time: '3 hours ago',
-    color: '#f59e0b',
-    read: true,
-  },
-  {
-    id: '4',
-    title: 'New Notes Available',
-    message: 'AI-generated notes for Chemistry - Organic Compounds',
-    time: 'Yesterday',
-    color: '#ec4899',
-    read: true,
-  },
-]
+interface NotificationItem {
+  id: string
+  type: string
+  title: string
+  message: string
+  color: string
+  isRead: boolean
+  createdAt: string
+}
+
+function getRelativeTime(dateStr: string): string {
+  const now = Date.now()
+  const then = new Date(dateStr).getTime()
+  const diffMs = now - then
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffHour = Math.floor(diffMs / 3600000)
+  const diffDay = Math.floor(diffMs / 86400000)
+
+  if (diffMin < 1) return 'Just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHour < 24) return `${diffHour}h ago`
+  if (diffDay < 7) return `${diffDay}d ago`
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function NotificationDropdown({ notifications, unreadCount, onMarkAllRead, collapsed = false }: {
+  notifications: NotificationItem[]
+  unreadCount: number
+  onMarkAllRead: () => void
+  collapsed?: boolean
+}) {
+  if (notifications.length === 0) {
+    return (
+      <div className="p-6 text-center">
+        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+          <Bell className="w-5 h-5 text-gray-600" />
+        </div>
+        <p className="text-xs text-gray-500">No notifications yet</p>
+        <p className="text-[10px] text-gray-600 mt-0.5">We&apos;ll notify you about quiz scores, streaks, and more</p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <ScrollArea className="max-h-72">
+        {notifications.map(n => (
+          <div
+            key={n.id}
+            className={cn(
+              'px-3 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer',
+              !n.isRead && 'bg-white/[0.02]'
+            )}
+          >
+            <div className="flex items-start gap-2.5">
+              <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium">{n.title}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
+                <p className="text-[10px] text-muted-foreground/60 mt-1">{getRelativeTime(n.createdAt)}</p>
+              </div>
+              {!n.isRead && (
+                <div className="w-2 h-2 rounded-full bg-[#00f0ff] mt-1.5 shrink-0" />
+              )}
+            </div>
+          </div>
+        ))}
+      </ScrollArea>
+      {unreadCount > 0 && (
+        <div className="p-2 border-t border-white/5">
+          <button
+            onClick={(e) => { e.stopPropagation(); onMarkAllRead() }}
+            className="w-full text-center text-xs text-[#00f0ff] hover:text-[#00f0ff]/80 py-1.5 transition-colors"
+          >
+            Mark all as read
+          </button>
+        </div>
+      )}
+    </>
+  )
+}
 
 function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
   const [open, setOpen] = useState(false)
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [loading, setLoading] = useState(true)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const unreadCount = sampleNotifications.filter(n => !n.read).length
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const res = await authFetch('/api/notifications?limit=20')
+      if (res.ok) {
+        const data = await res.json()
+        setNotifications(data.notifications || [])
+        setUnreadCount(data.unreadCount || 0)
+      }
+    } catch {
+      // ignore fetch errors
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  // Fetch on mount and poll every 30s
+  useEffect(() => {
+    fetchNotifications()
+    const interval = setInterval(fetchNotifications, 30000)
+    return () => clearInterval(interval)
+  }, [fetchNotifications])
+
+  const markAllRead = async () => {
+    try {
+      await authFetch('/api/notifications', {
+        method: 'PUT',
+        body: JSON.stringify({ all: true }),
+      })
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+      setUnreadCount(0)
+    } catch {
+      // ignore
+    }
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -110,6 +198,31 @@ function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
     }
   }, [open])
 
+  const dropdownContent = (
+    <div className="glass-strong rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+      <div className="p-3 border-b border-white/5 flex items-center justify-between">
+        <h3 className="text-sm font-semibold">Notifications</h3>
+        {unreadCount > 0 && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20">
+            {unreadCount} new
+          </span>
+        )}
+      </div>
+      {loading ? (
+        <div className="p-6 text-center">
+          <div className="w-4 h-4 border-2 border-white/10 border-t-[#00f0ff] rounded-full animate-spin mx-auto" />
+        </div>
+      ) : (
+        <NotificationDropdown
+          notifications={notifications}
+          unreadCount={unreadCount}
+          onMarkAllRead={markAllRead}
+          collapsed={collapsed}
+        />
+      )}
+    </div>
+  )
+
   if (collapsed) {
     return (
       <div className="relative" ref={dropdownRef}>
@@ -120,7 +233,7 @@ function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
           <Bell className="w-5 h-5 text-muted-foreground" />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full flex items-center justify-center">
-              <span className="text-[8px] font-bold text-white">{unreadCount}</span>
+              <span className="text-[8px] font-bold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>
             </span>
           )}
         </button>
@@ -133,39 +246,7 @@ function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
               transition={{ duration: 0.15 }}
               className="absolute top-full left-full ml-2 mt-1 w-80 z-50"
             >
-              <div className="glass-strong rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-                <div className="p-3 border-b border-white/5">
-                  <h3 className="text-sm font-semibold">Notifications</h3>
-                </div>
-                <ScrollArea className="max-h-72">
-                  {sampleNotifications.map(n => (
-                    <div
-                      key={n.id}
-                      className={cn(
-                        'px-3 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer',
-                        !n.read && 'bg-white/[0.02]'
-                      )}
-                    >
-                      <div className="flex items-start gap-2.5">
-                        <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-medium">{n.title}</p>
-                          <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
-                          <p className="text-[10px] text-muted-foreground/60 mt-1">{n.time}</p>
-                        </div>
-                        {!n.read && (
-                          <div className="w-2 h-2 rounded-full bg-[#00f0ff] mt-1.5 shrink-0" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </ScrollArea>
-                <div className="p-2 border-t border-white/5">
-                  <button className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1.5 transition-colors">
-                    View all notifications
-                  </button>
-                </div>
-              </div>
+              {dropdownContent}
             </motion.div>
           )}
         </AnimatePresence>
@@ -182,7 +263,7 @@ function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
         <Bell className="w-4.5 h-4.5 text-muted-foreground" />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(239,68,68,0.5)]">
-            <span className="text-[8px] font-bold text-white">{unreadCount}</span>
+            <span className="text-[8px] font-bold text-white">{unreadCount > 9 ? '9+' : unreadCount}</span>
           </span>
         )}
       </button>
@@ -195,39 +276,7 @@ function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
             transition={{ duration: 0.15 }}
             className="absolute top-full right-0 mt-1 w-80 z-50"
           >
-            <div className="glass-strong rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-              <div className="p-3 border-b border-white/5">
-                <h3 className="text-sm font-semibold">Notifications</h3>
-              </div>
-              <ScrollArea className="max-h-72">
-                {sampleNotifications.map(n => (
-                  <div
-                    key={n.id}
-                    className={cn(
-                      'px-3 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer',
-                      !n.read && 'bg-white/[0.02]'
-                    )}
-                  >
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium">{n.title}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
-                        <p className="text-[10px] text-muted-foreground/60 mt-1">{n.time}</p>
-                      </div>
-                      {!n.read && (
-                        <div className="w-2 h-2 rounded-full bg-[#00f0ff] mt-1.5 shrink-0" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </ScrollArea>
-              <div className="p-2 border-t border-white/5">
-                <button className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1.5 transition-colors">
-                  View all notifications
-                </button>
-              </div>
-            </div>
+            {dropdownContent}
           </motion.div>
         )}
       </AnimatePresence>

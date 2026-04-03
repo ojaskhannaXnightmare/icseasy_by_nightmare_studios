@@ -50,12 +50,23 @@ const SUBJECT_ICONS_BG: Record<string, string> = {
   'Computer Science': 'bg-violet-500/10 group-hover:bg-violet-500/20',
 }
 
+const SUBJECT_GLOW: Record<string, string> = {
+  'English': '0 0 20px rgba(236,72,153,0.15),0 0 40px rgba(236,72,153,0.08)',
+  'Mathematics': '0 0 20px rgba(0,240,255,0.15),0 0 40px rgba(0,240,255,0.08)',
+  'Physics': '0 0 20px rgba(168,85,247,0.15),0 0 40px rgba(168,85,247,0.08)',
+  'Chemistry': '0 0 20px rgba(34,197,94,0.15),0 0 40px rgba(34,197,94,0.08)',
+  'Biology': '0 0 20px rgba(16,185,129,0.15),0 0 40px rgba(16,185,129,0.08)',
+  'History': '0 0 20px rgba(245,158,11,0.15),0 0 40px rgba(245,158,11,0.08)',
+  'Geography': '0 0 20px rgba(59,130,246,0.15),0 0 40px rgba(59,130,246,0.08)',
+  'Computer Science': '0 0 20px rgba(139,92,246,0.15),0 0 40px rgba(139,92,246,0.08)',
+}
+
 const QUESTION_COUNTS = [5, 10, 15, 20]
 
 const DIFFICULTY_OPTIONS = [
-  { value: 'easy', label: 'Easy', color: 'text-green-400 border-green-500/50 bg-green-500/10' },
-  { value: 'medium', label: 'Medium', color: 'text-amber-400 border-amber-500/50 bg-amber-500/10' },
-  { value: 'hard', label: 'Hard', color: 'text-red-400 border-red-500/50 bg-red-500/10' },
+  { value: 'easy', label: 'Easy', color: 'text-green-400 border-green-500/50 bg-green-500/10', glow: '0 0 15px rgba(34,197,94,0.15)' },
+  { value: 'medium', label: 'Medium', color: 'text-amber-400 border-amber-500/50 bg-amber-500/10', glow: '0 0 15px rgba(245,158,11,0.15)' },
+  { value: 'hard', label: 'Hard', color: 'text-red-400 border-red-500/50 bg-red-500/10', glow: '0 0 15px rgba(239,68,68,0.15)' },
 ]
 
 export default function QuizSetup() {
@@ -127,188 +138,262 @@ export default function QuizSetup() {
     return 'text-red-400'
   }
 
+  const isReady = !!selectedTopic && !starting
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-5xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-5xl mx-auto relative overflow-hidden"
     >
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <button
-          onClick={() => setCurrentPage('dashboard')}
-          className="p-2 rounded-lg glass hover:bg-white/5 transition-colors"
-        >
-          <ChevronRight className="w-5 h-5 text-gray-400 rotate-180" />
-        </button>
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">
-            <Target className="w-7 h-7" />
-            Quiz Challenge
-          </h1>
-          <p className="text-sm text-gray-500 mt-0.5">Test your knowledge with AI-generated questions</p>
+      {/* Floating background orbs — pink/purple quiz theme */}
+      <motion.div
+        className="fixed top-20 right-20 w-[350px] h-[350px] rounded-full pointer-events-none floating-orb"
+        style={{ backgroundColor: 'rgba(168,85,247,0.06)' }}
+        animate={{
+          x: [0, 25, -15, 10, 0],
+          y: [0, -20, 10, -15, 0],
+        }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="fixed bottom-10 left-10 w-[300px] h-[300px] rounded-full pointer-events-none floating-orb floating-delayed"
+        style={{ backgroundColor: 'rgba(236,72,153,0.06)' }}
+        animate={{
+          x: [0, -20, 15, -10, 0],
+          y: [0, 15, -20, 10, 0],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="fixed top-1/2 right-1/3 w-[250px] h-[250px] rounded-full pointer-events-none floating-orb"
+        style={{ backgroundColor: 'rgba(0,240,255,0.04)' }}
+        animate={{
+          x: [0, 15, -25, 10, 0],
+          y: [0, -10, 20, -15, 0],
+        }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: -4 }}
+      />
+
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setCurrentPage('dashboard')}
+            className="p-2 rounded-lg glass hover:bg-white/5 transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-gray-400 rotate-180" />
+          </motion.button>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">
+              <Target className="w-7 h-7" />
+              Quiz Challenge
+            </h1>
+            <p className="text-sm text-gray-500 mt-0.5">Test your knowledge with AI-generated questions</p>
+          <Button
+            variant="ghost"
+            onClick={() => setCurrentPage('quiz-history')}
+            className="ml-auto text-xs text-gray-500 hover:text-[#00f0ff] gap-1.5 hidden sm:flex"
+          >
+            <History className="w-3.5 h-3.5" />
+            View History
+          </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Subject Selection */}
-      <div className="mb-8">
-        <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-cyan-400" />
-          Choose a Subject
-        </h2>
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <Skeleton key={i} className="h-24 rounded-xl bg-white/5" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {subjects.map((subject, index) => (
-              <motion.button
-                key={subject.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setSelectedSubjectName(subject.name)}
-                className={`group p-4 rounded-xl border bg-gradient-to-br transition-all duration-300 relative overflow-hidden ${
-                  selectedSubjectName === subject.name
-                    ? SUBJECT_COLORS[subject.name]
-                    : `from-white/5 to-transparent border-white/10 text-gray-400 hover:border-white/20 hover:text-white`
-                } ${selectedSubjectName === subject.name ? 'shadow-[0_0_20px_rgba(0,240,255,0.15),0_0_40px_rgba(168,85,247,0.1)]' : ''}`}
-              >
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${
-                  selectedSubjectName === subject.name
-                    ? SUBJECT_ICONS_BG[subject.name]
-                    : 'bg-white/5 group-hover:bg-white/10'
-                }`}>
-                  {SUBJECT_ICONS[subject.name] || <BookOpen className="w-6 h-6" />}
-                </div>
-                <p className="text-sm font-medium truncate">{subject.name}</p>
-                <p className="text-xs opacity-60 mt-0.5">{subject.topics.length} topics</p>
-              </motion.button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Topic & Count Selection */}
-      {selectedSubjectName && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-xl p-5 mb-8 neon-border"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400">Select Topic</label>
-              <Select value={selectedTopic} onValueChange={setSelectedTopic}>
-                <SelectTrigger className="glass bg-white/5 border-white/10 text-white h-11">
-                  <SelectValue placeholder="Choose a topic..." />
-                </SelectTrigger>
-                <SelectContent className="glass-strong border-white/10 bg-[#0f0f19]">
-                  {topicList.map(topic => (
-                    <SelectItem key={topic.id} value={topic.name} className="text-gray-300 focus:bg-white/5 focus:text-white">
-                      {topic.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        {/* Subject Selection */}
+        <div className="mb-8">
+          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-cyan-400" />
+            Choose a Subject
+          </h2>
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                <Skeleton key={i} className="h-24 rounded-xl bg-white/5 shimmer" />
+              ))}
             </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {subjects.map((subject, index) => (
+                <motion.button
+                  key={subject.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setSelectedSubjectName(subject.name)}
+                  className={`group p-4 rounded-xl border bg-gradient-to-br transition-all duration-300 relative overflow-hidden tilt-card ${
+                    selectedSubjectName === subject.name
+                      ? SUBJECT_COLORS[subject.name]
+                      : `from-white/5 to-transparent border-white/10 text-gray-400 hover:border-white/20 hover:text-white`
+                  } ${selectedSubjectName === subject.name ? `shadow-[${SUBJECT_GLOW[subject.name]}]` : ''}`}
+                  style={
+                    selectedSubjectName === subject.name
+                      ? { boxShadow: SUBJECT_GLOW[subject.name] }
+                      : undefined
+                  }
+                >
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${
+                    selectedSubjectName === subject.name
+                      ? SUBJECT_ICONS_BG[subject.name]
+                      : 'bg-white/5 group-hover:bg-white/10'
+                  }`}>
+                    {SUBJECT_ICONS[subject.name] || <BookOpen className="w-6 h-6" />}
+                  </div>
+                  <p className="text-sm font-medium truncate">{subject.name}</p>
+                  <p className="text-xs opacity-60 mt-0.5">{subject.topics.length} topics</p>
+                </motion.button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Topic & Count Selection */}
+        {selectedSubjectName && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card rounded-xl p-5 mb-8 neon-border"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400">Select Topic</label>
+                <Select value={selectedTopic} onValueChange={setSelectedTopic}>
+                  <SelectTrigger className="glass bg-white/5 border-white/10 text-white h-11 input-lift transition-all duration-200">
+                    <SelectValue placeholder="Choose a topic..." />
+                  </SelectTrigger>
+                  <SelectContent className="glass-strong border-white/10 bg-[#0f0f19]">
+                    {topicList.map(topic => (
+                      <SelectItem key={topic.id} value={topic.name} className="text-gray-300 focus:bg-white/5 focus:text-white">
+                        {topic.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400">Number of Questions</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {QUESTION_COUNTS.map(count => (
+                    <motion.button
+                      key={count}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setQuestionCount(count)}
+                      className={`py-2.5 rounded-lg text-sm font-medium transition-all border relative overflow-hidden ${
+                        questionCount === count
+                          ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400 shadow-[0_0_15px_rgba(0,240,255,0.1)]'
+                          : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 hover:border-white/20'
+                      }`}
+                    >
+                      {questionCount === count && (
+                        <motion.div
+                          layoutId="questionCountIndicator"
+                          className="absolute inset-0 rounded-lg border-2 border-cyan-500/30"
+                          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        />
+                      )}
+                      <span className="relative z-10">{count}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Difficulty Selector with neon glow */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400">Number of Questions</label>
-              <div className="grid grid-cols-4 gap-2">
-                {QUESTION_COUNTS.map(count => (
-                  <button
-                    key={count}
-                    onClick={() => setQuestionCount(count)}
+              <label className="text-sm font-medium text-gray-400">Difficulty Level</label>
+              <div className="grid grid-cols-3 gap-2">
+                {DIFFICULTY_OPTIONS.map(opt => (
+                  <motion.button
+                    key={opt.value}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setDifficulty(opt.value)}
                     className={`py-2.5 rounded-lg text-sm font-medium transition-all border ${
-                      questionCount === count
-                        ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-400'
+                      difficulty === opt.value
+                        ? opt.color
                         : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
                     }`}
+                    style={
+                      difficulty === opt.value
+                        ? { boxShadow: opt.glow }
+                        : undefined
+                    }
                   >
-                    {count}
-                  </button>
+                    {opt.label}
+                  </motion.button>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Difficulty Selector */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-400">Difficulty Level</label>
-            <div className="grid grid-cols-3 gap-2">
-              {DIFFICULTY_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  onClick={() => setDifficulty(opt.value)}
-                  className={`py-2.5 rounded-lg text-sm font-medium transition-all border ${
-                    difficulty === opt.value
-                      ? opt.color
-                      : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
+            <motion.div
+              layout
+              className="mt-5"
+            >
+              <Button
+                onClick={startQuiz}
+                disabled={!isReady}
+                className={`btn-neon-solid gap-2 px-8 py-3 w-full md:w-auto text-base transition-all duration-300 ${
+                  isReady ? 'btn-pulse-glow' : 'opacity-50'
+                }`}
+              >
+                {starting ? (
+                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Generating Quiz...</>
+                ) : (
+                  <><Play className="w-5 h-5" /> Start Quiz</>
+                )}
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Previous Quiz Attempts */}
+        {attempts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-400" />
+              Previous Attempts
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {attempts.slice(0, 9).map((attempt, index) => (
+                <motion.div
+                  key={attempt.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="glass-card rounded-xl p-4 card-glow"
                 >
-                  {opt.label}
-                </button>
+                  <div className="flex items-center justify-between mb-2">
+                    <Badge className="bg-white/5 text-gray-400 border border-white/10 text-xs">{attempt.subject}</Badge>
+                    <span className="text-xs text-gray-600">
+                      {new Date(attempt.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-2 truncate">{attempt.topic}</p>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-lg font-bold ${getScoreColor(attempt.score, attempt.totalMarks)}`}>
+                      {attempt.score}/{attempt.totalMarks}
+                    </span>
+                    <span className={`text-xs ${getScoreColor(attempt.score, attempt.totalMarks)}`}>
+                      {Math.round((attempt.score / attempt.totalMarks) * 100)}%
+                    </span>
+                  </div>
+                </motion.div>
               ))}
             </div>
-          </div>
-
-          <Button
-            onClick={startQuiz}
-            disabled={!selectedTopic || starting}
-            className="btn-neon-solid gap-2 px-8 py-3 w-full md:w-auto text-base"
-          >
-            {starting ? (
-              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Generating Quiz...</>
-            ) : (
-              <><Play className="w-5 h-5" /> Start Quiz</>
-            )}
-          </Button>
-        </motion.div>
-      )}
-
-      {/* Previous Quiz Attempts */}
-      {attempts.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-amber-400" />
-            Previous Attempts
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {attempts.slice(0, 9).map((attempt, index) => (
-              <motion.div
-                key={attempt.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="glass rounded-xl p-4 card-glow"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <Badge className="bg-white/5 text-gray-400 border border-white/10 text-xs">{attempt.subject}</Badge>
-                  <span className="text-xs text-gray-600">
-                    {new Date(attempt.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-400 mb-2 truncate">{attempt.topic}</p>
-                <div className="flex items-center justify-between">
-                  <span className={`text-lg font-bold ${getScoreColor(attempt.score, attempt.totalMarks)}`}>
-                    {attempt.score}/{attempt.totalMarks}
-                  </span>
-                  <span className={`text-xs ${getScoreColor(attempt.score, attempt.totalMarks)}`}>
-                    {Math.round((attempt.score / attempt.totalMarks) * 100)}%
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </div>
     </motion.div>
   )
 }

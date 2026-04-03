@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ChevronLeft, Send, Circle, ImagePlus, Loader2
+  ChevronLeft, Send, Circle, ImagePlus, Loader2, MessageSquare
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -138,7 +138,14 @@ export default function ChatPage() {
         className="min-h-screen lg:pl-[260px] flex items-center justify-center"
       >
         <div className="text-center">
-          <p className="text-gray-400 mb-4">No friend selected</p>
+          <motion.div
+            animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6"
+          >
+            <MessageSquare className="w-10 h-10 text-gray-600" />
+          </motion.div>
+          <p className="text-gray-400 mb-4 text-lg">No conversation selected</p>
           <Button onClick={() => setCurrentPage('friends')} className="btn-neon">
             Go to Friends
           </Button>
@@ -154,18 +161,20 @@ export default function ChatPage() {
       className="h-screen lg:pl-[260px] flex flex-col max-w-3xl mx-auto"
     >
       {/* Chat Header */}
-      <div className="glass-strong p-4 flex items-center gap-3 border-b border-white/5 shrink-0">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setSelectedFriend(null)
-            setCurrentPage('friends')
-          }}
-          className="text-gray-400 hover:text-white p-1"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
+      <div className="glass-strong p-4 flex items-center gap-3 border-b border-white/5 shrink-0 gradient-header-bar">
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSelectedFriend(null)
+              setCurrentPage('friends')
+            }}
+            className="text-gray-400 hover:text-white p-1"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+        </motion.div>
         <div className="relative">
           <Avatar className="w-10 h-10 border border-white/10">
             <AvatarImage src={selectedFriend.avatarUrl || undefined} />
@@ -173,9 +182,18 @@ export default function ChatPage() {
               {getInitials(selectedFriend.name)}
             </AvatarFallback>
           </Avatar>
+          {/* Online status with pulse for online users */}
           <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${
             selectedFriend.isOnline ? 'bg-green-400' : 'bg-gray-600'
-          } border-2 border-[#0f0f19]`} />
+          } border-2 border-[#0f0f19]`}>
+            {selectedFriend.isOnline && (
+              <motion.div
+                className="absolute inset-0 rounded-full bg-green-400"
+                animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
+              />
+            )}
+          </div>
         </div>
         <div className="flex-1 min-w-0">
           <h2 className="text-white font-semibold text-sm truncate">{selectedFriend.name}</h2>
@@ -195,18 +213,46 @@ export default function ChatPage() {
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map(i => (
               <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
-                <Skeleton className="h-12 w-48 rounded-2xl bg-white/5" />
+                <Skeleton className="h-12 w-48 rounded-2xl bg-white/5 shimmer" />
               </div>
             ))}
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
-                <Send className="w-7 h-7 text-gray-600" />
-              </div>
-              <p className="text-gray-500 text-sm">Start a conversation with {selectedFriend.name}</p>
-              <p className="text-gray-600 text-xs mt-1">Say hello! 👋</p>
+              <motion.div
+                animate={{
+                  y: [0, -8, 0],
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-white/10 flex items-center justify-center mx-auto mb-4"
+              >
+                <Send className="w-8 h-8 text-cyan-400/40" />
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-gray-400 text-sm"
+              >
+                Start a conversation with {selectedFriend.name}
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="flex items-center justify-center gap-1 mt-3"
+              >
+                {[0, 1, 2].map(i => (
+                  <motion.div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full bg-cyan-400/30"
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+                  />
+                ))}
+              </motion.div>
             </div>
           </div>
         ) : (
@@ -219,9 +265,9 @@ export default function ChatPage() {
               return (
                 <motion.div
                   key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.15 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.2 }}
                   className={`flex gap-2 mb-1 ${isMine ? 'justify-end' : 'justify-start'}`}
                 >
                   {!isMine && showAvatar && (
@@ -235,10 +281,10 @@ export default function ChatPage() {
                   {!isMine && !showAvatar && <div className="w-7 shrink-0" />}
 
                   <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'}`}>
-                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed message-glow ${
                       isMine
-                        ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/20 text-white rounded-tr-md'
-                        : 'glass border border-white/5 text-gray-300 rounded-tl-md'
+                        ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/20 text-white rounded-tr-md shadow-[0_0_15px_rgba(0,240,255,0.05)]'
+                        : 'glass-card rounded-tl-md text-gray-300'
                     }`}>
                       {msg.content}
                     </div>
@@ -272,21 +318,25 @@ export default function ChatPage() {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-cyan-500/50 pr-10"
+              className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 focus:border-cyan-500/50 pr-10 input-lift transition-all duration-200"
               disabled={sending}
             />
           </div>
-          <Button
-            type="submit"
-            disabled={!newMessage.trim() || sending}
-            className="btn-neon-solid p-2.5 h-11 w-11"
-          >
-            {sending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              type="submit"
+              disabled={!newMessage.trim() || sending}
+              className={`btn-neon-solid p-2.5 h-11 w-11 transition-all duration-200 ${
+                newMessage.trim() && !sending ? 'shadow-[0_0_20px_rgba(0,240,255,0.2)]' : ''
+              }`}
+            >
+              {sending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
+          </motion.div>
         </form>
       </div>
     </motion.div>
