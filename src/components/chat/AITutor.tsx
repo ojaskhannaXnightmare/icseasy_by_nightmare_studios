@@ -22,16 +22,20 @@ const suggestedPrompts = [
 
 function LoadingDots() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3">
+    <div className="flex items-center gap-1.5 px-4 py-3">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="w-2 h-2 rounded-full bg-[#00f0ff]/60"
-          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
+          className="w-2.5 h-2.5 rounded-full bg-[#00f0ff]/70"
+          animate={{
+            opacity: [0.2, 1, 0.2],
+            scale: [0.7, 1.2, 0.7],
+            y: [4, -4, 4],
+          }}
           transition={{
-            duration: 1.2,
+            duration: 1,
             repeat: Infinity,
-            delay: i * 0.2,
+            delay: i * 0.15,
             ease: 'easeInOut',
           }}
         />
@@ -120,11 +124,11 @@ export default function AITutor() {
       <div className="fixed top-1/4 right-0 w-96 h-96 bg-[#00f0ff]/3 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/3 w-80 h-80 bg-[#a855f7]/3 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Header */}
+      {/* Header — gradient header bar */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-strong px-4 sm:px-6 py-3 flex items-center justify-between border-b border-white/5 relative z-10"
+        className="glass-strong px-4 sm:px-6 py-3 flex items-center justify-between border-b border-white/5 relative z-10 gradient-header-bar"
       >
         <div className="flex items-center gap-3">
           <button
@@ -133,13 +137,22 @@ export default function AITutor() {
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00f0ff] to-[#a855f7] flex items-center justify-center">
-            <Bot className="w-4.5 h-4.5 text-[#0a0a0f]" />
-          </div>
+          <motion.div
+            className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00f0ff] to-[#a855f7] flex items-center justify-center"
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <Bot className="w-5 h-5 text-[#0a0a0f]" />
+          </motion.div>
           <div>
             <h1 className="text-sm sm:text-base font-semibold">AI Tutor</h1>
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_6px_rgba(34,197,94,0.6)]" />
+              <motion.div
+                className="w-1.5 h-1.5 rounded-full bg-[#22c55e]"
+                style={{ boxShadow: '0 0 6px rgba(34,197,94,0.6)' }}
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              />
               <span className="text-xs text-muted-foreground">Online &bull; ICSE Expert</span>
             </div>
           </div>
@@ -168,11 +181,14 @@ export default function AITutor() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col items-center justify-center min-h-[60vh] text-center"
               >
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f0ff]/20 to-[#a855f7]/20 flex items-center justify-center mb-5">
-                  <Sparkles className="w-8 h-8 text-[#00f0ff]" />
-                </div>
+                <motion.div
+                  className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00f0ff]/20 to-[#a855f7]/20 flex items-center justify-center mb-6 floating"
+                  style={{ boxShadow: '0 0 40px rgba(0,240,255,0.1), 0 0 80px rgba(168,85,247,0.05)' }}
+                >
+                  <Sparkles className="w-10 h-10 text-[#00f0ff]" />
+                </motion.div>
                 <motion.h2
-                  className="text-xl font-bold mb-2"
+                  className="text-xl font-bold mb-2 text-gradient-animated"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -183,7 +199,7 @@ export default function AITutor() {
                   I&apos;m your AI tutor specialized in ICSE subjects. Ask me about any topic and I&apos;ll help you understand it better.
                 </p>
 
-                {/* Suggested Prompts */}
+                {/* Suggested Prompts — shimmer border on hover */}
                 <motion.div
                   initial="hidden"
                   animate="visible"
@@ -200,8 +216,10 @@ export default function AITutor() {
                         hidden: { opacity: 0, y: 10 },
                         visible: { opacity: 1, y: 0 },
                       }}
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => handleSend(prompt)}
-                      className="text-left p-3 rounded-xl glass border border-white/5 hover:border-[#00f0ff]/20 hover:bg-[#00f0ff]/5 transition-all duration-200 text-sm text-muted-foreground hover:text-foreground group"
+                      className="text-left p-3.5 rounded-xl glass border border-white/5 hover:border-[#00f0ff]/30 hover:bg-[#00f0ff]/5 transition-all duration-200 text-sm text-muted-foreground hover:text-foreground group shimmer-border"
                     >
                       <span className="text-[#00f0ff] mr-2 opacity-60 group-hover:opacity-100 transition-opacity">
                         &rarr;
@@ -224,8 +242,8 @@ export default function AITutor() {
                     <div
                       className={`max-w-[85%] sm:max-w-[75%] ${
                         msg.role === 'user'
-                          ? 'bg-[#00f0ff]/15 border border-[#00f0ff]/20 rounded-2xl rounded-br-md px-4 py-3'
-                          : 'glass rounded-2xl rounded-bl-md px-4 py-3'
+                          ? 'bg-gradient-to-br from-[#00f0ff]/20 to-[#00f0ff]/10 border border-[#00f0ff]/25 rounded-2xl rounded-br-md px-4 py-3 message-glow'
+                          : 'glass-card rounded-2xl rounded-bl-md px-4 py-3 message-glow'
                       }`}
                     >
                       {msg.role === 'assistant' && (
@@ -233,7 +251,7 @@ export default function AITutor() {
                           <div className="w-5 h-5 rounded-md bg-gradient-to-br from-[#00f0ff] to-[#a855f7] flex items-center justify-center">
                             <Bot className="w-3 h-3 text-[#0a0a0f]" />
                           </div>
-                          <span className="text-xs text-muted-foreground">AI Tutor</span>
+                          <span className="text-xs text-muted-foreground font-medium">AI Tutor</span>
                         </div>
                       )}
                       <div className={`text-sm leading-relaxed prose-sm ${
@@ -249,14 +267,14 @@ export default function AITutor() {
                   </motion.div>
                 ))}
 
-                {/* Loading indicator */}
+                {/* Loading indicator with improved typing animation */}
                 {loading && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="glass rounded-2xl rounded-bl-md">
+                    <div className="glass-card rounded-2xl rounded-bl-md">
                       <div className="flex items-center gap-2 px-4 py-3">
                         <div className="w-5 h-5 rounded-md bg-gradient-to-br from-[#00f0ff] to-[#a855f7] flex items-center justify-center">
                           <Bot className="w-3 h-3 text-[#0a0a0f]" />
@@ -287,21 +305,23 @@ export default function AITutor() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask me anything about ICSE topics..."
-              className="h-11 bg-white/5 border-white/10 focus:border-[#00f0ff]/40 rounded-xl pr-4 text-sm"
+              className="h-11 bg-white/5 border-white/10 focus:border-[#00f0ff]/40 rounded-xl pr-4 text-sm input-lift"
               disabled={loading}
             />
           </div>
-          <Button
-            onClick={() => handleSend()}
-            disabled={!input.trim() || loading}
-            className="btn-neon-solid h-11 w-11 rounded-xl p-0 shrink-0"
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => handleSend()}
+              disabled={!input.trim() || loading}
+              className="btn-neon-solid h-11 w-11 rounded-xl p-0 shrink-0"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
+          </motion.div>
         </div>
         <p className="text-[10px] text-muted-foreground text-center mt-2 max-w-3xl mx-auto">
           AI Tutor may make mistakes. Verify important information with your textbooks.

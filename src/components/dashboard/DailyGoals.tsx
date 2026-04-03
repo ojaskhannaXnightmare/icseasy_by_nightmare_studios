@@ -27,15 +27,14 @@ const dailyGoals: DailyGoal[] = [
     id: '2',
     title: 'Generate 2 Notes',
     subtitle: 'Create study notes with AI',
-    status: 'in_progress',
-    progress: '1/2',
+    status: 'not_started',
     color: '#a855f7',
   },
   {
     id: '3',
     title: 'Study for 30 min',
     subtitle: 'Use the Pomodoro timer',
-    status: 'completed',
+    status: 'not_started',
     color: '#22c55e',
   },
   {

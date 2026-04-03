@@ -96,28 +96,28 @@ const statsCards = [
     label: 'Day Streak',
     icon: Flame,
     color: '#f59e0b',
-    getValue: () => '7',
+    getValue: (user: { streak?: number } | null) => String(user?.streak || 0),
   },
   {
     key: 'notes',
     label: 'Total Notes',
     icon: FileText,
     color: '#a855f7',
-    getValue: () => '23',
+    getValue: (_user: unknown, totalNotes: number) => String(totalNotes),
   },
   {
     key: 'quizzes',
     label: 'Quizzes Taken',
     icon: Brain,
     color: '#ec4899',
-    getValue: () => '15',
+    getValue: (_user: unknown, _n: number, totalQuizzes: number) => String(totalQuizzes),
   },
   {
     key: 'score',
     label: 'Avg Score',
     icon: TrendingUp,
     color: '#22c55e',
-    getValue: () => '82%',
+    getValue: (_user: unknown, _n: number, _q: number, avgScore: number) => `${Math.round(avgScore)}%`,
   },
 ]
 
@@ -206,13 +206,24 @@ function DashboardSkeleton() {
 }
 
 export default function Dashboard() {
-  const { user, setCurrentPage, totalNotes, totalQuizzes, avgScore } = useStore()
+  const { user, setCurrentPage, totalNotes, totalQuizzes, avgScore, setStats } = useStore()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1200)
-    fetch('/api/seed').catch(() => {})
-    return () => clearTimeout(timer)
+    const init = async () => {
+      fetch('/api/seed').catch(() => {})
+      try {
+        const res = await fetch('/api/profile')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.stats) {
+            setStats(data.stats.totalNotes || 0, data.stats.totalQuizzes || 0, data.stats.avgScore || 0)
+          }
+        }
+      } catch { /* ignore */ }
+      setLoading(false)
+    }
+    init()
   }, [])
 
   if (loading) return <DashboardSkeleton />
@@ -267,7 +278,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon
-            const value = stat.getValue()
+            const value = stat.getValue(user, totalNotes, totalQuizzes, avgScore)
             return (
               <motion.div
                 key={stat.key}

@@ -20,6 +20,7 @@ import {
   Trophy,
   Award,
   Layers,
+  BarChart3,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -46,6 +47,7 @@ const navItems: NavItem[] = [
   { icon: FileText, label: 'Notes', page: 'notes' },
   { icon: Search, label: 'Research', page: 'research' },
   { icon: Brain, label: 'Quiz', page: 'quiz-setup' },
+  { icon: BarChart3, label: 'Analytics', page: 'analytics' },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' },
   { icon: Timer, label: 'Study Timer', page: 'timer' },
   { icon: Trophy, label: 'Leaderboard', page: 'leaderboard' },

@@ -258,10 +258,10 @@ export default function LeaderboardPage() {
                   </div>
                   {/* Stats */}
                   <div className="flex items-center gap-4 shrink-0">
-                    <div className="text-right hidden sm:block">
-                      <div className="flex items-center gap-1">
+                    <div className="hidden sm:block">
+                      <div className="flex items-center gap-1 justify-end">
                         <Brain className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{entry.quizzesTaken}</span>
+                        <span className="text-[11px] text-muted-foreground">{entry.quizzesTaken} quizzes</span>
                       </div>
                     </div>
                     <div className="text-right">

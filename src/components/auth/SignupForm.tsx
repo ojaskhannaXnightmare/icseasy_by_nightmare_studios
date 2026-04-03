@@ -57,16 +57,32 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 right-1/3 w-80 h-80 bg-[#a855f7]/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-[#00f0ff]/5 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center px-4 relative grid-bg-animated">
+      {/* Floating neon orbs */}
+      <motion.div
+        className="absolute top-1/4 right-[15%] w-72 h-72 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%)' }}
+        animate={{ y: [0, 25, 0], x: [0, -10, 0], scale: [1, 1.08, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute bottom-1/4 left-[15%] w-64 h-64 rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.1) 0%, transparent 70%)' }}
+        animate={{ y: [0, -20, 0], x: [0, 10, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+      />
+      <motion.div
+        className="absolute top-[40%] left-[25%] w-36 h-36 rounded-full pointer-events-none floating-orb"
+        style={{ background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 70%)' }}
+        animate={{ y: [0, -15, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md relative z-10"
       >
         {/* Logo */}
         <motion.div
@@ -75,22 +91,28 @@ export default function SignupForm() {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#ec4899] flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-            <Bot className="w-8 h-8 text-[#0a0a0f]" />
-          </div>
-          <h1 className="text-2xl font-bold gradient-text">Create Account</h1>
+          <motion.div
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#ec4899] flex items-center justify-center mx-auto mb-4"
+            style={{ boxShadow: '0 0 40px rgba(168,85,247,0.25), 0 0 80px rgba(236,72,153,0.15)' }}
+            animate={{ boxShadow: ['0 0 40px rgba(168,85,247,0.25), 0 0 80px rgba(236,72,153,0.15)', '0 0 50px rgba(168,85,247,0.35), 0 0 100px rgba(236,72,153,0.2)', '0 0 40px rgba(168,85,247,0.25), 0 0 80px rgba(236,72,153,0.15)'] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Bot className="w-9 h-9 text-[#0a0a0f]" />
+          </motion.div>
+          <h1 className="text-2xl font-bold text-gradient-animated">Create Account</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Start your ICSE learning journey
           </p>
         </motion.div>
 
-        {/* Form Card */}
+        {/* Form Card — frosted glass with stronger backdrop */}
         <motion.form
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onSubmit={handleSubmit}
-          className="glass rounded-2xl p-6 sm:p-8 neon-border"
+          className="glass-card rounded-2xl p-6 sm:p-8"
+          style={{ boxShadow: '0 0 40px rgba(168,85,247,0.04), 0 25px 60px rgba(0,0,0,0.4)' }}
         >
           <div className="space-y-5">
             {/* Name */}
@@ -106,7 +128,7 @@ export default function SignupForm() {
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg"
+                  className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg input-lift"
                   required
                   disabled={loading}
                 />
@@ -126,7 +148,7 @@ export default function SignupForm() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg"
+                  className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg input-lift"
                   required
                   disabled={loading}
                 />
@@ -146,7 +168,7 @@ export default function SignupForm() {
                   placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`pl-10 pr-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg ${
+                  className={`pl-10 pr-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg input-lift ${
                     password && !passwordValid ? 'border-red-500/50' : ''
                   }`}
                   required
@@ -161,14 +183,22 @@ export default function SignupForm() {
                 </button>
               </div>
               {password && !passwordValid && (
-                <p className="text-xs text-red-400">
+                <motion.p
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-xs text-red-400"
+                >
                   Password must be at least 6 characters
-                </p>
+                </motion.p>
               )}
               {passwordValid && (
-                <p className="text-xs text-[#22c55e]">
+                <motion.p
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-xs text-[#22c55e]"
+                >
                   Password strength: Good
-                </p>
+                </motion.p>
               )}
             </div>
 
@@ -183,10 +213,10 @@ export default function SignupForm() {
               </motion.p>
             )}
 
-            {/* Submit */}
+            {/* Submit — pulsing glow */}
             <Button
               type="submit"
-              className="w-full btn-neon-solid h-11 rounded-lg text-base"
+              className={`w-full btn-neon-solid h-11 rounded-lg text-base ${!loading && passwordValid ? 'btn-pulse-glow' : ''}`}
               disabled={loading || !passwordValid}
             >
               {loading ? (
@@ -200,14 +230,21 @@ export default function SignupForm() {
             </Button>
           </div>
 
+          {/* Gradient divider */}
+          <div className="my-6 flex items-center gap-3">
+            <div className="gradient-divider flex-1" />
+            <span className="text-[11px] text-muted-foreground uppercase tracking-wider">or continue with</span>
+            <div className="gradient-divider flex-1" />
+          </div>
+
           {/* Switch to login */}
-          <div className="mt-6 text-center">
+          <div className="text-center">
             <p className="text-sm text-muted-foreground">
               Already have an account?{' '}
               <button
                 type="button"
                 onClick={() => setCurrentPage('login')}
-                className="text-[#a855f7] hover:underline font-medium"
+                className="text-[#a855f7] hover:underline font-medium transition-colors hover:text-[#a855f7]/80"
               >
                 Login
               </button>

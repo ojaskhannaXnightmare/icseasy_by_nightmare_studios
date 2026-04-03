@@ -14,6 +14,8 @@ import {
   Monitor,
   ChevronRight,
   ArrowLeft,
+  Sparkles,
+  GraduationCap,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -146,9 +148,72 @@ const iconMap: Record<string, React.ElementType> = {
   Monitor,
 }
 
+function EmptySubjectsState() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-center py-20"
+    >
+      {/* Animated illustration */}
+      <div className="relative w-28 h-28 mx-auto mb-6">
+        <motion.div
+          className="absolute inset-0 rounded-full border border-dashed border-white/10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.div
+          className="absolute inset-4 rounded-2xl bg-gradient-to-br from-[#a855f7]/10 to-[#ec4899]/10 flex items-center justify-center floating"
+          style={{ boxShadow: '0 0 30px rgba(168,85,247,0.08)' }}
+        >
+          <GraduationCap className="w-10 h-10 text-[#a855f7]/60" />
+        </motion.div>
+        <motion.div
+          className="absolute top-2 right-6 w-2 h-2 rounded-full bg-[#00f0ff]/40"
+          animate={{ y: [0, -5, 0], opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-6 left-3 w-1.5 h-1.5 rounded-full bg-[#ec4899]/40"
+          animate={{ y: [0, -4, 0], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+        />
+      </div>
+
+      <motion.h3
+        className="text-xl font-semibold text-gray-300 mb-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        No subjects found
+      </motion.h3>
+      <motion.p
+        className="text-sm text-muted-foreground mb-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        Try a different search term to find what you&apos;re looking for.
+      </motion.p>
+      <motion.div
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg glass border border-white/5 text-sm text-muted-foreground"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Search className="w-4 h-4" />
+        <span>Browse all 8 ICSE subjects</span>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function SubjectHub() {
   const { setCurrentPage, setSelectedSubject } = useStore()
   const [search, setSearch] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [subjects, setSubjects] = useState<SubjectData[]>([])
 
   useEffect(() => {
@@ -196,32 +261,43 @@ export default function SubjectHub() {
           className="mb-8"
         >
           <h1 className="text-2xl sm:text-3xl font-bold">
-            <span className="gradient-text">Subjects</span>
+            <span className="text-gradient-animated">Subjects</span>
           </h1>
           <p className="text-muted-foreground mt-1">
             Choose a subject to start learning
           </p>
         </motion.div>
 
-        {/* Search */}
+        {/* Search — with animated icon */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="mb-6"
+          className={`mb-6 max-w-md relative transition-all duration-300 ${searchFocused ? 'search-focused' : ''}`}
         >
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="relative">
+            <motion.div
+              animate={{
+                scale: searchFocused ? 1.15 : 1,
+                color: searchFocused ? '#00f0ff' : undefined,
+              }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            >
+              <Search className="w-4 h-4 text-muted-foreground" />
+            </motion.div>
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
               placeholder="Search subjects..."
-              className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#00f0ff]/40 rounded-xl text-sm"
+              className="pl-10 h-11 bg-white/5 border-white/10 focus:border-[#00f0ff]/40 rounded-xl text-sm input-lift"
             />
           </div>
         </motion.div>
 
-        {/* Subject Grid */}
+        {/* Subject Grid — 3D tilt on hover */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredSubjects.map((subject, index) => {
             const Icon = iconMap[subject.icon] || BookOpen
@@ -231,8 +307,10 @@ export default function SubjectHub() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handleSubjectClick(subject)}
-                className="glass rounded-xl p-5 card-glow subject-card-glow text-left group relative overflow-hidden"
+                className="glass-card rounded-xl p-5 card-glow subject-card-glow text-left group relative overflow-hidden tilt-card"
               >
                 {/* Hover gradient overlay */}
                 <div
@@ -244,15 +322,20 @@ export default function SubjectHub() {
 
                 <div className="relative z-10">
                   {/* Icon */}
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                  <motion.div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{
                       backgroundColor: `${subject.color}12`,
                       boxShadow: `0 0 20px ${subject.color}08`,
                     }}
+                    whileHover={{
+                      scale: 1.1,
+                      boxShadow: `0 0 30px ${subject.color}15`,
+                    }}
+                    transition={{ type: 'spring', stiffness: 300 }}
                   >
                     <Icon className="w-6 h-6" style={{ color: subject.color }} />
-                  </div>
+                  </motion.div>
 
                   {/* Name */}
                   <h3 className="font-semibold text-base mb-1.5 group-hover:text-white transition-colors">
@@ -264,23 +347,31 @@ export default function SubjectHub() {
                     {subject.description}
                   </p>
 
-                  {/* Topic count + Arrow */}
+                  {/* Topic count badge + Arrow */}
                   <div className="flex items-center justify-between">
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] px-2 py-0.5 rounded-md"
-                      style={{
-                        backgroundColor: `${subject.color}12`,
-                        color: subject.color,
-                        borderColor: `${subject.color}20`,
-                      }}
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      className="badge-pulse"
                     >
-                      {subject.topics?.length || 0} topics
-                    </Badge>
-                    <ChevronRight
-                      className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-1"
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-2.5 py-0.5 rounded-md font-medium"
+                        style={{
+                          backgroundColor: `${subject.color}15`,
+                          color: subject.color,
+                          borderColor: `${subject.color}25`,
+                          borderWidth: '1px',
+                        }}
+                      >
+                        {subject.topics?.length || 0} topics
+                      </Badge>
+                    </motion.div>
+                    <motion.div
+                      className="opacity-0 group-hover:opacity-100 transition-all duration-200"
                       style={{ color: subject.color }}
-                    />
+                    >
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </motion.div>
                   </div>
                 </div>
               </motion.button>
@@ -289,17 +380,7 @@ export default function SubjectHub() {
         </div>
 
         {filteredSubjects.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <Search className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-1">No subjects found</h3>
-            <p className="text-sm text-muted-foreground">
-              Try a different search term
-            </p>
-          </motion.div>
+          <EmptySubjectsState />
         )}
       </div>
     </div>

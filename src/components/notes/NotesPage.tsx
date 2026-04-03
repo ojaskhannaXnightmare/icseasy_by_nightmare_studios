@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, Plus, Star, Trash2, Bookmark, BookmarkCheck,
-  FileText, BookOpen, Filter, X, ChevronRight, Clock
+  FileText, BookOpen, Filter, X, ChevronRight, Clock,
+  Sparkles, PenLine, NotebookPen, Download, Loader2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -42,6 +43,103 @@ const SUBJECT_COLORS: Record<string, string> = {
   'Computer Science': 'text-violet-400 border-violet-400/30 bg-violet-400/10',
 }
 
+function formatRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
+
+  if (diffSec < 60) return 'just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHour < 24) return `${diffHour}h ago`
+  if (diffDay < 7) return `${diffDay}d ago`
+  return date.toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric'
+  })
+}
+
+function EmptyNotesState({ searchQuery, onGenerate }: { searchQuery: string; onGenerate: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-center py-20"
+    >
+      {/* Animated illustration */}
+      <div className="relative w-28 h-28 mx-auto mb-6">
+        {/* Outer ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full border border-dashed border-white/10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        />
+        {/* Middle ring */}
+        <motion.div
+          className="absolute inset-3 rounded-full border border-dashed border-white/5"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+        />
+        {/* Center icon container */}
+        <motion.div
+          className="absolute inset-6 rounded-2xl bg-gradient-to-br from-[#00f0ff]/10 to-[#a855f7]/10 flex items-center justify-center floating"
+          style={{ boxShadow: '0 0 30px rgba(0,240,255,0.08)' }}
+        >
+          <NotebookPen className="w-10 h-10 text-[#00f0ff]/60" />
+        </motion.div>
+        {/* Floating decorative dots */}
+        <motion.div
+          className="absolute top-1 right-8 w-2 h-2 rounded-full bg-[#a855f7]/40"
+          animate={{ y: [0, -6, 0], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-4 left-4 w-1.5 h-1.5 rounded-full bg-[#ec4899]/40"
+          animate={{ y: [0, -4, 0], opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        />
+        <motion.div
+          className="absolute top-6 left-1 w-2.5 h-2.5 rounded-full bg-[#00f0ff]/30"
+          animate={{ y: [0, -5, 0], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        />
+      </div>
+
+      <motion.h3
+        className="text-xl font-semibold text-gray-300 mb-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        {searchQuery ? 'No matches found' : 'No notes yet'}
+      </motion.h3>
+      <motion.p
+        className="text-sm text-gray-500 mb-6 max-w-sm mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        {searchQuery
+          ? `No notes matching "${searchQuery}". Try a different search term.`
+          : 'Start your learning journey by generating your first AI-powered note.'}
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Button onClick={onGenerate} className="btn-neon-solid gap-2 px-5 py-2.5">
+          <Sparkles className="w-4 h-4" />
+          Generate Your First Note
+        </Button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function NotesPage() {
   const { setCurrentPage } = useStore()
   const [notes, setNotes] = useState<NoteData[]>([])
@@ -52,6 +150,31 @@ export default function NotesPage() {
   const [showGenerateDialog, setShowGenerateDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [exporting, setExporting] = useState(false)
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const res = await authFetch('/api/notes/export?format=markdown')
+      if (res.ok) {
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `icseasy-notes-${new Date().toISOString().slice(0, 10)}.md`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        toast.success('Notes exported successfully')
+      } else {
+        toast.error('Failed to export notes')
+      }
+    } catch {
+      toast.error('Export failed')
+    }
+    setExporting(false)
+  }
 
   const fetchNotes = useCallback(async () => {
     try {
@@ -166,28 +289,43 @@ export default function NotesPage() {
             <ChevronRight className="w-5 h-5 text-gray-400 rotate-180" />
           </button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold gradient-text">My Notes</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gradient-animated">My Notes</h1>
             <p className="text-sm text-gray-500 mt-0.5">{notes.length} notes total</p>
           </div>
         </div>
-        <Button
-          onClick={() => setShowGenerateDialog(true)}
-          className="btn-neon-solid gap-2 px-4 py-2"
-        >
-          <Plus className="w-4 h-4" />
-          Generate Note
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleExport}
+            disabled={notes.length === 0 || exporting}
+            variant="outline"
+            className="btn-neon gap-2 px-4 py-2"
+          >
+            {exporting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            Export
+          </Button>
+          <Button
+            onClick={() => setShowGenerateDialog(true)}
+            className="btn-neon-solid gap-2 px-4 py-2"
+          >
+            <Plus className="w-4 h-4" />
+            Generate Note
+          </Button>
+        </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="glass rounded-xl p-3 mb-6 flex flex-col sm:flex-row gap-3">
+      <div className="glass-card rounded-xl p-3 mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <Input
             placeholder="Search notes by title, topic, or subject..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white/5 border-white/10 focus:border-cyan-500/50 text-white placeholder:text-gray-500"
+            className="pl-10 bg-white/5 border-white/10 focus:border-cyan-500/50 text-white placeholder:text-gray-500 input-lift"
           />
           {searchQuery && (
             <button
@@ -200,7 +338,7 @@ export default function NotesPage() {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs — with animated underline */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="glass bg-transparent p-1 h-auto flex-wrap gap-1 mb-6">
           <TabsTrigger
@@ -236,22 +374,10 @@ export default function NotesPage() {
               ))}
             </div>
           ) : filteredNotes.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-10 h-10 text-gray-600" />
-              </div>
-              <h3 className="text-lg text-gray-400 mb-2">No notes found</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                {searchQuery ? 'Try a different search term' : 'Generate your first AI-powered note'}
-              </p>
-              <Button onClick={() => setShowGenerateDialog(true)} className="btn-neon gap-2">
-                <Plus className="w-4 h-4" /> Generate Note
-              </Button>
-            </motion.div>
+            <EmptyNotesState
+              searchQuery={searchQuery}
+              onGenerate={() => setShowGenerateDialog(true)}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence mode="popLayout">
@@ -263,7 +389,7 @@ export default function NotesPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: index * 0.05 }}
-                    className="glass rounded-xl p-4 card-glow cursor-pointer group relative overflow-hidden"
+                    className="glass-card rounded-xl p-4 card-glow cursor-pointer group relative overflow-hidden note-card-hover"
                     onClick={() => setSelectedNote(note)}
                   >
                     {/* Decorative gradient line at top */}
@@ -275,7 +401,9 @@ export default function NotesPage() {
                           {note.title}
                         </h3>
                       </div>
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                           e.stopPropagation()
                           toggleBookmark(note)
@@ -287,7 +415,7 @@ export default function NotesPage() {
                         ) : (
                           <Bookmark className="w-5 h-5 text-gray-500 group-hover:text-gray-300" />
                         )}
-                      </button>
+                      </motion.button>
                     </div>
 
                     <div className="flex flex-wrap gap-2 mb-3">
@@ -304,7 +432,7 @@ export default function NotesPage() {
                     <div className="flex items-center justify-between text-xs text-gray-600">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {formatDate(note.createdAt)}
+                        {formatRelativeTime(note.updatedAt || note.createdAt)}
                       </span>
                       <span>{note.topic}</span>
                     </div>
@@ -318,7 +446,7 @@ export default function NotesPage() {
 
       {/* Note Detail Dialog */}
       <Dialog open={!!selectedNote} onOpenChange={() => setSelectedNote(null)}>
-        <DialogContent className="glass-strong max-w-2xl max-h-[85vh] overflow-y-auto border border-white/10">
+        <DialogContent className="glass-card max-w-2xl max-h-[85vh] overflow-y-auto">
           {selectedNote && (
             <>
               <DialogHeader>
@@ -334,6 +462,9 @@ export default function NotesPage() {
                 <DialogTitle className="text-xl text-white">{selectedNote.title}</DialogTitle>
                 <DialogDescription className="text-gray-500">
                   Created on {formatDate(selectedNote.createdAt)}
+                  {selectedNote.updatedAt && selectedNote.updatedAt !== selectedNote.createdAt && (
+                    <span> &bull; Edited {formatRelativeTime(selectedNote.updatedAt)}</span>
+                  )}
                 </DialogDescription>
               </DialogHeader>
 
@@ -365,7 +496,7 @@ export default function NotesPage() {
                       <Trash2 className="w-4 h-4 mr-2" /> Delete
                     </Button>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="glass-strong border-red-500/20">
+                  <AlertDialogContent className="glass-card border-red-500/20">
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-white">Delete Note</AlertDialogTitle>
                       <AlertDialogDescription className="text-gray-400">

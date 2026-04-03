@@ -25,6 +25,7 @@ import StudyTimer from '@/components/timer/StudyTimer'
 import LeaderboardPage from '@/components/leaderboard/LeaderboardPage'
 import AchievementsPage from '@/components/achievements/AchievementsPage'
 import FlashcardsPage from '@/components/flashcards/FlashcardsPage'
+import AnalyticsPage from '@/components/analytics/AnalyticsPage'
 
 
 
@@ -48,6 +49,7 @@ const authenticatedPages: PageType[] = [
   'leaderboard',
   'achievements',
   'flashcards',
+  'analytics',
 ]
 
 function AppRouter() {
@@ -115,6 +117,9 @@ function AppRouter() {
 
           {/* Flashcards */}
           {currentPage === 'flashcards' && <FlashcardsPage />}
+
+          {/* Analytics */}
+          {currentPage === 'analytics' && <AnalyticsPage />}
         </motion.div>
       </AnimatePresence>
 

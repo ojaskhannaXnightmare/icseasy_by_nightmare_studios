@@ -56,6 +56,13 @@ export async function GET(request: NextRequest) {
       },
     })
 
+    // Analytics summary for profile
+    const bestSubjectEntry = await db.quizAttempt.groupBy({
+      by: ['subject'],
+      where: { userId },
+      _avg: { score: true },
+    })
+
     return NextResponse.json({
       user,
       stats: {
@@ -64,6 +71,16 @@ export async function GET(request: NextRequest) {
         totalQuizzes,
         averageScore: averageScore._avg.score ? Math.round(averageScore._avg.score * 100) / 100 : 0,
         friendsCount,
+        analyticsSummary: {
+          bestSubject: bestSubjectEntry.length > 0
+            ? bestSubjectEntry.reduce((a, b) => {
+                const aAvg = a._avg.score ?? 0
+                const bAvg = b._avg.score ?? 0
+                return aAvg >= bAvg ? a : b
+              }).subject
+            : 'N/A',
+          totalStudyTime: totalNotes * 15 + totalQuizzes * 25,
+        },
       },
     })
   } catch (error: unknown) {

@@ -31,6 +31,7 @@ model User {
   groups        GroupMember[]
   groupMessages GroupMessage[]
   createdGroups Group[]         @relation("CreatedGroups")
+  flashcards     Flashcard[]
 }
 
 model Note {
@@ -138,4 +139,17 @@ model GroupMessage {
   createdAt DateTime @default(now())
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Flashcard {
+  id        String   @id @default(cuid())
+  userId    String
+  frontText String
+  backText  String
+  subject   String
+  topic     String
+  tags      String   @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
