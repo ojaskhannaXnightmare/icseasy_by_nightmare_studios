@@ -200,7 +200,7 @@ export default function SubjectDetail() {
         </motion.div>
 
         {/* Topics List */}
-        <div className="space-y-3">
+        <div className="space-y-3 stagger-children">
           {(selectedSubject.topics || []).map((topic, index) => (
             <motion.div
               key={topic.id}
@@ -208,13 +208,13 @@ export default function SubjectDetail() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.35, delay: 0.4 + index * 0.06 }}
               whileHover={{ scale: 1.01 }}
-              className="glass-card rounded-xl p-4 sm:p-5 card-glow group"
+              className="glass-card rounded-xl p-4 sm:p-5 card-glow card-glow-purple group border-sweep"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 {/* Topic info */}
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <motion.div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-sm font-bold"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-sm font-bold icon-container-ring"
                     style={{
                       backgroundColor: `${color}10`,
                       color,
@@ -225,7 +225,7 @@ export default function SubjectDetail() {
                     {index + 1}
                   </motion.div>
                   <div className="min-w-0">
-                    <h3 className="font-medium text-sm sm:text-base group-hover:text-white transition-colors truncate">
+                    <h3 className="font-medium text-sm sm:text-base group-hover:text-white transition-colors truncate neon-underline-hover">
                       {topic.name}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">

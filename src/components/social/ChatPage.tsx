@@ -162,7 +162,7 @@ export default function ChatPage() {
     >
       {/* Chat Header */}
       <div className="glass-strong p-4 flex items-center gap-3 border-b border-white/5 shrink-0 gradient-header-bar">
-        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="icon-container-ring">
           <Button
             variant="ghost"
             size="sm"
@@ -199,7 +199,7 @@ export default function ChatPage() {
           <h2 className="text-white font-semibold text-sm truncate">{selectedFriend.name}</h2>
           <p className="text-xs text-gray-500">
             {selectedFriend.isOnline ? (
-              <span className="text-green-400">Online</span>
+              <span className="text-green-400 neon-badge" style={{ '--badge-glow': 'rgba(34,197,94,0.2)' } as React.CSSProperties}>Online</span>
             ) : (
               'Offline'
             )}
@@ -208,7 +208,7 @@ export default function ChatPage() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-1">
+      <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-neon">
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map(i => (
@@ -281,7 +281,7 @@ export default function ChatPage() {
                   {!isMine && !showAvatar && <div className="w-7 shrink-0" />}
 
                   <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'}`}>
-                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed message-glow ${
+                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed message-glow message-stagger glass-panel-deep ${
                       isMine
                         ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/20 text-white rounded-tr-md shadow-[0_0_15px_rgba(0,240,255,0.05)]'
                         : 'glass-card rounded-tl-md text-gray-300'
@@ -322,7 +322,7 @@ export default function ChatPage() {
               disabled={sending}
             />
           </div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="icon-container-ring">
             <Button
               type="submit"
               disabled={!newMessage.trim() || sending}

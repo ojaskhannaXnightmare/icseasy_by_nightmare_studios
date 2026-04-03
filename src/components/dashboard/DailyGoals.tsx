@@ -54,7 +54,7 @@ function StatusIcon({ status, color }: { status: GoalStatus; color: string }) {
           className="w-6 h-6 rounded-full flex items-center justify-center border"
           style={{ backgroundColor: `${color}20`, borderColor: `${color}40` }}
         >
-          <CheckCircle2 className="w-4 h-4" style={{ color }} />
+          <CheckCircle2 className="w-4 h-4 icon-breathe" style={{ color }} />
         </div>
       )
     case 'in_progress':
@@ -132,7 +132,7 @@ export default function DailyGoals() {
         </div>
         <div className="flex items-center gap-2">
           <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-[11px] text-muted-foreground gradient-text-shimmer">
             {Math.round(progressPercent)}%
           </span>
         </div>
@@ -158,7 +158,7 @@ export default function DailyGoals() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.7 + index * 0.08 }}
             className={cn(
-              'flex items-center gap-3 p-3 rounded-xl border transition-all duration-200',
+              'flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 border-sweep',
               goal.status === 'completed'
                 ? 'bg-white/[0.02] border-white/5'
                 : 'bg-white/[0.01] border-white/5 hover:bg-white/[0.03]'
@@ -168,7 +168,7 @@ export default function DailyGoals() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className={cn(
-                  'text-sm font-medium truncate',
+                  'text-sm font-medium truncate neon-underline-hover',
                   goal.status === 'completed' && 'line-through text-muted-foreground'
                 )}>
                   {goal.title}

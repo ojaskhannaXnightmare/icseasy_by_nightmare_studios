@@ -26,6 +26,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store/useStore'
 import DailyGoals from './DailyGoals'
 import StreakWidget from '@/components/StreakWidget'
+import ExamCountdown from '@/components/exam/ExamCountdown'
 import { authFetch } from '@/lib/api'
 import {
   AreaChart,
@@ -326,6 +327,12 @@ export default function Dashboard() {
               </motion.div>
             )
           })}
+        </div>
+
+        <div className="gradient-divider my-4" />
+        {/* Exam Countdown Widget */}
+        <div className="mb-8">
+          <ExamCountdown />
         </div>
 
         <div className="gradient-divider my-4" />

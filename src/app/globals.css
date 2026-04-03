@@ -1492,3 +1492,278 @@
   pointer-events: none;
   border-radius: inherit;
 }
+
+/* ========================================
+   Round 5: Enhanced styling utilities
+   ======================================== */
+
+/* Animated gradient text shimmer sweep */
+.gradient-text-shimmer {
+  background: linear-gradient(90deg, #00f0ff, #a855f7, #ec4899, #00f0ff);
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text-sweep 5s linear infinite;
+}
+
+@keyframes shimmer-text-sweep {
+  0% { background-position: 100% 50%; }
+  100% { background-position: -100% 50%; }
+}
+
+/* Neon outline card — shows neon border on hover */
+.neon-outline-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.35s ease;
+}
+
+.neon-outline-card:hover {
+  border-color: rgba(0, 240, 255, 0.25);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.08), inset 0 0 25px rgba(0, 240, 255, 0.02);
+}
+
+/* Glassmorphism panel with blur depth */
+.glass-panel-deep {
+  background: rgba(10, 10, 18, 0.75);
+  backdrop-filter: blur(40px) saturate(1.5);
+  -webkit-backdrop-filter: blur(40px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Animated border gradient sweep */
+.border-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-sweep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--sweep-angle, 0deg), transparent 60%, #00f0ff, #a855f7, #ec4899, transparent 90%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: border-sweep-rotate 4s linear infinite;
+}
+
+.border-sweep:hover::before {
+  opacity: 0.8;
+}
+
+@property --sweep-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-sweep-rotate {
+  to { --sweep-angle: 360deg; }
+}
+
+/* Pulse dot indicator (online, live, etc.) */
+.pulse-dot {
+  position: relative;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0;
+  animation: pulse-dot-expand 2s ease-out infinite;
+}
+
+@keyframes pulse-dot-expand {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+/* Text reveal from left animation */
+.text-reveal-left {
+  animation: reveal-left 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes reveal-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Number count-up shimmer */
+.number-shimmer {
+  background: linear-gradient(135deg, #00f0ff 0%, #a855f7 50%, #00f0ff 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: number-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes number-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Floating label for inputs */
+.floating-label {
+  position: relative;
+}
+
+/* Hover glow effect on cards — purple variant */
+.card-glow-purple {
+  transition: all 0.3s ease;
+}
+
+.card-glow-purple:hover {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.08), 0 0 40px rgba(168, 85, 247, 0.04);
+  border-color: rgba(168, 85, 247, 0.2);
+}
+
+/* Hover glow effect on cards — pink variant */
+.card-glow-pink {
+  transition: all 0.3s ease;
+}
+
+.card-glow-pink:hover {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.08), 0 0 40px rgba(236, 72, 153, 0.04);
+  border-color: rgba(236, 72, 153, 0.2);
+}
+
+/* Staggered child animation */
+.stagger-children > * {
+  animation: stagger-fade-in 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes stagger-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle breathing animation for icons */
+.icon-breathe {
+  animation: icon-breathe 3s ease-in-out infinite;
+}
+
+@keyframes icon-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+/* Neon underline on hover */
+.neon-underline-hover {
+  position: relative;
+}
+
+.neon-underline-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f0ff, #a855f7);
+  transition: width 0.3s ease;
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.neon-underline-hover:hover::after {
+  width: 100%;
+}
+
+/* Scrollbar for specific container */
+.scrollbar-neon {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+}
+
+.scrollbar-neon::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-neon::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-neon::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.3), rgba(168, 85, 247, 0.3));
+  border-radius: 2px;
+}
+
+/* Glassmorphism badge */
+.glass-badge {
+  background: rgba(15, 15, 25, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animated background gradient mesh */
+.gradient-mesh-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-mesh-bg::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(236, 72, 153, 0.04) 0%, transparent 50%);
+  animation: mesh-drift 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mesh-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(2%, -2%) rotate(1deg); }
+  66% { transform: translate(-1%, 1%) rotate(-0.5deg); }
+}
+
+/* Enhanced icon container with gradient ring */
+.icon-container-ring {
+  position: relative;
+}
+
+.icon-container-ring::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(168, 85, 247, 0.3));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.icon-container-ring:hover::after {
+  opacity: 1;
+}

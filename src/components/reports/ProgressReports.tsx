@@ -280,7 +280,7 @@ export default function ProgressReports() {
           </button>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a855f7]/20 to-[#ec4899]/20 border border-[#a855f7]/20 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#a855f7]/20 to-[#ec4899]/20 border border-[#a855f7]/20 flex items-center justify-center icon-container-ring">
                 <BarChart3 className="w-6 h-6 text-[#a855f7]" />
               </div>
               <div>
@@ -403,14 +403,14 @@ export default function ProgressReports() {
                     <div key={metric.label} className="glass rounded-xl p-4 card-glow">
                       <div className="flex items-center justify-between mb-3">
                         <div
-                          className="w-9 h-9 rounded-lg flex items-center justify-center"
+                          className="w-9 h-9 rounded-lg flex items-center justify-center icon-container-ring"
                           style={{ backgroundColor: `${metric.color}15` }}
                         >
                           <Icon className="w-4 h-4" style={{ color: metric.color }} />
                         </div>
                         <ChangeIndicator change={metric.change} />
                       </div>
-                      <div className="text-xl sm:text-2xl font-bold" style={{ color: metric.color }}>
+                      <div className="text-xl sm:text-2xl font-bold number-shimmer" style={{ color: metric.color }}>
                         {metric.value}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">{metric.label}</p>
@@ -419,24 +419,26 @@ export default function ProgressReports() {
                 })}
               </motion.div>
 
+              <div className="gradient-divider-glow" />
+
               {/* Charts Row */}
               <div className="grid lg:grid-cols-2 gap-6 mb-8">
                 {/* Study Time Trend */}
-                <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow">
+                <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow glass-panel-deep">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-[#00f0ff]/15 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#00f0ff]/15 flex items-center justify-center icon-container-ring">
                         <Clock className="w-4 h-4 text-[#00f0ff]" />
                       </div>
                       <div>
-                        <h2 className="text-lg font-semibold">Study Time Trend</h2>
+                        <h2 className="text-lg font-semibold neon-underline-hover">Study Time Trend</h2>
                         <p className="text-xs text-muted-foreground">
                           Daily focus minutes this {period === 'weekly' ? 'week' : 'month'}
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="h-[280px] w-full">
+                  <div className="h-[280px] w-full chart-container-glow">
                     {data.trendData.length > 1 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data.trendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
@@ -482,19 +484,19 @@ export default function ProgressReports() {
                 </motion.div>
 
                 {/* Subject Performance */}
-                <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow">
+                <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow glass-panel-deep">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-[#a855f7]/15 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#a855f7]/15 flex items-center justify-center icon-container-ring">
                         <BarChart3 className="w-4 h-4 text-[#a855f7]" />
                       </div>
                       <div>
-                        <h2 className="text-lg font-semibold">Subject Performance</h2>
+                        <h2 className="text-lg font-semibold neon-underline-hover">Subject Performance</h2>
                         <p className="text-xs text-muted-foreground">Average score per subject (all time)</p>
                       </div>
                     </div>
                   </div>
-                  <div className="h-[280px] w-full">
+                  <div className="h-[280px] w-full chart-container-glow">
                     {data.subjectPerformance.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
@@ -541,18 +543,20 @@ export default function ProgressReports() {
                 </motion.div>
               </div>
 
+              <div className="gradient-divider-glow" />
+
               {/* Achievement Progress Summary */}
               <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow">
                 <div className="flex items-center gap-2.5 mb-6">
-                  <div className="w-8 h-8 rounded-lg bg-[#f59e0b]/15 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-[#f59e0b]/15 flex items-center justify-center icon-container-ring">
                     <Trophy className="w-4 h-4 text-[#f59e0b]" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold">Achievement Progress</h2>
+                    <h2 className="text-lg font-semibold neon-underline-hover">Achievement Progress</h2>
                     <p className="text-xs text-muted-foreground">Overall milestones summary</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 stagger-children">
                   {[
                     { label: 'Total Notes', value: data.achievementSummary.totalNotes, target: 25, color: '#a855f7' },
                     { label: 'Total Quizzes', value: data.achievementSummary.totalQuizzes, target: 25, color: '#ec4899' },

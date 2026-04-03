@@ -33,6 +33,8 @@ import SettingsPage from '@/components/settings/SettingsPage'
 import StudyPlanner from '@/components/planner/StudyPlanner'
 import DailyChallenge from '@/components/challenge/DailyChallenge'
 import ProgressReports from '@/components/reports/ProgressReports'
+import BookmarksPage from '@/components/bookmarks/BookmarksPage'
+import ActivityHeatmap from '@/components/activity/ActivityHeatmap'
 import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 
 
@@ -44,6 +46,7 @@ const authenticatedPages: PageType[] = [
   'subjects',
   'subject-detail',
   'notes',
+  'bookmarks',
   'research',
   'quiz-setup',
   'quiz-active',
@@ -63,6 +66,7 @@ const authenticatedPages: PageType[] = [
   'planner',
   'challenge',
   'reports',
+  'heatmap',
 ]
 
 function AppRouter() {
@@ -139,6 +143,7 @@ function AppRouter() {
 
           {/* Notes & Research */}
           {currentPage === 'notes' && <NotesPage />}
+          {currentPage === 'bookmarks' && <BookmarksPage />}
           {currentPage === 'research' && <ResearchTool />}
 
           {/* Quiz */}
@@ -182,6 +187,9 @@ function AppRouter() {
 
           {/* Progress Reports */}
           {currentPage === 'reports' && <ProgressReports />}
+
+          {/* Activity Heatmap */}
+          {currentPage === 'heatmap' && <ActivityHeatmap />}
         </motion.div>
       </AnimatePresence>
 

@@ -18,6 +18,8 @@ import {
   CalendarDays,
   Zap,
   TrendingUp,
+  Activity,
+  Bookmark,
 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { cn } from '@/lib/utils'
@@ -32,7 +34,9 @@ const primaryNavItems = [
 
 const moreNavItems = [
   { icon: FileText, label: 'Notes', page: 'notes' as const },
+  { icon: Bookmark, label: 'Saved Notes', page: 'bookmarks' as const },
   { icon: BarChart3, label: 'Analytics', page: 'analytics' as const },
+  { icon: Activity, label: 'Activity', page: 'heatmap' as const },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' as const },
   { icon: CalendarDays, label: 'Planner', page: 'planner' as const },
   { icon: Zap, label: 'Daily Challenge', page: 'challenge' as const },
@@ -52,8 +56,10 @@ export default function BottomNav() {
       'tutor': ['tutor'],
       'quiz-setup': ['quiz-setup', 'quiz-active', 'quiz-results'],
       'profile': ['profile'],
-      'notes': ['notes', 'research'],
+      'notes': ['notes', 'bookmarks', 'research'],
+      'bookmarks': ['bookmarks'],
       'analytics': ['analytics'],
+      'heatmap': ['heatmap'],
       'flashcards': ['flashcards'],
       'planner': ['planner'],
       'challenge': ['challenge'],

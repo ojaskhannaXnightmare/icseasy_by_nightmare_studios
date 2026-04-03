@@ -168,7 +168,7 @@ function StudyBlockCard({ block, index }: { block: StudyBlock; index: number }) 
             {block.subject}
           </span>
           <span
-            className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+            className="text-[10px] px-1.5 py-0.5 rounded-full font-medium glass-badge"
             style={{
               color: priorityColor,
               backgroundColor: `${priorityColor}15`,
@@ -304,7 +304,7 @@ export default function StudyPlanner() {
           </button>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#00f0ff]/20 to-[#a855f7]/20 border border-[#00f0ff]/20 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#00f0ff]/20 to-[#a855f7]/20 border border-[#00f0ff]/20 flex items-center justify-center icon-container-ring">
                 <CalendarDays className="w-6 h-6 text-[#00f0ff]" />
               </div>
               <div>
@@ -342,7 +342,7 @@ export default function StudyPlanner() {
         )}
 
         {/* Stats Overview */}
-        <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
           {[
             { icon: FileText, label: 'Total Notes', value: stats?.totalNotes ?? 0, color: '#a855f7', suffix: '' },
             { icon: Brain, label: 'Quizzes Taken', value: stats?.totalQuizzes ?? 0, color: '#ec4899', suffix: '' },
@@ -357,7 +357,7 @@ export default function StudyPlanner() {
                     <Icon className="w-4 h-4" style={{ color: stat.color }} />
                   </div>
                 </div>
-                <div className="text-2xl font-bold" style={{ color: stat.color }}>
+                <div className="text-2xl font-bold number-shimmer" style={{ color: stat.color }}>
                   {stat.value}{stat.suffix}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
@@ -370,10 +370,10 @@ export default function StudyPlanner() {
         {stats && stats.subjectProgress.length > 0 && (
           <motion.div variants={itemVariants} className="mb-8">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-[#a855f7]/15 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[#a855f7]/15 flex items-center justify-center icon-container-ring">
                 <BookOpen className="w-4 h-4 text-[#a855f7]" />
               </div>
-              <h2 className="text-lg font-semibold">Subject Progress</h2>
+              <h2 className="text-lg font-semibold neon-underline-hover">Subject Progress</h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {stats.subjectProgress.map((sp) => {
@@ -442,14 +442,14 @@ export default function StudyPlanner() {
             >
               {/* Weekly Schedule Grid */}
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-[#ec4899]/15 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#ec4899]/15 flex items-center justify-center icon-container-ring">
                   <CalendarDays className="w-4 h-4 text-[#ec4899]" />
                 </div>
-                <h2 className="text-lg font-semibold">Weekly Schedule</h2>
+                <h2 className="text-lg font-semibold neon-underline-hover">Weekly Schedule</h2>
               </div>
 
               {/* Desktop: 7-column grid */}
-              <div className="hidden lg:block mb-8">
+              <div className="hidden lg:block mb-8 glass-panel-deep border-sweep rounded-xl p-4">
                 <div className="grid grid-cols-7 gap-3">
                   {DAYS.map((day, dayIdx) => {
                     const blocks = plan.plan[day] || []
@@ -478,7 +478,7 @@ export default function StudyPlanner() {
               </div>
 
               {/* Mobile: Scrollable cards per day */}
-              <div className="lg:hidden mb-8 space-y-4">
+              <div className="lg:hidden mb-8 space-y-4 glass-panel-deep border-sweep rounded-xl p-4">
                 {DAYS.map((day, dayIdx) => {
                   const blocks = plan.plan[day] || []
                   if (blocks.length === 0) return null
@@ -504,10 +504,10 @@ export default function StudyPlanner() {
               {plan.tips && plan.tips.length > 0 && (
                 <motion.div variants={itemVariants} className="glass rounded-xl p-5 sm:p-6 card-glow mb-8">
                   <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#22c55e]/15 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-[#22c55e]/15 flex items-center justify-center icon-container-ring">
                       <Lightbulb className="w-4 h-4 text-[#22c55e]" />
                     </div>
-                    <h2 className="text-lg font-semibold">Study Tips</h2>
+                    <h2 className="text-lg font-semibold neon-underline-hover">Study Tips</h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {plan.tips.map((tip, idx) => (

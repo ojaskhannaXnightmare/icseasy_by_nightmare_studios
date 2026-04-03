@@ -344,7 +344,7 @@ export default function DailyChallenge() {
             Back to Dashboard
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ec4899]/20 to-[#a855f7]/20 border border-[#ec4899]/20 flex items-center justify-center">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#ec4899]/20 to-[#a855f7]/20 border border-[#ec4899]/20 flex items-center justify-center icon-container-ring">
               <Zap className="w-6 h-6 text-[#ec4899]" />
             </div>
             <div>
@@ -358,21 +358,21 @@ export default function DailyChallenge() {
 
         {/* Stats Row */}
         <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4 mb-8">
-          <div className="glass rounded-xl p-4 card-glow text-center">
-            <div className="flex items-center justify-center gap-1.5 mb-2">
+          <div className="glass rounded-xl p-4 card-glow-pink text-center">
+            <div className="flex items-center justify-center gap-1.5 mb-2 pulse-dot">
               <Flame className="w-5 h-5 text-[#f59e0b]" />
               <span className="text-sm font-semibold text-[#f59e0b]">{streak}</span>
             </div>
             <p className="text-xs text-muted-foreground">Day Streak</p>
           </div>
-          <div className="glass rounded-xl p-4 card-glow text-center">
+          <div className="glass rounded-xl p-4 card-glow-purple text-center">
             <div className="flex items-center justify-center gap-1.5 mb-2">
               <Target className="w-5 h-5 text-[#00f0ff]" />
               <span className="text-sm font-semibold text-[#00f0ff]">{completedDates.length}</span>
             </div>
             <p className="text-xs text-muted-foreground">Completed</p>
           </div>
-          <div className="glass rounded-xl p-4 card-glow text-center">
+          <div className="glass rounded-xl p-4 card-glow-purple text-center">
             <div className="flex items-center justify-center gap-1.5 mb-2">
               <Trophy className="w-5 h-5 text-[#a855f7]" />
               <span className="text-sm font-semibold text-[#a855f7]">
@@ -398,7 +398,7 @@ export default function DailyChallenge() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="glass rounded-xl p-8 text-center"
+              className="glass rounded-xl p-8 text-center glass-panel-deep"
             >
               <div className="relative inline-block mb-6">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#ec4899]/10 to-[#a855f7]/10 border border-[#ec4899]/20 flex items-center justify-center">
@@ -415,7 +415,7 @@ export default function DailyChallenge() {
                 whileTap={{ scale: 0.97 }}
                 onClick={startChallenge}
                 disabled={generating}
-                className={`btn-neon-solid px-8 py-3 rounded-xl flex items-center gap-2 text-sm mx-auto ${generating ? 'opacity-60' : ''}`}
+                className={`btn-neon-solid px-8 py-3 rounded-xl flex items-center gap-2 text-sm mx-auto btn-shimmer-hover ${generating ? 'opacity-60' : ''}`}
               >
                 {generating ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -433,7 +433,7 @@ export default function DailyChallenge() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="glass rounded-xl overflow-hidden"
+              className="glass rounded-xl overflow-hidden glass-panel-deep"
             >
               {/* Top bar */}
               <div className="gradient-header-bar p-4 flex items-center justify-between">
@@ -583,7 +583,7 @@ export default function DailyChallenge() {
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: 'spring', delay: 0.2 }}
-                      className="text-4xl font-bold"
+                      className="text-4xl font-bold gradient-text-shimmer"
                       style={{
                         color: score >= 4 ? '#22c55e' : score >= 2 ? '#f59e0b' : '#ef4444',
                       }}
@@ -617,7 +617,7 @@ export default function DailyChallenge() {
               </div>
 
               {/* Per-question review */}
-              <div className="max-h-64 overflow-y-auto mb-6 space-y-2 text-left px-2">
+              <div className="max-h-64 overflow-y-auto mb-6 space-y-2 text-left px-2 scrollbar-neon">
                 {challenge.questions.map((q, idx) => {
                   const isCorrect = score > 0
                   return (
@@ -660,7 +660,7 @@ export default function DailyChallenge() {
                   whileTap={{ scale: 0.97 }}
                   onClick={startChallenge}
                   disabled={generating}
-                  className={`btn-neon-solid px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm ${generating ? 'opacity-60' : ''}`}
+                  className={`btn-neon-solid px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm btn-shimmer-hover ${generating ? 'opacity-60' : ''}`}
                 >
                   {generating ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
