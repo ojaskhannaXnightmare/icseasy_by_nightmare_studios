@@ -44,38 +44,17 @@ interface AnalyticsData {
   avgScore: number
 }
 
-// --- Pre-computed fallback data (no Math.random) ---
-const fallbackData: AnalyticsData = {
-  totalStudyTime: 485,
-  subjectPerformance: [
-    { subject: 'Mathematics', avgScore: 82.5, totalQuizzes: 8 },
-    { subject: 'Physics', avgScore: 74.3, totalQuizzes: 6 },
-    { subject: 'Chemistry', avgScore: 68.9, totalQuizzes: 5 },
-    { subject: 'Biology', avgScore: 85.1, totalQuizzes: 7 },
-    { subject: 'English', avgScore: 91.2, totalQuizzes: 4 },
-    { subject: 'History', avgScore: 77.8, totalQuizzes: 3 },
-  ],
-  scoreDistribution: { '0-40%': 2, '41-60%': 3, '61-80%': 8, '81-100%': 12 },
-  notesPerSubject: [
-    { subject: 'Mathematics', count: 12 },
-    { subject: 'Physics', count: 8 },
-    { subject: 'Chemistry', count: 6 },
-    { subject: 'Biology', count: 9 },
-    { subject: 'English', count: 5 },
-    { subject: 'History', count: 4 },
-  ],
-  mostActiveDay: 'Wednesday',
-  monthlyTrend: [
-    { month: 'Oct', notes: 8, quizzes: 5 },
-    { month: 'Nov', notes: 12, quizzes: 8 },
-    { month: 'Dec', notes: 6, quizzes: 4 },
-    { month: 'Jan', notes: 15, quizzes: 10 },
-    { month: 'Feb', notes: 11, quizzes: 7 },
-    { month: 'Mar', notes: 14, quizzes: 9 },
-  ],
-  totalNotes: 44,
-  totalQuizzes: 25,
-  avgScore: 79.8,
+// --- Empty state data for new users ---
+const emptyAnalytics: AnalyticsData = {
+  totalStudyTime: 0,
+  subjectPerformance: [],
+  scoreDistribution: { '0-40%': 0, '41-60%': 0, '61-80%': 0, '81-100%': 0 },
+  notesPerSubject: [],
+  mostActiveDay: 'N/A',
+  monthlyTrend: [],
+  totalNotes: 0,
+  totalQuizzes: 0,
+  avgScore: 0,
 }
 
 // --- Score distribution config ---
@@ -88,6 +67,16 @@ const scoreRanges = [
 
 // --- Insight generators ---
 function generateInsights(data: AnalyticsData) {
+  // Empty state: return encouraging onboarding insights
+  if (data.totalQuizzes === 0 && data.totalNotes === 0) {
+    return [
+      { icon: Sparkles, text: 'Start your learning journey! Take a quiz or create notes to see insights here.', color: '#00f0ff' },
+      { icon: Brain, text: 'Complete your first quiz to track your subject performance.', color: '#ec4899' },
+      { icon: FileText, text: 'Create smart notes with AI to build your knowledge base.', color: '#a855f7' },
+      { icon: Flame, text: 'Study consistently to build your streak and unlock achievements.', color: '#f59e0b' },
+    ]
+  }
+
   const insights: { icon: React.ElementType; text: string; color: string }[] = []
 
   // Best subject
@@ -100,14 +89,16 @@ function generateInsights(data: AnalyticsData) {
     })
   }
 
-  // Total study time
-  const hours = Math.floor(data.totalStudyTime / 60)
-  const mins = data.totalStudyTime % 60
-  insights.push({
-    icon: Flame,
-    text: `You've spent ${hours}h ${mins}m studying across all activities`,
-    color: '#ec4899',
-  })
+  // Total study time (only if > 0)
+  if (data.totalStudyTime > 0) {
+    const hours = Math.floor(data.totalStudyTime / 60)
+    const mins = data.totalStudyTime % 60
+    insights.push({
+      icon: Flame,
+      text: `You've spent ${hours}h ${mins}m studying across all activities`,
+      color: '#ec4899',
+    })
+  }
 
   // High score rate
   const totalQuizzes = Object.values(data.scoreDistribution).reduce((a, b) => a + b, 0)
@@ -120,12 +111,14 @@ function generateInsights(data: AnalyticsData) {
     })
   }
 
-  // Most active day
-  insights.push({
-    icon: Calendar,
-    text: `${data.mostActiveDay} is your most productive study day`,
-    color: '#00f0ff',
-  })
+  // Most active day (skip if N/A)
+  if (data.mostActiveDay !== 'N/A') {
+    insights.push({
+      icon: Calendar,
+      text: `${data.mostActiveDay} is your most productive study day`,
+      color: '#00f0ff',
+    })
+  }
 
   // Notes count
   if (data.totalNotes > 0) {
@@ -223,13 +216,15 @@ export default function AnalyticsPage() {
           const json = await res.json()
           if (json.stats) {
             setData(json.stats as AnalyticsData)
+            setLoading(false)
+            return
           }
         }
       } catch {
-        // Fall back to sample data on error
+        // Silently handle error
       }
-      // Use fallback if no data
-      setData((prev) => prev ?? fallbackData)
+      // No valid data — use clean empty state
+      setData(emptyAnalytics)
       setLoading(false)
     }
     fetchAnalytics()
@@ -237,7 +232,7 @@ export default function AnalyticsPage() {
 
   if (loading) return <AnalyticsSkeleton />
 
-  const analytics = data ?? fallbackData
+  const analytics = data ?? emptyAnalytics
   const insights = generateInsights(analytics)
   const totalDist = Object.values(analytics.scoreDistribution).reduce((a, b) => a + b, 0)
   const studyHours = Math.floor(analytics.totalStudyTime / 60)
@@ -536,20 +531,36 @@ export default function AnalyticsPage() {
                 <h2 className="text-base font-semibold">Most Active Day</h2>
               </div>
               <div className="text-center py-3">
-                <motion.p
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4, type: 'spring' }}
-                  className="text-2xl font-bold neon-text-cyan"
-                >
-                  {analytics.mostActiveDay}
-                </motion.p>
-                <p className="text-xs text-muted-foreground mt-1">Your peak study day</p>
+                {analytics.mostActiveDay === 'N/A' ? (
+                  <>
+                    <motion.p
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.4, type: 'spring' }}
+                      className="text-lg font-medium text-muted-foreground"
+                    >
+                      No data yet
+                    </motion.p>
+                    <p className="text-xs text-muted-foreground/60 mt-1">Complete quizzes to discover your peak day</p>
+                  </>
+                ) : (
+                  <>
+                    <motion.p
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.4, type: 'spring' }}
+                      className="text-2xl font-bold neon-text-cyan"
+                    >
+                      {analytics.mostActiveDay}
+                    </motion.p>
+                    <p className="text-xs text-muted-foreground mt-1">Your peak study day</p>
+                  </>
+                )}
               </div>
               {/* Day badges */}
               <div className="flex flex-wrap gap-1.5 mt-3 justify-center">
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => {
-                  const isActive = analytics.mostActiveDay.startsWith(day)
+                  const isActive = analytics.mostActiveDay !== 'N/A' && analytics.mostActiveDay.startsWith(day)
                   return (
                     <span
                       key={day}
@@ -575,18 +586,16 @@ export default function AnalyticsPage() {
                 <h2 className="text-base font-semibold">Total Study Time</h2>
               </div>
               <div className="text-center py-2">
-                <p className="text-3xl font-bold" style={{ color: '#f59e0b' }}>
+                <p className="text-3xl font-bold" style={{ color: analytics.totalStudyTime === 0 ? '#52525b' : '#f59e0b' }}>
                   {studyHours}<span className="text-lg font-normal text-muted-foreground ml-1">h</span>
-                  {studyMins > 0 && (
-                    <>
-                      <span className="mx-1 text-muted-foreground/40">:</span>
-                      {String(studyMins).padStart(2, '0')}
-                      <span className="text-lg font-normal text-muted-foreground ml-1">m</span>
-                    </>
-                  )}
+                  <span className="mx-1 text-muted-foreground/40">:</span>
+                  {String(studyMins).padStart(2, '0')}
+                  <span className="text-lg font-normal text-muted-foreground ml-1">m</span>
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Estimated across all activities
+                  {analytics.totalStudyTime === 0
+                    ? 'Start studying to track your time'
+                    : 'Estimated across all activities'}
                 </p>
               </div>
             </div>

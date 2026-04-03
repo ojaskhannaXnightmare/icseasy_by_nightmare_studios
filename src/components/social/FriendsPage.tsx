@@ -201,9 +201,9 @@ export default function FriendsPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="glass rounded-xl p-4 flex items-center gap-3"
+                className="glass-request rounded-xl p-4 flex items-center gap-3"
               >
-                <div className="relative">
+                <div className="relative shrink-0">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={req.user.avatarUrl || undefined} />
                     <AvatarFallback className="bg-white/10 text-gray-400 text-sm">
@@ -236,7 +236,7 @@ export default function FriendsPage() {
               </motion.div>
             ))}
           </div>
-          <Separator className="mt-6 bg-white/5" />
+          <Separator className="mt-6 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </motion.div>
       )}
 
@@ -253,9 +253,34 @@ export default function FriendsPage() {
             ))}
           </div>
         ) : filteredFriends.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-              <User className="w-8 h-8 text-gray-600" />
+          <div className="text-center py-16">
+            {/* Orbital empty state animation */}
+            <div className="relative w-28 h-28 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full border border-white/5 orbital-ring" />
+              <div className="absolute inset-3 rounded-full border border-dashed border-white/5 orbital-ring" style={{ animationDirection: 'reverse', animationDuration: '8s' }} />
+              <div className="absolute inset-6 rounded-full border border-white/5 orbital-ring" style={{ animationDuration: '16s' }} />
+              {/* Orbital dots */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="orbital-dot" style={{ animationDuration: '12s' }}>
+                  <div className="w-2 h-2 rounded-full bg-cyan-400/40 shadow-[0_0_8px_rgba(0,240,255,0.3)]" />
+                </div>
+              </div>
+              <div className="absolute bottom-3 right-0">
+                <div className="orbital-dot" style={{ animationDuration: '8s' }}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400/40 shadow-[0_0_6px_rgba(168,85,247,0.3)]" />
+                </div>
+              </div>
+              <div className="absolute top-6 -left-1">
+                <div className="orbital-dot" style={{ animationDuration: '16s' }}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-pink-400/40 shadow-[0_0_6px_rgba(236,72,153,0.3)]" />
+                </div>
+              </div>
+              {/* Center icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
+                  <User className="w-7 h-7 text-gray-600" />
+                </div>
+              </div>
             </div>
             <h3 className="text-gray-400 mb-2">
               {searchQuery ? 'No friends found' : 'No friends yet'}
@@ -279,7 +304,7 @@ export default function FriendsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.03 }}
-                  className="glass rounded-xl p-4 flex items-center gap-3 card-glow cursor-pointer group"
+                  className="glass rounded-xl p-4 flex items-center gap-3 card-glow friend-card-glow cursor-pointer group"
                   onClick={() => openChat(friend)}
                 >
                   <div className="relative shrink-0">
@@ -289,7 +314,7 @@ export default function FriendsPage() {
                         {getInitials(friend.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full ${getStatusColor(friend.isOnline)} border-2 border-[#0a0a0f]`} />
+                    <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full ${getStatusColor(friend.isOnline)} border-2 border-[#0a0a0f] ${friend.isOnline ? 'online-pulse text-green-400' : ''}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white group-hover:text-cyan-400 transition-colors truncate">

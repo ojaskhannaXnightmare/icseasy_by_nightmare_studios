@@ -17,8 +17,7 @@ function createPrismaClient() {
   }
 
   return new PrismaClient({
-    datasourceUrl: 'file:./db/custom.db',
-    log: ['query'],
+    datasourceUrl: process.env.DATABASE_URL || 'file:/home/z/my-project/db/custom.db',
   })
 }
 

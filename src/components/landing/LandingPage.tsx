@@ -34,6 +34,32 @@ const particles = [
   { x: 18, y: 92, size: 2, opacity: 0.3 },
 ]
 
+// Pre-computed star field for background (larger, brighter decorative stars)
+const starField = [
+  { x: 5, y: 3, size: 1, opacity: 0.4, duration: '6s', delay: '0s', color: '#00f0ff' },
+  { x: 15, y: 12, size: 1.5, opacity: 0.25, duration: '8s', delay: '1s', color: '#a855f7' },
+  { x: 30, y: 5, size: 1, opacity: 0.35, duration: '5s', delay: '2.5s', color: '#ec4899' },
+  { x: 42, y: 18, size: 2, opacity: 0.15, duration: '10s', delay: '0.5s', color: '#00f0ff' },
+  { x: 58, y: 8, size: 1, opacity: 0.4, duration: '7s', delay: '3s', color: '#a855f7' },
+  { x: 68, y: 22, size: 1.5, opacity: 0.2, duration: '9s', delay: '1.5s', color: '#ec4899' },
+  { x: 80, y: 3, size: 1, opacity: 0.35, duration: '6s', delay: '4s', color: '#00f0ff' },
+  { x: 92, y: 15, size: 1.5, opacity: 0.3, duration: '8s', delay: '2s', color: '#a855f7' },
+  { x: 3, y: 45, size: 1, opacity: 0.25, duration: '7s', delay: '0.8s', color: '#ec4899' },
+  { x: 20, y: 50, size: 2, opacity: 0.15, duration: '11s', delay: '3.5s', color: '#00f0ff' },
+  { x: 38, y: 40, size: 1, opacity: 0.4, duration: '5s', delay: '1.2s', color: '#a855f7' },
+  { x: 55, y: 55, size: 1.5, opacity: 0.2, duration: '9s', delay: '2.8s', color: '#ec4899' },
+  { x: 70, y: 42, size: 1, opacity: 0.35, duration: '6s', delay: '4.5s', color: '#00f0ff' },
+  { x: 85, y: 48, size: 1.5, opacity: 0.25, duration: '8s', delay: '0.3s', color: '#a855f7' },
+  { x: 95, y: 35, size: 1, opacity: 0.3, duration: '7s', delay: '3.2s', color: '#ec4899' },
+  { x: 8, y: 72, size: 2, opacity: 0.15, duration: '10s', delay: '1.8s', color: '#00f0ff' },
+  { x: 25, y: 80, size: 1, opacity: 0.4, duration: '6s', delay: '4.2s', color: '#a855f7' },
+  { x: 45, y: 70, size: 1.5, opacity: 0.2, duration: '8s', delay: '2.3s', color: '#ec4899' },
+  { x: 62, y: 85, size: 1, opacity: 0.35, duration: '5s', delay: '0.6s', color: '#00f0ff' },
+  { x: 78, y: 75, size: 2, opacity: 0.15, duration: '11s', delay: '3.8s', color: '#a855f7' },
+  { x: 90, y: 88, size: 1, opacity: 0.3, duration: '7s', delay: '1.5s', color: '#ec4899' },
+  { x: 50, y: 95, size: 1.5, opacity: 0.25, duration: '9s', delay: '4.8s', color: '#00f0ff' },
+]
+
 const features = [
   {
     icon: Bot,
@@ -140,11 +166,29 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Pre-computed particles */}
+      {/* Pre-computed star field + particles */}
       <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Star field - subtle twinkling background */}
+        {starField.map((star, i) => (
+          <div
+            key={`star-${i}`}
+            className="absolute rounded-full star-field"
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: star.size,
+              height: star.size,
+              backgroundColor: star.color,
+              '--star-opacity': star.opacity,
+              '--star-duration': star.duration,
+              '--star-delay': star.delay,
+            } as React.CSSProperties}
+          />
+        ))}
+        {/* Animated particles */}
         {particles.map((particle, i) => (
           <motion.div
-            key={i}
+            key={`particle-${i}`}
             className="absolute rounded-full"
             style={{
               left: `${particle.x}%`,
@@ -230,9 +274,9 @@ export default function LandingPage() {
             <Zap className="w-3.5 h-3.5 text-[#a855f7]" />
           </motion.div>
 
-          {/* Title */}
+          {/* Title with typing cursor */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.9]">
-            <span className="gradient-text">ICSEasy</span>
+            <span className="gradient-text typing-cursor">ICSEasy</span>
           </h1>
 
           {/* Subtitle */}
@@ -315,7 +359,9 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section ref={featuresRef} className="relative z-10 py-24 px-4">
+      <section ref={featuresRef} className="relative z-10 py-24 px-4 section-transition">
+        {/* Section gradient divider */}
+        <div className="gradient-divider mb-16" />
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -342,7 +388,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
-                  className="glass rounded-2xl p-6 card-glow group relative overflow-hidden"
+                  className="glass rounded-2xl p-6 card-glow feature-card-enhanced group relative overflow-hidden"
                 >
                   {/* Gradient overlay */}
                   <div className={`absolute inset-0 bg-gradient-to-b ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -372,7 +418,8 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="relative z-10 py-24 px-4">
+      <section className="relative z-10 py-24 px-4 section-transition">
+        <div className="gradient-divider mb-16" />
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -427,7 +474,8 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="relative z-10 py-24 px-4">
+      <section className="relative z-10 py-24 px-4 section-transition">
+        <div className="gradient-divider mb-16" />
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -498,7 +546,8 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-10 py-24 px-4">
+      <section className="relative z-10 py-24 px-4 section-transition">
+        <div className="gradient-divider mb-16" />
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

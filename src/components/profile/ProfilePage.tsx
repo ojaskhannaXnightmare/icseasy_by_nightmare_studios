@@ -173,15 +173,17 @@ export default function ProfilePage() {
             <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10" />
 
             <div className="relative flex flex-col sm:flex-row items-center sm:items-end gap-5">
-              {/* Avatar */}
+              {/* Avatar with animated gradient glow ring */}
               <div className="relative group">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border-2 border-white/10 flex items-center justify-center overflow-hidden">
-                  <Avatar className="w-24 h-24 h-full w-full rounded-2xl">
-                    <AvatarImage src={user?.avatarUrl || undefined} className="object-cover" />
-                    <AvatarFallback className="bg-transparent text-2xl font-bold text-white/60">
-                      {user ? getInitials(user.name) : '?'}
-                    </AvatarFallback>
-                  </Avatar>
+                <div className="avatar-glow avatar-glow-rounded">
+                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border-2 border-white/10 flex items-center justify-center overflow-hidden">
+                    <Avatar className="w-24 h-24 h-full w-full rounded-2xl">
+                      <AvatarImage src={user?.avatarUrl || undefined} className="object-cover" />
+                      <AvatarFallback className="bg-transparent text-2xl font-bold text-white/60">
+                        {user ? getInitials(user.name) : '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                 </div>
                 <div className="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                   <Camera className="w-6 h-6 text-white" />
@@ -209,10 +211,10 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              {/* Edit Button */}
+              {/* Edit Button with neon hover glow */}
               <div className="flex items-center gap-2">
                 {!editing ? (
-                  <Button onClick={() => setEditing(true)} className="btn-neon gap-2 text-sm">
+                  <Button onClick={() => setEditing(true)} className="btn-neon btn-neon-hover-glow gap-2 text-sm">
                     <Edit3 className="w-4 h-4" /> Edit
                   </Button>
                 ) : (
@@ -285,7 +287,10 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {/* Stats Grid */}
+          {/* Section divider */}
+          <div className="gradient-divider" />
+
+          {/* Stats Grid with enhanced hover */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -302,17 +307,32 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="glass rounded-xl p-4 text-center card-glow"
+                  className="glass rounded-xl p-4 text-center card-glow stat-card-enhanced"
                 >
                   <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mx-auto mb-2 border ${stat.borderColor}`}>
                     <stat.icon className={`w-5 h-5 ${stat.color}`} />
                   </div>
+                  {/* Animated stat bar */}
+                  <motion.div
+                    className="h-0.5 rounded-full bg-white/5 overflow-hidden mb-2 mx-auto"
+                    style={{ maxWidth: '80%' }}
+                  >
+                    <motion.div
+                      className={`h-full rounded-full ${stat.bgColor.replace('/10', '/40')}`}
+                      initial={{ width: 0 }}
+                      animate={{ width: typeof stat.value === 'number' ? `${Math.min(stat.value * 2, 100)}%` : '60%' }}
+                      transition={{ duration: 1.2, delay: 0.5 + index * 0.15, ease: 'easeOut' }}
+                    />
+                  </motion.div>
                   <p className="text-2xl font-bold text-white">{stat.value}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
+
+          {/* Section divider */}
+          {bookmarkedNotes.length > 0 && <div className="gradient-divider" />}
 
           {/* Bookmarked Notes */}
           {bookmarkedNotes.length > 0 && (

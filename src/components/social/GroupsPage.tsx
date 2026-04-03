@@ -160,7 +160,7 @@ export default function GroupsPage() {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="btn-neon-solid gap-2 px-4 py-2 shadow-[0_0_20px_rgba(0,240,255,0.2)]"
+              className="btn-neon-solid btn-shimmer gap-2 px-4 py-2 shadow-[0_0_20px_rgba(0,240,255,0.2)]"
             >
               <Plus className="w-4 h-4" />
               Create Group
@@ -181,16 +181,38 @@ export default function GroupsPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-20"
           >
-            <motion.div
-              animate={{
-                y: [0, -10, 0],
-                rotate: [0, 5, -5, 0],
-              }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-white/10 flex items-center justify-center mx-auto mb-6"
-            >
-              <Users className="w-10 h-10 text-gray-500" />
-            </motion.div>
+            {/* Enhanced empty state with orbital animation */}
+            <div className="relative w-32 h-32 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full border border-white/5 orbital-ring" />
+              <div className="absolute inset-4 rounded-full border border-dashed border-white/5 orbital-ring" style={{ animationDirection: 'reverse', animationDuration: '9s' }} />
+              <div className="absolute inset-8 rounded-full border border-white/5 orbital-ring" style={{ animationDuration: '18s' }} />
+              {/* Orbital dots */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="orbital-dot" style={{ animationDuration: '12s' }}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-cyan-400/30 shadow-[0_0_10px_rgba(0,240,255,0.3)]" />
+                </div>
+              </div>
+              <div className="absolute bottom-4 right-0">
+                <div className="orbital-dot" style={{ animationDuration: '9s' }}>
+                  <div className="w-2 h-2 rounded-full bg-purple-400/30 shadow-[0_0_8px_rgba(168,85,247,0.3)]" />
+                </div>
+              </div>
+              <div className="absolute top-8 -left-2">
+                <div className="orbital-dot" style={{ animationDuration: '18s' }}>
+                  <div className="w-2 h-2 rounded-full bg-pink-400/30 shadow-[0_0_8px_rgba(236,72,153,0.3)]" />
+                </div>
+              </div>
+              {/* Center icon */}
+              <motion.div
+                animate={{ y: [0, -6, 0], rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-white/10 flex items-center justify-center">
+                  <Users className="w-8 h-8 text-gray-500" />
+                </div>
+              </motion.div>
+            </div>
             <motion.h3
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -230,7 +252,7 @@ export default function GroupsPage() {
                   exit={{ opacity: 0, y: -10, scale: 0.98 }}
                   transition={{ delay: index * 0.06 }}
                   whileHover={{ scale: 1.02, y: -2 }}
-                  className="glass-card rounded-xl p-5 card-glow cursor-pointer group relative overflow-hidden"
+                  className="glass-card rounded-xl p-5 card-glow group-card-gradient cursor-pointer group relative overflow-hidden"
                   onClick={() => openGroupChat(group)}
                 >
                   {/* Decorative gradient */}
@@ -257,9 +279,9 @@ export default function GroupsPage() {
                           {group.members?.length || 0} members
                         </Badge>
                       </div>
-                      {/* Member avatars with glow ring */}
+                      {/* Member avatars with stacking effect */}
                       {group.members && group.members.length > 0 && (
-                        <div className="flex items-center mt-3 -space-x-2">
+                        <div className="flex items-center mt-3 avatar-stack">
                           {group.members.slice(0, 5).map((member, mi) => (
                             <motion.div
                               key={member.userId}

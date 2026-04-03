@@ -106,6 +106,11 @@ export default function StudyTimer() {
 
   return (
     <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 pb-24 lg:pb-8 relative overflow-hidden">
+      {/* Ambient glow - changes color based on mode */}
+      <div
+        className="timer-ambient"
+        style={{ backgroundColor: mode === 'focus' ? '#00f0ff' : '#a855f7' }}
+      />
       {/* Background orbs that change color based on mode */}
       <motion.div
         className="fixed top-1/3 left-1/3 w-[400px] h-[400px] rounded-full pointer-events-none floating-orb"
@@ -174,7 +179,7 @@ export default function StudyTimer() {
             onClick={() => switchMode('focus')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
               mode === 'focus'
-                ? 'bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20 shadow-[0_0_20px_rgba(0,240,255,0.15)]'
+                ? 'bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20 shadow-[0_0_20px_rgba(0,240,255,0.15)] mode-toggle-active'
                 : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent'
             }`}
           >
@@ -187,7 +192,7 @@ export default function StudyTimer() {
             onClick={() => switchMode('break')}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
               mode === 'break'
-                ? 'bg-[#a855f7]/10 text-[#a855f7] border border-[#a855f7]/20 shadow-[0_0_20px_rgba(168,85,247,0.15)]'
+                ? 'bg-[#a855f7]/10 text-[#a855f7] border border-[#a855f7]/20 shadow-[0_0_20px_rgba(168,85,247,0.15)] mode-toggle-active'
                 : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent'
             }`}
           >
@@ -313,9 +318,9 @@ export default function StudyTimer() {
               onClick={handleStartPause}
               className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
                 mode === 'focus'
-                  ? 'bg-[#00f0ff] hover:bg-[#00f0ff]/90 text-[#0a0a0f] shadow-[0_0_30px_rgba(0,240,255,0.3)]'
-                  : 'bg-[#a855f7] hover:bg-[#a855f7]/90 text-white shadow-[0_0_30px_rgba(168,85,247,0.3)]'
-              }`}
+                  ? 'bg-[#00f0ff] hover:bg-[#00f0ff]/90 text-[#0a0a0f] shadow-[0_0_30px_rgba(0,240,255,0.3)] timer-btn-pulse text-[#00f0ff]'
+                  : 'bg-[#a855f7] hover:bg-[#a855f7]/90 text-white shadow-[0_0_30px_rgba(168,85,247,0.3)] timer-btn-pulse text-[#a855f7]'
+              } ${isRunning ? '' : ''}`}
             >
               {isRunning ? (
                 <Pause className="w-6 h-6" />
@@ -361,7 +366,7 @@ export default function StudyTimer() {
           </motion.div>
         </motion.div>
 
-        {/* Session Counter with staggered entrance */}
+        {/* Session Counter with neon badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -384,6 +389,14 @@ export default function StudyTimer() {
                 <span className="text-xs text-muted-foreground">
                   {sessions === 1 ? 'session' : 'sessions'} today
                 </span>
+                {sessions > 0 && (
+                  <span
+                    className="neon-badge text-cyan-400 border-cyan-500/20 bg-cyan-500/5"
+                    style={{ '--badge-glow': 'rgba(0, 240, 255, 0.15)' } as React.CSSProperties}
+                  >
+                    {mode === 'focus' ? '🔥' : '☕'} {mode === 'focus' ? 'Focused' : 'Resting'}
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex gap-1">

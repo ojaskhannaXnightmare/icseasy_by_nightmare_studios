@@ -1,8 +1,10 @@
 'use client'
 
+import { useSyncExternalStore } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore, type PageType } from '@/store/useStore'
 import LandingPage from '@/components/landing/LandingPage'
+import OnboardingTour from '@/components/OnboardingTour'
 import LoginForm from '@/components/auth/LoginForm'
 import SignupForm from '@/components/auth/SignupForm'
 import Sidebar from '@/components/layout/Sidebar'
@@ -59,6 +61,17 @@ const authenticatedPages: PageType[] = [
 function AppRouter() {
   const { currentPage, user } = useStore()
 
+  // Read localStorage for onboarding status (SSR-safe via useSyncExternalStore)
+ const onboardedValue = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener('storage', onStoreChange)
+      return () => window.removeEventListener('storage', onStoreChange)
+    },
+    () => localStorage.getItem('icseasy-onboarded'),
+    () => null
+  )
+  const showOnboarding = !!user && !onboardedValue
+
   // Auth guard: redirect to landing if not authenticated on protected pages
   const needsAuth = currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'signup'
   if (needsAuth && !user) {
@@ -75,6 +88,9 @@ function AppRouter() {
 
   return (
     <div className="min-h-screen">
+      {/* Onboarding Tour — shows for first-time logged-in users */}
+      {showOnboarding && <OnboardingTour />}
+
       {needsSidebar && <Sidebar />}
 
       {/* Page Router with Transitions */}

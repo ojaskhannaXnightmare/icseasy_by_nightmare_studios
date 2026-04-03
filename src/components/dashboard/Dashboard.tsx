@@ -20,11 +20,17 @@ import {
   Globe,
   Code2,
   Languages,
+  Leaf,
+  Landmark,
+  Monitor,
+  Sparkles,
+  MessageCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store/useStore'
 import DailyGoals from './DailyGoals'
+import { authFetch } from '@/lib/api'
 import {
   AreaChart,
   Area,
@@ -35,60 +41,70 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-// Pre-computed weekly activity data (no random)
-const weeklyData = [
-  { day: 'Mon', activity: 4 },
-  { day: 'Tue', activity: 7 },
-  { day: 'Wed', activity: 5 },
-  { day: 'Thu', activity: 9 },
-  { day: 'Fri', activity: 6 },
-  { day: 'Sat', activity: 12 },
-  { day: 'Sun', activity: 8 },
-]
+// Icon mapping for subjects from DB
+const subjectIcons: Record<string, React.ElementType> = {
+  Physics: Atom,
+  Chemistry: FlaskConical,
+  Mathematics: Calculator,
+  Biology: Leaf,
+  English: BookOpen,
+  History: Landmark,
+  Geography: Globe,
+  'Computer Science': Monitor,
+}
 
-// Pre-computed recent activities
-const recentActivities = [
-  {
-    id: '1',
-    icon: Brain,
-    text: 'Completed Physics Quiz',
-    detail: 'Score: 85%',
-    time: '2 hours ago',
-    color: '#00f0ff',
-  },
-  {
-    id: '2',
-    icon: FileText,
-    text: 'Generated Notes: Algebra',
-    detail: 'Mathematics',
-    time: '5 hours ago',
-    color: '#a855f7',
-  },
-  {
-    id: '3',
-    icon: Bot,
-    text: 'AI Tutor Session',
-    detail: 'Biology - Cell Structure',
-    time: 'Yesterday',
-    color: '#ec4899',
-  },
-  {
-    id: '4',
-    icon: Trophy,
-    text: 'Achievement Unlocked',
-    detail: '7-day Study Streak',
-    time: 'Yesterday',
-    color: '#22c55e',
-  },
-  {
-    id: '5',
-    icon: Search,
-    text: 'Researched: World War II',
-    detail: 'History',
-    time: '2 days ago',
-    color: '#f59e0b',
-  },
-]
+// Activity type icon mapping
+const activityTypeIcons: Record<string, React.ElementType> = {
+  quiz: Brain,
+  note: FileText,
+  chat: Bot,
+}
+
+// Relative time helper (no Math.random, no Date.now in render)
+function getRelativeTime(isoString: string): string {
+  const now = new Date()
+  const date = new Date(isoString)
+  const diffMs = now.getTime() - date.getTime()
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
+
+  if (diffSec < 60) return 'just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHour < 24) return `${diffHour}h ago`
+  if (diffDay === 1) return 'yesterday'
+  if (diffDay < 7) return `${diffDay}d ago`
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+interface WeeklyActivityItem {
+  day: string
+  activity: number
+}
+
+interface RecentActivityItem {
+  id: string
+  type: 'quiz' | 'note' | 'chat'
+  text: string
+  detail: string
+  time: string
+  color: string
+}
+
+interface SubjectItem {
+  name: string
+  topicsCount: number
+  completedCount: number
+  progress: number
+  color: string
+}
+
+interface ActivityData {
+  weeklyActivity: WeeklyActivityItem[]
+  recentActivities: RecentActivityItem[]
+  subjects: SubjectItem[]
+}
 
 const statsCards = [
   {
@@ -148,18 +164,6 @@ const quickActions = [
   },
 ]
 
-// Pre-computed subject progress data
-const subjectProgress = [
-  { name: 'Physics', icon: Atom, progress: 60, topicsCompleted: 9, totalTopics: 15, color: '#a855f7' },
-  { name: 'Chemistry', icon: FlaskConical, progress: 45, topicsCompleted: 6, totalTopics: 14, color: '#22c55e' },
-  { name: 'Mathematics', icon: Calculator, progress: 75, topicsCompleted: 12, totalTopics: 16, color: '#00f0ff' },
-  { name: 'Biology', icon: BookOpen, progress: 30, topicsCompleted: 4, totalTopics: 13, color: '#10b981' },
-  { name: 'English', icon: Languages, progress: 85, topicsCompleted: 11, totalTopics: 13, color: '#ec4899' },
-  { name: 'History', icon: History, progress: 55, topicsCompleted: 7, totalTopics: 13, color: '#f59e0b' },
-  { name: 'Geography', icon: Globe, progress: 40, topicsCompleted: 5, totalTopics: 13, color: '#3b82f6' },
-  { name: 'Computer Science', icon: Code2, progress: 70, topicsCompleted: 8, totalTopics: 12, color: '#8b5cf6' },
-]
-
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload?.length) return null
   return (
@@ -208,6 +212,7 @@ function DashboardSkeleton() {
 export default function Dashboard() {
   const { user, setCurrentPage, totalNotes, totalQuizzes, avgScore, setStats } = useStore()
   const [loading, setLoading] = useState(true)
+  const [activityData, setActivityData] = useState<ActivityData | null>(null)
 
   useEffect(() => {
     const init = async () => {
@@ -221,12 +226,34 @@ export default function Dashboard() {
           }
         }
       } catch { /* ignore */ }
+      try {
+        const actRes = await authFetch('/api/dashboard/activity')
+        if (actRes.ok) {
+          const actData = await actRes.json()
+          setActivityData(actData)
+        }
+      } catch { /* ignore */ }
       setLoading(false)
     }
     init()
   }, [])
 
   if (loading) return <DashboardSkeleton />
+
+  const weeklyData = activityData?.weeklyActivity ?? [
+    { day: 'Mon', activity: 0 },
+    { day: 'Tue', activity: 0 },
+    { day: 'Wed', activity: 0 },
+    { day: 'Thu', activity: 0 },
+    { day: 'Fri', activity: 0 },
+    { day: 'Sat', activity: 0 },
+    { day: 'Sun', activity: 0 },
+  ]
+
+  const recentActivities = activityData?.recentActivities ?? []
+  const subjectsList = activityData?.subjects ?? []
+
+  const isWeeklyEmpty = weeklyData.every((d) => d.activity === 0)
 
   return (
     <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
@@ -366,6 +393,16 @@ export default function Dashboard() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+            {isWeeklyEmpty && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="text-center text-xs text-muted-foreground mt-2"
+              >
+                Start studying to see your activity here
+              </motion.p>
+            )}
           </motion.div>
 
           {/* Quick Actions */}
@@ -427,52 +464,88 @@ export default function Dashboard() {
               View All
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {subjectProgress.map((subject, index) => {
-              const Icon = subject.icon
-              return (
-                <motion.div
-                  key={subject.name}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                  className="glass rounded-xl p-4 card-glow hover:bg-white/[0.04] transition-colors cursor-pointer"
-                  onClick={() => setCurrentPage('subjects')}
-                >
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: `${subject.color}15` }}
-                    >
-                      <Icon className="w-4 h-4" style={{ color: subject.color }} />
+          {subjectsList.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="glass rounded-xl p-8 text-center"
+            >
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                className="inline-block mb-4"
+              >
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto" style={{ backgroundColor: '#00f0ff10' }}>
+                  <BookOpen className="w-8 h-8" style={{ color: '#00f0ff' }} />
+                </div>
+              </motion.div>
+              <p className="text-sm text-muted-foreground">No subjects available yet</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 text-xs"
+                onClick={() => setCurrentPage('subjects')}
+              >
+                Browse Subjects
+              </Button>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {subjectsList.map((subject, index) => {
+                const Icon = subjectIcons[subject.name] || BookOpen
+                const hasProgress = subject.progress > 0
+                return (
+                  <motion.div
+                    key={subject.name}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                    className="glass rounded-xl p-4 card-glow hover:bg-white/[0.04] transition-colors cursor-pointer"
+                    onClick={() => setCurrentPage('subjects')}
+                  >
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: `${subject.color}15` }}
+                      >
+                        <Icon className="w-4 h-4" style={{ color: subject.color }} />
+                      </div>
+                      <span className="text-sm font-medium truncate">{subject.name}</span>
                     </div>
-                    <span className="text-sm font-medium truncate">{subject.name}</span>
-                  </div>
-                  {/* Progress bar */}
-                  <div className="w-full h-1.5 rounded-full bg-white/5 mb-2">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${subject.progress}%` }}
-                      transition={{ duration: 0.8, delay: 0.7 + index * 0.05 }}
-                      className="h-full rounded-full"
-                      style={{
-                        backgroundColor: subject.color,
-                        boxShadow: `0 0 8px ${subject.color}40`,
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] text-muted-foreground">
-                      {subject.topicsCompleted}/{subject.totalTopics} topics
-                    </span>
-                    <span className="text-[11px] font-semibold" style={{ color: subject.color }}>
-                      {subject.progress}%
-                    </span>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
+                    {/* Progress bar */}
+                    <div className="w-full h-1.5 rounded-full bg-white/5 mb-2">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${subject.progress}%` }}
+                        transition={{ duration: 0.8, delay: 0.7 + index * 0.05 }}
+                        className="h-full rounded-full"
+                        style={{
+                          backgroundColor: subject.color,
+                          boxShadow: `0 0 8px ${subject.color}40`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-muted-foreground">
+                        {hasProgress
+                          ? `${subject.completedCount}/${subject.topicsCount} topics`
+                          : `${subject.topicsCount} topics`}
+                      </span>
+                      {hasProgress ? (
+                        <span className="text-[11px] font-semibold" style={{ color: subject.color }}>
+                          {subject.progress}%
+                        </span>
+                      ) : (
+                        <span className="text-[11px] font-semibold" style={{ color: subject.color }}>
+                          Start
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
         </motion.div>
 
         {/* Recent Activity */}
@@ -491,32 +564,89 @@ export default function Dashboard() {
               View All
             </Button>
           </div>
-          <div className="space-y-3">
-            {recentActivities.map((activity, index) => {
-              const Icon = activity.icon
-              return (
-                <motion.div
-                  key={activity.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
-                  className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors"
+          {recentActivities.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-col items-center justify-center py-8"
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="mb-4"
+              >
+                <div className="w-20 h-20 rounded-full flex items-center justify-center relative">
+                  <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,240,255,0.1) 0%, transparent 70%)' }} />
+                  <Sparkles className="w-8 h-8 text-[#00f0ff]" />
+                  <motion.div
+                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full"
+                    style={{ backgroundColor: '#a855f7' }}
+                    animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full"
+                    style={{ backgroundColor: '#ec4899' }}
+                    animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                  />
+                </div>
+              </motion.div>
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                No activity yet — take a quiz or create notes to get started!
+              </p>
+              <div className="flex gap-3 mt-4">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs gap-1.5"
+                  onClick={() => setCurrentPage('quiz-setup')}
                 >
-                  <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${activity.color}12` }}
+                  <Brain className="w-3.5 h-3.5" />
+                  Take a Quiz
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs gap-1.5"
+                  onClick={() => setCurrentPage('notes')}
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                  Create Notes
+                </Button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="space-y-3">
+              {recentActivities.map((activity, index) => {
+                const Icon = activityTypeIcons[activity.type] || MessageCircle
+                return (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
+                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors"
                   >
-                    <Icon className="w-4 h-4" style={{ color: activity.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{activity.text}</p>
-                    <p className="text-xs text-muted-foreground">{activity.detail}</p>
-                  </div>
-                  <span className="text-xs text-muted-foreground shrink-0">{activity.time}</span>
-                </motion.div>
-              )
-            })}
-          </div>
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${activity.color}12` }}
+                    >
+                      <Icon className="w-4 h-4" style={{ color: activity.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{activity.text}</p>
+                      <p className="text-xs text-muted-foreground">{activity.detail}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">
+                      {getRelativeTime(activity.time)}
+                    </span>
+                  </motion.div>
+                )
+              })}
+            </div>
+          )}
         </motion.div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Bot, Loader2, Mail, Lock, Eye, EyeOff, User } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -16,8 +16,25 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   const passwordValid = password.length >= 6
+
+  const passwordStrength = useMemo(() => {
+    if (!password) return { score: 0, label: '', color: '' }
+    let score = 0
+    if (password.length >= 8) score += 1
+    if (/[A-Z]/.test(password)) score += 1
+    if (/[a-z]/.test(password)) score += 1
+    if (/[0-9]/.test(password)) score += 1
+    if (/[^A-Za-z0-9]/.test(password)) score += 1
+    if (password.length >= 12) score += 1
+
+    if (score <= 1) return { score, label: 'Weak', color: '#ef4444' }
+    if (score <= 3) return { score, label: 'Fair', color: '#f59e0b' }
+    if (score <= 5) return { score, label: 'Good', color: '#00f0ff' }
+    return { score, label: 'Strong', color: '#22c55e' }
+  }, [password])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -168,6 +185,8 @@ export default function SignupForm() {
                   placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
                   className={`pl-10 pr-10 h-11 bg-white/5 border-white/10 focus:border-[#a855f7]/50 rounded-lg input-lift ${
                     password && !passwordValid ? 'border-red-500/50' : ''
                   }`}
@@ -191,14 +210,30 @@ export default function SignupForm() {
                   Password must be at least 6 characters
                 </motion.p>
               )}
-              {passwordValid && (
-                <motion.p
-                  initial={{ opacity: 0, x: -4 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="text-xs text-[#22c55e]"
+              {/* Password Strength Meter */}
+              {passwordFocused && password.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-1.5 pt-1"
                 >
-                  Password strength: Good
-                </motion.p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-muted-foreground">Password strength</span>
+                    <span className="text-[11px] font-medium" style={{ color: passwordStrength.color }}>
+                      {passwordStrength.label}
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{ background: passwordStrength.color }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(passwordStrength.score / 6) * 100}%` }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
+                    />
+                  </div>
+                </motion.div>
               )}
             </div>
 
