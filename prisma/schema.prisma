@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String
+  password      String?
+  avatarUrl     String?
+  bio           String?
+  studyPrefs    String?         @default("[]")
+  isOnline      Boolean         @default(false)
+  lastSeen      DateTime?
+  streak        Int             @default(0)
+  lastActive    DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  notes         Note[]
+  quizzes       QuizAttempt[]
+  chatHistories ChatHistory[]
+  sentRequests  FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+  sentMessages  Message[]       @relation("SentMessages")
+  receivedMessages Message[]    @relation("ReceivedMessages")
+  groups        GroupMember[]
+  groupMessages GroupMessage[]
+  createdGroups Group[]         @relation("CreatedGroups")
+}
+
+model Note {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  subject     String
+  topic       String
+  content     String
+  noteType    String   @default("short")
+  isBookmarked Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  subject     String
+  topic       String
+  score       Float
+  totalMarks  Float
+  answers     String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subject {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  icon        String
+  color       String
+  description String
+  topics      Topic[]
+}
+
+model Topic {
+  id        String  @id @default(cuid())
+  subjectId String
+  name      String
+  notes     String?
+  questions String?
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+}
+
+model FriendRequest {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  sender     User     @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+  @@unique([senderId, receiverId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Group {
+  id        String         @id @default(cuid())
+  name      String
+  avatarUrl String?
+  createdBy String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  creator   User           @relation("CreatedGroups", fields: [createdBy], references: [id], onDelete: Cascade)
+  members   GroupMember[]
+  messages  GroupMessage[]
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([groupId, userId])
+}
+
+model GroupMessage {
+  id        String   @id @default(cuid())
+  groupId   String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
