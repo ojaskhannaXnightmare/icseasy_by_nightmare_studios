@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore, type GroupData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 interface GroupMessage {
   id: string
@@ -33,7 +34,7 @@ export default function GroupChat() {
   const fetchMessages = useCallback(async () => {
     if (!selectedGroup) return
     try {
-      const res = await fetch(`/api/groups/${selectedGroup.id}`)
+      const res = await authFetch(`/api/groups/${selectedGroup.id}`)
       if (res.ok) {
         const data = await res.json()
         setMessages(Array.isArray(data.messages) ? data.messages : [])
@@ -95,9 +96,8 @@ export default function GroupChat() {
     setMessages(prev => [...prev, tempMsg])
 
     try {
-      const res = await fetch(`/api/groups/${selectedGroup.id}`, {
+      const res = await authFetch(`/api/groups/${selectedGroup.id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content })
       })
       if (res.ok) {

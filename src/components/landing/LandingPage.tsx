@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Bot, BookOpen, Brain, Sparkles, ChevronRight, Zap } from 'lucide-react'
+import { Bot, BookOpen, Brain, Sparkles, ChevronRight, Zap, UserPlus, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useStore } from '@/store/useStore'
 
@@ -63,6 +63,56 @@ const stats = [
   { value: '8', label: 'ICSE Subjects' },
   { value: '500+', label: 'Quiz Questions' },
   { value: '24/7', label: 'AI Available' },
+]
+
+// How It Works steps
+const howItWorksSteps = [
+  {
+    step: 1,
+    title: 'Sign Up Free',
+    description: 'Create your account in seconds. No credit card required. Get instant access to all features.',
+    icon: UserPlus,
+  },
+  {
+    step: 2,
+    title: 'Choose Your Subject',
+    description: 'Pick from 8 ICSE subjects. Select specific topics or let AI guide your learning path.',
+    icon: BookOpen,
+  },
+  {
+    step: 3,
+    title: 'Learn with AI',
+    description: 'Get personalized tutoring, generate notes, take quizzes, and track your progress with AI.',
+    icon: GraduationCap,
+  },
+]
+
+// Testimonials
+const testimonials = [
+  {
+    initials: 'AP',
+    name: 'Ananya Patel',
+    school: 'St. Xavier\'s School, Mumbai',
+    rating: 5,
+    text: 'ICSEasy completely transformed my study routine. The AI tutor explains concepts better than most textbooks. I went from 65% to 92% in Physics!',
+    color: '#00f0ff',
+  },
+  {
+    initials: 'RS',
+    name: 'Rahul Sharma',
+    school: 'La Martiniere College, Kolkata',
+    rating: 5,
+    text: 'The quiz feature is absolutely brilliant. It adapts to my weak areas and gives me targeted practice. My Biology scores improved by 30 marks.',
+    color: '#a855f7',
+  },
+  {
+    initials: 'MK',
+    name: 'Meera Kapoor',
+    school: 'Bishop Cotton School, Bangalore',
+    rating: 5,
+    text: 'I love how everything is organized by ICSE syllabus. The smart notes save me hours of revision time. Best study app for ICSE students!',
+    color: '#ec4899',
+  },
 ]
 
 export default function LandingPage() {
@@ -300,6 +350,132 @@ export default function LandingPage() {
                 </motion.div>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="relative z-10 py-24 px-4">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              <span className="gradient-text">How It Works</span>
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              Get started in three simple steps and supercharge your ICSE preparation
+            </p>
+          </motion.div>
+
+          <div className="relative">
+            {/* Dashed connecting line (desktop) */}
+            <div className="hidden md:block absolute top-16 left-[20%] right-[20%] border-t-2 border-dashed border-[#00f0ff]/20 z-0" />
+
+            <div className="grid md:grid-cols-3 gap-8 relative z-10">
+              {howItWorksSteps.map((step, index) => {
+                const Icon = step.icon
+                return (
+                  <motion.div
+                    key={step.step}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    className="flex flex-col items-center text-center"
+                  >
+                    {/* Step circle */}
+                    <div className="relative mb-6">
+                      <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center neon-border border-[#00f0ff]/20">
+                        <Icon className="w-7 h-7 text-[#00f0ff]" />
+                      </div>
+                      <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#00f0ff] flex items-center justify-center shadow-[0_0_12px_rgba(0,240,255,0.4)]">
+                        <span className="text-xs font-bold text-[#0a0a0f]">{step.step}</span>
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                      {step.description}
+                    </p>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="relative z-10 py-24 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              <span className="gradient-text">Loved by Students</span>
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">
+              See what ICSE students across India are saying about their experience
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={testimonial.initials}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.5, delay: index * 0.15 }}
+                className="glass rounded-2xl p-6 card-glow relative overflow-hidden"
+              >
+                {/* Glow accent */}
+                <div
+                  className="absolute top-0 left-0 w-24 h-24 rounded-full blur-[60px] pointer-events-none"
+                  style={{ backgroundColor: `${testimonial.color}08` }}
+                />
+
+                <div className="relative z-10">
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-4">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <span key={i} className="text-amber-400 text-sm">★</span>
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                    &ldquo;{testimonial.text}&rdquo;
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                      style={{
+                        backgroundColor: `${testimonial.color}15`,
+                        color: testimonial.color,
+                        boxShadow: `0 0 12px ${testimonial.color}10`,
+                      }}
+                    >
+                      {testimonial.initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{testimonial.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{testimonial.school}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

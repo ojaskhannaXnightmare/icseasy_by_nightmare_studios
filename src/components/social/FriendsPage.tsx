@@ -18,6 +18,7 @@ import {
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog'
 import { useStore, type FriendData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 interface FriendRequest {
   id: string
@@ -39,17 +40,15 @@ export default function FriendsPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch('/api/friends')
+      const res = await authFetch('/api/friends')
       if (res.ok) {
         const data = await res.json()
-        setFriends(Array.isArray(data) ? data : [])
-      }
-    } catch { /* ignore */ }
-    try {
-      const res = await fetch('/api/friends/requests')
-      if (res.ok) {
-        const data = await res.json()
-        setRequests(Array.isArray(data) ? data : [])
+        setFriends(Array.isArray(data.friends) ? data.friends : [])
+        setRequests(Array.isArray(data.pendingRequests) ? data.pendingRequests.map((r: { id: string; user: { id: string; name: string; email: string; avatarUrl?: string | null } }) => ({
+          id: r.id,
+          user: r.user,
+          status: 'pending' as const
+        })) : [])
       }
     } catch { /* ignore */ }
     setLoading(false)
@@ -64,10 +63,9 @@ export default function FriendsPage() {
     setAddingFriend(true)
     setAddError('')
     try {
-      const res = await fetch('/api/friends', {
+      const res = await authFetch('/api/friends', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: addEmail.trim() })
+        body: JSON.stringify({ receiverEmail: addEmail.trim() })
       })
       const data = await res.json()
       if (res.ok) {
@@ -85,10 +83,9 @@ export default function FriendsPage() {
 
   const handleAcceptRequest = async (requestId: string) => {
     try {
-      await fetch(`/api/friends/${requestId}`, {
+      await authFetch(`/api/friends/${requestId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'accept' })
+        body: JSON.stringify({ status: 'accepted' })
       })
       setRequests(prev => prev.filter(r => r.id !== requestId))
       fetchData()
@@ -97,10 +94,9 @@ export default function FriendsPage() {
 
   const handleRejectRequest = async (requestId: string) => {
     try {
-      await fetch(`/api/friends/${requestId}`, {
+      await authFetch(`/api/friends/${requestId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reject' })
+        body: JSON.stringify({ status: 'rejected' })
       })
       setRequests(prev => prev.filter(r => r.id !== requestId))
     } catch { /* ignore */ }

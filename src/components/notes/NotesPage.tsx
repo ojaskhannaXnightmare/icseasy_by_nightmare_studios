@@ -22,6 +22,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore, type NoteData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 import { GenerateNoteDialog } from './GenerateNoteDialog'
 
 const SUBJECTS = [
@@ -53,7 +54,7 @@ export default function NotesPage() {
 
   const fetchNotes = useCallback(async () => {
     try {
-      const res = await fetch('/api/notes')
+      const res = await authFetch('/api/notes')
       if (res.ok) {
         const data = await res.json()
         setNotes(data)
@@ -85,9 +86,8 @@ export default function NotesPage() {
 
   const toggleBookmark = async (note: NoteData) => {
     try {
-      const res = await fetch(`/api/notes/${note.id}`, {
+      const res = await authFetch(`/api/notes/${note.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isBookmarked: !note.isBookmarked })
       })
       if (res.ok) {
@@ -106,7 +106,7 @@ export default function NotesPage() {
   const deleteNote = async () => {
     if (!deleteId) return
     try {
-      const res = await fetch(`/api/notes/${deleteId}`, { method: 'DELETE' })
+      const res = await authFetch(`/api/notes/${deleteId}`, { method: 'DELETE' })
       if (res.ok) {
         setNotes(prev => prev.filter(n => n.id !== deleteId))
         if (selectedNote?.id === deleteId) setSelectedNote(null)

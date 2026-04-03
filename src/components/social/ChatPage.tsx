@@ -11,6 +11,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStore, type FriendData, type MessageData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 export default function ChatPage() {
   const { selectedFriend, setCurrentPage, user, setSelectedFriend } = useStore()
@@ -24,7 +25,7 @@ export default function ChatPage() {
   const fetchMessages = useCallback(async () => {
     if (!selectedFriend) return
     try {
-      const res = await fetch(`/api/messages?friendId=${selectedFriend.id}`)
+      const res = await authFetch(`/api/messages?friendId=${selectedFriend.id}`)
       if (res.ok) {
         const data = await res.json()
         setMessages(Array.isArray(data) ? data : [])
@@ -98,9 +99,8 @@ export default function ChatPage() {
     setMessages(prev => [...prev, tempMsg])
 
     try {
-      const res = await fetch('/api/messages', {
+      const res = await authFetch('/api/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           receiverId: selectedFriend.id,
           content

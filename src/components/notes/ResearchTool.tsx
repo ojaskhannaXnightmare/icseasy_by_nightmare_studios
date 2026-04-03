@@ -19,6 +19,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
 } from '@/components/ui/dialog'
 import { useStore } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 const SUBJECTS = [
   'English', 'Mathematics', 'Physics', 'Chemistry',
@@ -72,12 +73,9 @@ export default function ResearchTool() {
     setResearching(true)
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await authFetch('/api/research', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `Research and provide comprehensive information on the topic "${topic}" for ICSE ${subject}. Include key concepts, important definitions, historical context if relevant, and connections to exam topics. Structure the response clearly with headings and bullet points. Format in markdown.`
-        })
+        body: JSON.stringify({ topic: topic.trim(), subject })
       })
       const data = await res.json()
       if (data.content) {
@@ -105,9 +103,8 @@ export default function ResearchTool() {
     if (!result || !topic.trim() || !subject) return
     setSaving(true)
     try {
-      const res = await fetch('/api/notes', {
+      const res = await authFetch('/api/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: `Research: ${topic}`,
           subject,

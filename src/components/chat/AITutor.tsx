@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useStore } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 import ReactMarkdown from 'react-markdown'
 
 const suggestedPrompts = [
@@ -71,10 +72,15 @@ export default function AITutor() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/chat', {
+      // Build message history for context
+      const messages = [
+        ...chatMessages.map(m => ({ role: m.role, content: m.content })),
+        { role: 'user', content },
+      ]
+
+      const res = await authFetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content }),
+        body: JSON.stringify({ messages }),
       })
 
       const data = await res.json()
@@ -82,7 +88,7 @@ export default function AITutor() {
       const assistantMessage = {
         id: `assistant-${chatMessages.length + 2}`,
         role: 'assistant' as const,
-        content: data.response || data.content || 'Sorry, I could not process your request. Please try again.',
+        content: data.message || data.response || data.content || 'Sorry, I could not process your request. Please try again.',
         timestamp: Date.now(),
       }
       addChatMessage(assistantMessage)

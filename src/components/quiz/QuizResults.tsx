@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useStore } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 export default function QuizResults() {
   const {
@@ -79,9 +80,8 @@ export default function QuizResults() {
   useEffect(() => {
     const saveResult = async () => {
       try {
-        await fetch('/api/quiz/submit', {
+        await authFetch('/api/quiz/submit', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             subject: quizSubject,
             topic: quizTopic,

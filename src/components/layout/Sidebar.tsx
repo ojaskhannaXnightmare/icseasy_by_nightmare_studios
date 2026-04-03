@@ -1,6 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   Bot,
@@ -14,6 +15,9 @@ import {
   LogOut,
   Menu,
   X,
+  Bell,
+  Timer,
+  Trophy,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -40,17 +44,197 @@ const navItems: NavItem[] = [
   { icon: FileText, label: 'Notes', page: 'notes' },
   { icon: Search, label: 'Research', page: 'research' },
   { icon: Brain, label: 'Quiz', page: 'quiz-setup' },
+  { icon: Timer, label: 'Study Timer', page: 'timer' },
+  { icon: Trophy, label: 'Leaderboard', page: 'leaderboard' },
   { icon: Users, label: 'Friends', page: 'friends' },
   { icon: MessageSquare, label: 'Groups', page: 'groups' },
   { icon: User, label: 'Profile', page: 'profile' },
 ]
+
+const sampleNotifications = [
+  {
+    id: '1',
+    title: 'Quiz Score Updated',
+    message: 'You scored 92% on Physics - Laws of Motion',
+    time: '5 min ago',
+    color: '#00f0ff',
+    read: false,
+  },
+  {
+    id: '2',
+    title: 'Friend Request',
+    message: 'Priya Patel wants to connect with you',
+    time: '1 hour ago',
+    color: '#a855f7',
+    read: false,
+  },
+  {
+    id: '3',
+    title: 'Study Streak',
+    message: 'You\'re on a 7-day streak! Keep it going!',
+    time: '3 hours ago',
+    color: '#f59e0b',
+    read: true,
+  },
+  {
+    id: '4',
+    title: 'New Notes Available',
+    message: 'AI-generated notes for Chemistry - Organic Compounds',
+    time: 'Yesterday',
+    color: '#ec4899',
+    read: true,
+  },
+]
+
+function NotificationBell({ collapsed = false }: { collapsed?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const unreadCount = sampleNotifications.filter(n => !n.read).length
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [open])
+
+  if (collapsed) {
+    return (
+      <div className="relative" ref={dropdownRef}>
+        <button
+          onClick={() => setOpen(!open)}
+          className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+        >
+          <Bell className="w-5 h-5 text-muted-foreground" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full flex items-center justify-center">
+              <span className="text-[8px] font-bold text-white">{unreadCount}</span>
+            </span>
+          )}
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -5 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -5 }}
+              transition={{ duration: 0.15 }}
+              className="absolute top-full left-full ml-2 mt-1 w-80 z-50"
+            >
+              <div className="glass-strong rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+                <div className="p-3 border-b border-white/5">
+                  <h3 className="text-sm font-semibold">Notifications</h3>
+                </div>
+                <ScrollArea className="max-h-72">
+                  {sampleNotifications.map(n => (
+                    <div
+                      key={n.id}
+                      className={cn(
+                        'px-3 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer',
+                        !n.read && 'bg-white/[0.02]'
+                      )}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium">{n.title}</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
+                          <p className="text-[10px] text-muted-foreground/60 mt-1">{n.time}</p>
+                        </div>
+                        {!n.read && (
+                          <div className="w-2 h-2 rounded-full bg-[#00f0ff] mt-1.5 shrink-0" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </ScrollArea>
+                <div className="p-2 border-t border-white/5">
+                  <button className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1.5 transition-colors">
+                    View all notifications
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative flex-1 flex justify-end" ref={dropdownRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+      >
+        <Bell className="w-4.5 h-4.5 text-muted-foreground" />
+        {unreadCount > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(239,68,68,0.5)]">
+            <span className="text-[8px] font-bold text-white">{unreadCount}</span>
+          </span>
+        )}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -5 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -5 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full right-0 mt-1 w-80 z-50"
+          >
+            <div className="glass-strong rounded-xl border border-white/10 overflow-hidden shadow-2xl">
+              <div className="p-3 border-b border-white/5">
+                <h3 className="text-sm font-semibold">Notifications</h3>
+              </div>
+              <ScrollArea className="max-h-72">
+                {sampleNotifications.map(n => (
+                  <div
+                    key={n.id}
+                    className={cn(
+                      'px-3 py-3 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer',
+                      !n.read && 'bg-white/[0.02]'
+                    )}
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: n.color }} />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium">{n.title}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.message}</p>
+                        <p className="text-[10px] text-muted-foreground/60 mt-1">{n.time}</p>
+                      </div>
+                      {!n.read && (
+                        <div className="w-2 h-2 rounded-full bg-[#00f0ff] mt-1.5 shrink-0" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </ScrollArea>
+              <div className="p-2 border-t border-white/5">
+                <button className="w-full text-center text-xs text-muted-foreground hover:text-foreground py-1.5 transition-colors">
+                  View all notifications
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
   const { currentPage, setCurrentPage, logout } = useStore()
 
   return (
     <div className="flex flex-col h-full">
-      {/* Logo */}
+      {/* Logo + Notification Bell */}
       <div className="p-4 flex items-center gap-3">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#00f0ff] to-[#a855f7] flex items-center justify-center shrink-0">
           <Bot className="w-5 h-5 text-[#0a0a0f]" />
@@ -59,7 +243,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="min-w-0"
+            className="min-w-0 flex-1"
           >
             <h1 className="text-lg font-bold gradient-text leading-tight">ICSEasy</h1>
             <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
@@ -67,6 +251,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
             </p>
           </motion.div>
         )}
+        <NotificationBell collapsed={collapsed} />
       </div>
 
       <Separator className="bg-white/5" />

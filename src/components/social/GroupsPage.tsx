@@ -17,6 +17,7 @@ import {
   DialogDescription, DialogFooter
 } from '@/components/ui/dialog'
 import { useStore, type GroupData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 export default function GroupsPage() {
   const { setCurrentPage, setSelectedGroup } = useStore()
@@ -29,7 +30,7 @@ export default function GroupsPage() {
 
   const loadGroups = async () => {
     try {
-      const res = await fetch('/api/groups')
+      const res = await authFetch('/api/groups')
       if (res.ok) {
         const data = await res.json()
         setGroups(Array.isArray(data) ? data : [])
@@ -53,9 +54,8 @@ export default function GroupsPage() {
     setCreating(true)
     setError('')
     try {
-      const res = await fetch('/api/groups', {
+      const res = await authFetch('/api/groups', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: groupName.trim() })
       })
       const data = await res.json()

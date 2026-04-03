@@ -5,6 +5,7 @@ import LandingPage from '@/components/landing/LandingPage'
 import LoginForm from '@/components/auth/LoginForm'
 import SignupForm from '@/components/auth/SignupForm'
 import Sidebar from '@/components/layout/Sidebar'
+import BottomNav from '@/components/layout/BottomNav'
 import Dashboard from '@/components/dashboard/Dashboard'
 import AITutor from '@/components/chat/AITutor'
 import SubjectHub from '@/components/subjects/SubjectHub'
@@ -19,6 +20,8 @@ import ChatPage from '@/components/social/ChatPage'
 import GroupsPage from '@/components/social/GroupsPage'
 import GroupChat from '@/components/social/GroupChat'
 import ProfilePage from '@/components/profile/ProfilePage'
+import StudyTimer from '@/components/timer/StudyTimer'
+import LeaderboardPage from '@/components/leaderboard/LeaderboardPage'
 
 
 
@@ -38,10 +41,18 @@ const authenticatedPages: PageType[] = [
   'groups',
   'group-chat',
   'profile',
+  'timer',
+  'leaderboard',
 ]
 
 function AppRouter() {
-  const { currentPage } = useStore()
+  const { currentPage, user } = useStore()
+
+  // Auth guard: redirect to landing if not authenticated on protected pages
+  const needsAuth = currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'signup'
+  if (needsAuth && !user) {
+    return <LandingPage />
+  }
 
   // Unauthenticated pages
   if (currentPage === 'landing') return <LandingPage />
@@ -78,6 +89,15 @@ function AppRouter() {
 
       {/* Profile */}
       {currentPage === 'profile' && <ProfilePage />}
+
+      {/* Study Timer */}
+      {currentPage === 'timer' && <StudyTimer />}
+
+      {/* Leaderboard */}
+      {currentPage === 'leaderboard' && <LeaderboardPage />}
+
+      {/* Bottom Navigation (mobile only) */}
+      {needsSidebar && <BottomNav />}
     </div>
   )
 }

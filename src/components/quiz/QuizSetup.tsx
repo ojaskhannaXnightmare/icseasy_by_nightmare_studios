@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import { useStore, type SubjectData, type QuizAttemptData } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 const SUBJECT_ICONS: Record<string, React.ReactNode> = {
   'English': <Languages className="w-6 h-6" />,
@@ -71,7 +72,7 @@ export default function QuizSetup() {
         }
       } catch { /* ignore */ }
       try {
-        const res = await fetch('/api/quiz/attempts')
+        const res = await authFetch('/api/quiz/attempts')
         if (res.ok) {
           const data = await res.json()
           setAttempts(Array.isArray(data) ? data : [])
@@ -95,9 +96,8 @@ export default function QuizSetup() {
     setStarting(true)
 
     try {
-      const res = await fetch('/api/quiz/generate', {
+      const res = await authFetch('/api/quiz/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subject: selectedSubjectName,
           topic: selectedTopic,

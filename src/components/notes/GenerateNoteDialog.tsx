@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Textarea } from '@/components/ui/textarea'
+import { authFetch } from '@/lib/api'
 
 const SUBJECTS = [
   'English', 'Mathematics', 'Physics', 'Chemistry',
@@ -66,16 +67,18 @@ export function GenerateNoteDialog({ open, onOpenChange, onNoteCreated }: Genera
     setStep('generating')
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await authFetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Generate ICSE ${subject} study notes on the topic "${topic}" in ${noteType} format. The notes should be comprehensive, well-structured, and suitable for ICSE exam preparation. Include key concepts, definitions, and important points. Format the response in markdown. Do not include a title at the top - just start with the content directly.`
+          messages: [{
+            role: 'user',
+            content: `Generate ICSE ${subject} study notes on the topic "${topic}" in ${noteType} format. The notes should be comprehensive, well-structured, and suitable for ICSE exam preparation. Include key concepts, definitions, and important points. Format the response in markdown. Do not include a title at the top - just start with the content directly.`
+          }]
         })
       })
       const data = await res.json()
-      if (data.content) {
-        setGeneratedContent(data.content)
+      if (data.message || data.content) {
+        setGeneratedContent(data.message || data.content)
         setGeneratedTitle(`${topic} - ${subject} Notes`)
         setStep('preview')
       } else {
@@ -92,9 +95,8 @@ export function GenerateNoteDialog({ open, onOpenChange, onNoteCreated }: Genera
     if (!generatedContent) return
     setSaving(true)
     try {
-      const res = await fetch('/api/notes', {
+      const res = await authFetch('/api/notes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: generatedTitle,
           subject,

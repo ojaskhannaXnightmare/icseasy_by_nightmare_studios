@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Flame,
@@ -12,8 +13,16 @@ import {
   Pencil,
   Clock,
   Trophy,
+  Atom,
+  FlaskConical,
+  Calculator,
+  History,
+  Globe,
+  Code2,
+  Languages,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useStore } from '@/store/useStore'
 import {
   AreaChart,
@@ -138,6 +147,18 @@ const quickActions = [
   },
 ]
 
+// Pre-computed subject progress data
+const subjectProgress = [
+  { name: 'Physics', icon: Atom, progress: 60, topicsCompleted: 9, totalTopics: 15, color: '#a855f7' },
+  { name: 'Chemistry', icon: FlaskConical, progress: 45, topicsCompleted: 6, totalTopics: 14, color: '#22c55e' },
+  { name: 'Mathematics', icon: Calculator, progress: 75, topicsCompleted: 12, totalTopics: 16, color: '#00f0ff' },
+  { name: 'Biology', icon: BookOpen, progress: 30, topicsCompleted: 4, totalTopics: 13, color: '#10b981' },
+  { name: 'English', icon: Languages, progress: 85, topicsCompleted: 11, totalTopics: 13, color: '#ec4899' },
+  { name: 'History', icon: History, progress: 55, topicsCompleted: 7, totalTopics: 13, color: '#f59e0b' },
+  { name: 'Geography', icon: Globe, progress: 40, topicsCompleted: 5, totalTopics: 13, color: '#3b82f6' },
+  { name: 'Computer Science', icon: Code2, progress: 70, topicsCompleted: 8, totalTopics: 12, color: '#8b5cf6' },
+]
+
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
   if (!active || !payload?.length) return null
   return (
@@ -148,8 +169,51 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   )
 }
 
+function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Welcome skeleton */}
+        <div className="mb-8">
+          <Skeleton className="h-4 w-40 mb-2 bg-white/5" />
+          <Skeleton className="h-8 w-64 mb-2 bg-white/5" />
+          <Skeleton className="h-4 w-48 bg-white/5" />
+        </div>
+        {/* Stats skeleton */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[1, 2, 3, 4].map(i => (
+            <Skeleton key={i} className="h-28 rounded-xl bg-white/5" />
+          ))}
+        </div>
+        {/* Chart + Actions skeleton */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-8">
+          <Skeleton className="lg:col-span-2 h-80 rounded-xl bg-white/5" />
+          <Skeleton className="h-80 rounded-xl bg-white/5" />
+        </div>
+        {/* Subjects skeleton */}
+        <Skeleton className="h-6 w-32 mb-4 bg-white/5" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+            <Skeleton key={i} className="h-32 rounded-xl bg-white/5" />
+          ))}
+        </div>
+        {/* Activity skeleton */}
+        <Skeleton className="h-72 rounded-xl bg-white/5" />
+      </div>
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const { user, setCurrentPage, totalNotes, totalQuizzes, avgScore } = useStore()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (loading) return <DashboardSkeleton />
 
   return (
     <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
@@ -309,6 +373,75 @@ export default function Dashboard() {
             </div>
           </motion.div>
         </div>
+
+        {/* Your Subjects - Progress Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-semibold">Your Subjects</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Track your progress across all subjects</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-muted-foreground"
+              onClick={() => setCurrentPage('subjects')}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {subjectProgress.map((subject, index) => {
+              const Icon = subject.icon
+              return (
+                <motion.div
+                  key={subject.name}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
+                  className="glass rounded-xl p-4 card-glow hover:bg-white/[0.04] transition-colors cursor-pointer"
+                  onClick={() => setCurrentPage('subjects')}
+                >
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${subject.color}15` }}
+                    >
+                      <Icon className="w-4 h-4" style={{ color: subject.color }} />
+                    </div>
+                    <span className="text-sm font-medium truncate">{subject.name}</span>
+                  </div>
+                  {/* Progress bar */}
+                  <div className="w-full h-1.5 rounded-full bg-white/5 mb-2">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${subject.progress}%` }}
+                      transition={{ duration: 0.8, delay: 0.7 + index * 0.05 }}
+                      className="h-full rounded-full"
+                      style={{
+                        backgroundColor: subject.color,
+                        boxShadow: `0 0 8px ${subject.color}40`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-muted-foreground">
+                      {subject.topicsCompleted}/{subject.totalTopics} topics
+                    </span>
+                    <span className="text-[11px] font-semibold" style={{ color: subject.color }}>
+                      {subject.progress}%
+                    </span>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        </motion.div>
 
         {/* Recent Activity */}
         <motion.div

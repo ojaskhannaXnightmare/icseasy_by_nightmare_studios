@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { useStore } from '@/store/useStore'
 
 export default function SignupForm() {
-  const { setCurrentPage } = useStore()
+  const { setCurrentPage, setAuth } = useStore()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,6 +44,10 @@ export default function SignupForm() {
         return
       }
 
+      // Store auth state
+      if (data.token && data.user) {
+        setAuth(data.user, data.token)
+      }
       setCurrentPage('dashboard')
     } catch {
       setError('Something went wrong. Please try again.')

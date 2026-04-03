@@ -16,6 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { useStore } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 
 export default function ProfilePage() {
   const {
@@ -40,7 +41,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('/api/profile')
+        const res = await authFetch('/api/profile')
         if (res.ok) {
           const data = await res.json()
           updateProfileState({
@@ -60,9 +61,8 @@ export default function ProfilePage() {
     setSaving(true)
     setSuccess(false)
     try {
-      const res = await fetch('/api/profile', {
+      const res = await authFetch('/api/profile', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, bio, studyPrefs })
       })
       if (res.ok) {
