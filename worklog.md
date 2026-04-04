@@ -1094,3 +1094,31 @@ Stage Summary:
 - Vercel deployment should connect to Turso when `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` env vars are set
 - User must also set `DATABASE_URL` on Vercel to any valid SQLite path (e.g., `file:/tmp/dummy.db`) since Prisma schema references it
 - Key files changed: `next.config.ts`, `package.json`, `src/lib/db.ts`
+
+---
+Task ID: 14 — Fix AI API Routes + Mobile Optimization
+Agent: Main Agent
+Task: Fix AI Tutor errors on Vercel and optimize mobile layout
+
+Work Log:
+- Diagnosed AI API failure: z-ai-web-dev-sdk reads config from /etc/.z-ai-config (sandbox-only internal IP). On Vercel, ZAI.create() throws "Configuration file not found"
+- Created shared AI helper src/lib/ai.ts with dual initialization:
+  - Vercel path: ZAI_BASE_URL + ZAI_API_KEY env vars → new ZAI({baseUrl, apiKey})
+  - Sandbox path: ZAI.create() file-based config
+  - Returns {error} with descriptive message if neither works
+- Updated 5 AI API routes: chat, quiz/generate, research, planner/generate, challenge/generate
+- Each route returns HTTP 503 with clear error message when AI unavailable
+- Fixed AITutor.tsx: Added res.ok + data.error check before consuming response
+- Added z-ai-web-dev-sdk to serverExternalPackages in next.config.ts
+- Mobile fixes:
+  - BottomNav: iOS safe-area-inset-bottom padding via env() CSS function
+  - AITutor: safe-area padding on chat input area
+  - Added pb-24 to 4 pages missing it (FormulaSheets, ResearchTool, GroupChat, FocusMode)
+  - Verified all 33 pages have proper pb-24 lg:pb-8 bottom padding
+- Pushed to GitHub (commit e9913a2)
+
+Stage Summary:
+- AI routes now gracefully handle unavailability with clear 503 errors
+- To enable AI on Vercel: set ZAI_BASE_URL and ZAI_API_KEY env vars
+- All pages properly account for bottom nav on mobile with pb-24
+- iOS safe area respected on bottom nav and chat input
