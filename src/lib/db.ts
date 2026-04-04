@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaLibSql } from '@prisma/adapter-libsql'
-import { createClient } from '@libsql/client'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -15,15 +13,20 @@ function isValidTursoUrl(url: string | undefined): url is string {
   return url.startsWith('libsql://') || url.startsWith('https://')
 }
 
-function createPrismaClient() {
+function createPrismaClient(): PrismaClient {
   // Use Turso cloud database in production when VALID credentials are set
-  // Strict validation prevents build-time crashes from missing/malformed env vars
+  // Dynamic imports prevent @libsql/client from being bundled when not needed
   if (
     process.env.NODE_ENV === 'production' &&
     isValidTursoUrl(process.env.TURSO_DATABASE_URL) &&
     process.env.TURSO_AUTH_TOKEN &&
     process.env.TURSO_AUTH_TOKEN !== 'undefined'
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { createClient } = require('@libsql/client')
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PrismaLibSql } = require('@prisma/adapter-libsql')
+
     const libsql = createClient({
       url: process.env.TURSO_DATABASE_URL,
       authToken: process.env.TURSO_AUTH_TOKEN,
@@ -33,8 +36,8 @@ function createPrismaClient() {
   }
 
   // Local SQLite database (development + Vercel build fallback)
-  // During build, use in-memory DB to avoid file system issues
-  const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || !process.env.DATABASE_URL
+  // During build, use /tmp to avoid file system issues in serverless
+  const isBuild = process.env.NEXT_PHASE === 'phase-production-build'
   const dbUrl = isBuild
     ? 'file:/tmp/prisma-build.db'
     : (process.env.DATABASE_URL || 'file:./db/custom.db')
