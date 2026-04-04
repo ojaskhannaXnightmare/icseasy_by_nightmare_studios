@@ -17,21 +17,19 @@ export async function getAI(): Promise<{ zai: ZAIInstance } | { error: string }>
   if (initError) return { error: initError }
 
   try {
+    // Dynamic import — z-ai-web-dev-sdk is ESM-only, require() won't work
+    const ZAI = (await import('z-ai-web-dev-sdk')).default
+
     // Try env var configuration first (for Vercel / external deployments)
     const baseUrl = process.env.ZAI_BASE_URL
     const apiKey = process.env.ZAI_API_KEY
 
     if (baseUrl && apiKey) {
-      // Dynamic import to avoid bundling issues
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const ZAI = require('z-ai-web-dev-sdk').default
       cachedZai = new ZAI({ baseUrl, apiKey })
       return { zai: cachedZai }
     }
 
     // Fall back to file-based config (sandbox environment)
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ZAI = require('z-ai-web-dev-sdk').default
     cachedZai = await ZAI.create()
     return { zai: cachedZai }
   } catch (err: unknown) {

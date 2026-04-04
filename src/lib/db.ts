@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaLibSQL } from '@prisma/adapter-libsql'
 
 /**
  * ICSEasy Database Configuration
@@ -6,9 +7,9 @@ import { PrismaClient } from '@prisma/client'
  * On Vercel (production): Connects to Turso cloud DB via @prisma/adapter-libsql
  * Locally (development): Uses local SQLite via Prisma's default SQLite driver
  *
- * The adapter packages are listed in serverExternalPackages (next.config.ts)
- * so webpack won't bundle them — they're loaded at runtime from node_modules.
- * This prevents build-time crashes when TURSO_DATABASE_URL is absent.
+ * Both @libsql/client and @prisma/adapter-libsql are listed in
+ * serverExternalPackages (next.config.ts) so webpack won't bundle them —
+ * they're resolved at runtime from node_modules.
  */
 
 const globalForPrisma = globalThis as unknown as {
@@ -33,10 +34,6 @@ function createPrismaClient(): PrismaClient {
 
   if (canUseTurso) {
     try {
-      // Dynamically load Turso dependencies (only at runtime, not during build)
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { PrismaLibSQL } = require('@prisma/adapter-libsql')
-
       // PrismaLibSQL is a FACTORY — pass {url, authToken} config, NOT a client instance
       const adapter = new PrismaLibSQL({
         url: tursoUrl,
