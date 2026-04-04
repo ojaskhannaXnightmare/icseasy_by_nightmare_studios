@@ -27,6 +27,7 @@ import { useStore } from '@/store/useStore'
 import DailyGoals from './DailyGoals'
 import StreakWidget from '@/components/StreakWidget'
 import ExamCountdown from '@/components/exam/ExamCountdown'
+import XPBar from '@/components/xp/XPBar'
 import { authFetch } from '@/lib/api'
 import {
   AreaChart,
@@ -246,7 +247,7 @@ export default function Dashboard() {
   const isWeeklyEmpty = weeklyData.every((d) => d.activity === 0)
 
   return (
-    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
+    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 bg-gradient-flow">
       {/* Background glows */}
       <div className="fixed top-0 right-0 w-96 h-96 bg-[#00f0ff]/3 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/4 w-96 h-96 bg-[#a855f7]/3 rounded-full blur-[150px] pointer-events-none" />
@@ -283,12 +284,19 @@ export default function Dashboard() {
               }).format(new Date())}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold">
-            Welcome back, <span className="gradient-text text-gradient-animated">{user?.name || 'Student'}</span>
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Ready to continue your learning journey?
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold">
+                Welcome back, <span className="gradient-text text-gradient-animated">{user?.name || 'Student'}</span>
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Ready to continue your learning journey?
+              </p>
+            </div>
+            <div className="w-full sm:w-72">
+              <XPBar />
+            </div>
+          </div>
         </motion.div>
 
         {/* Stats Grid */}
@@ -307,7 +315,7 @@ export default function Dashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: (index + 1) * 0.1 }}
-                className="glass-card rounded-xl p-4 sm:p-5 stat-card-lift card-glow"
+                className="glass-card rounded-xl p-4 sm:p-5 card-hover-lift card-glow"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div
@@ -318,7 +326,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div
-                  className="text-2xl sm:text-3xl font-bold"
+                  className="text-2xl sm:text-3xl font-bold number-animate"
                   style={{ color: stat.color }}
                 >
                   {value}
@@ -329,7 +337,7 @@ export default function Dashboard() {
           })}
         </div>
 
-        <div className="gradient-divider my-4" />
+        <div className="gradient-divider separator-neon my-4" />
         {/* Exam Countdown Widget */}
         <div className="mb-8">
           <ExamCountdown />

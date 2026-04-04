@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type PageType = 'landing' | 'login' | 'signup' | 'dashboard' | 'tutor' | 'subjects' | 'subject-detail' | 'notes' | 'bookmarks' | 'research' | 'quiz-setup' | 'quiz-active' | 'quiz-results' | 'quiz-history' | 'friends' | 'messages' | 'groups' | 'profile' | 'group-chat' | 'timer' | 'leaderboard' | 'achievements' | 'flashcards' | 'analytics' | 'settings' | 'planner' | 'challenge' | 'reports' | 'heatmap'
+export type PageType = 'landing' | 'login' | 'signup' | 'dashboard' | 'tutor' | 'subjects' | 'subject-detail' | 'notes' | 'bookmarks' | 'formulas' | 'research' | 'quiz-setup' | 'quiz-active' | 'quiz-results' | 'quiz-history' | 'friends' | 'messages' | 'groups' | 'profile' | 'group-chat' | 'timer' | 'leaderboard' | 'achievements' | 'flashcards' | 'analytics' | 'settings' | 'planner' | 'challenge' | 'reports' | 'heatmap' | 'focus'
 
 export interface User {
   id: string
@@ -138,6 +138,12 @@ interface AppState {
   setStreak: (streak: number) => void
   longestStreak: number
   setLongestStreak: (longestStreak: number) => void
+
+  // XP & Level
+  xp: number
+  setXp: (xp: number) => void
+  level: number
+  setLevel: (level: number) => void
 }
 
 export const useStore = create<AppState>()(
@@ -224,6 +230,12 @@ export const useStore = create<AppState>()(
       setStreak: (streak) => set({ streak }),
       longestStreak: 0,
       setLongestStreak: (longestStreak) => set({ longestStreak }),
+
+      // XP & Level
+      xp: 0,
+      setXp: (xp) => set({ xp }),
+      level: 1,
+      setLevel: (level) => set({ level }),
     }),
     {
       name: 'icseasy-store',
@@ -237,6 +249,8 @@ export const useStore = create<AppState>()(
         avgScore: state.avgScore,
         streak: state.streak,
         longestStreak: state.longestStreak,
+        xp: state.xp,
+        level: state.level,
       }),
     }
   )

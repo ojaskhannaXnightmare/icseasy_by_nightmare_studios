@@ -295,7 +295,7 @@ export default function FriendsPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 scrollbar-thin">
             <AnimatePresence>
               {filteredFriends.map((friend, index) => (
                 <motion.div
@@ -304,7 +304,7 @@ export default function FriendsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.03 }}
-                  className="glass rounded-xl p-4 flex items-center gap-3 card-glow friend-card-glow cursor-pointer group"
+                  className="glass card-glass-frost rounded-xl p-4 flex items-center gap-3 card-glow friend-card-glow cursor-pointer group"
                   onClick={() => openChat(friend)}
                 >
                   <div className="relative shrink-0">

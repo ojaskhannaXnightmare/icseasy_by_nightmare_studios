@@ -3,6 +3,7 @@
 import { useSyncExternalStore, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore, type PageType } from '@/store/useStore'
+import { authFetch } from '@/lib/api'
 import LandingPage from '@/components/landing/LandingPage'
 import OnboardingTour from '@/components/OnboardingTour'
 import LoginForm from '@/components/auth/LoginForm'
@@ -34,7 +35,9 @@ import StudyPlanner from '@/components/planner/StudyPlanner'
 import DailyChallenge from '@/components/challenge/DailyChallenge'
 import ProgressReports from '@/components/reports/ProgressReports'
 import BookmarksPage from '@/components/bookmarks/BookmarksPage'
+import FormulaSheetsPage from '@/components/formulas/FormulaSheetsPage'
 import ActivityHeatmap from '@/components/activity/ActivityHeatmap'
+import FocusModePage from '@/components/focus/FocusModePage'
 import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 
 
@@ -47,6 +50,7 @@ const authenticatedPages: PageType[] = [
   'subject-detail',
   'notes',
   'bookmarks',
+  'formulas',
   'research',
   'quiz-setup',
   'quiz-active',
@@ -67,6 +71,7 @@ const authenticatedPages: PageType[] = [
   'challenge',
   'reports',
   'heatmap',
+  'focus',
 ]
 
 function AppRouter() {
@@ -78,7 +83,7 @@ function AppRouter() {
       const state = useStore.getState()
       if (state.user && state.token) {
         try {
-          const res = await fetch('/api/profile')
+          const res = await authFetch('/api/profile')
           if (!res.ok) {
             // Token is invalid/expired — clear session
             logout()
@@ -190,6 +195,12 @@ function AppRouter() {
 
           {/* Activity Heatmap */}
           {currentPage === 'heatmap' && <ActivityHeatmap />}
+
+          {/* Formula Sheets */}
+          {currentPage === 'formulas' && <FormulaSheetsPage />}
+
+          {/* Focus Mode */}
+          {currentPage === 'focus' && <FocusModePage />}
         </motion.div>
       </AnimatePresence>
 

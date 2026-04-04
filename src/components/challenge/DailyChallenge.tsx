@@ -168,93 +168,6 @@ export default function DailyChallenge() {
     )
   }, [])
 
-  // Timer for current question (60s)
-  useEffect(() => {
-    if (phase !== 'playing' || selectedAnswer !== null) return
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          // Auto-advance when time runs out
-          handleTimeUp()
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [phase, selectedAnswer, currentQ])
-
-  // Total timer (5 minutes)
-  useEffect(() => {
-    if (phase !== 'playing') return
-
-    const interval = setInterval(() => {
-      setTotalTimeLeft((prev) => {
-        if (prev <= 1) {
-          finishChallenge()
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [phase, finishChallenge])
-
-  const handleTimeUp = () => {
-    if (challenge && selectedAnswer === null) {
-      setShowExplanation(true)
-      setTimeout(() => nextQuestion(), 2000)
-    }
-  }
-
-  const startChallenge = async () => {
-    setGenerating(true)
-    try {
-      const res = await authFetch('/api/challenge/generate', { method: 'POST' })
-      if (!res.ok) {
-        return
-      }
-      const data = await res.json()
-      setChallenge(data)
-      setCurrentQ(0)
-      setSelectedAnswer(null)
-      setShowExplanation(false)
-      setScore(0)
-      setTimeLeft(60)
-      setTotalTimeLeft(300)
-      setPhase('playing')
-    } catch {
-      // Silently handle
-    }
-    setGenerating(false)
-  }
-
-  const handleAnswer = (optionIdx: number) => {
-    if (selectedAnswer !== null || !challenge) return
-    setSelectedAnswer(optionIdx)
-    setShowExplanation(true)
-
-    if (optionIdx === challenge.questions[currentQ].correct) {
-      setScore((prev) => prev + 1)
-    }
-
-    // Auto-advance after delay
-    setTimeout(() => nextQuestion(), 2200)
-  }
-
-  const nextQuestion = () => {
-    if (!challenge) return
-    if (currentQ + 1 >= challenge.questions.length) {
-      finishChallenge()
-    } else {
-      setCurrentQ((prev) => prev + 1)
-      setSelectedAnswer(null)
-      setShowExplanation(false)
-      setTimeLeft(60)
-    }
-  }
-
   const finishChallenge = useCallback(() => {
     if (!challenge) return
     setPhase('results')
@@ -303,6 +216,93 @@ export default function DailyChallenge() {
     setCompletedDates(newDates.slice(-30)) // Keep last 30
     saveProgress(newStreak, newDates.slice(-30))
   }, [challenge, currentQ, selectedAnswer, score, completedDates, streak, saveProgress])
+
+  const nextQuestion = () => {
+    if (!challenge) return
+    if (currentQ + 1 >= challenge.questions.length) {
+      finishChallenge()
+    } else {
+      setCurrentQ((prev) => prev + 1)
+      setSelectedAnswer(null)
+      setShowExplanation(false)
+      setTimeLeft(60)
+    }
+  }
+
+  const handleTimeUp = () => {
+    if (challenge && selectedAnswer === null) {
+      setShowExplanation(true)
+      setTimeout(() => nextQuestion(), 2000)
+    }
+  }
+
+  const startChallenge = async () => {
+    setGenerating(true)
+    try {
+      const res = await authFetch('/api/challenge/generate', { method: 'POST' })
+      if (!res.ok) {
+        return
+      }
+      const data = await res.json()
+      setChallenge(data)
+      setCurrentQ(0)
+      setSelectedAnswer(null)
+      setShowExplanation(false)
+      setScore(0)
+      setTimeLeft(60)
+      setTotalTimeLeft(300)
+      setPhase('playing')
+    } catch {
+      // Silently handle
+    }
+    setGenerating(false)
+  }
+
+  const handleAnswer = (optionIdx: number) => {
+    if (selectedAnswer !== null || !challenge) return
+    setSelectedAnswer(optionIdx)
+    setShowExplanation(true)
+
+    if (optionIdx === challenge.questions[currentQ].correct) {
+      setScore((prev) => prev + 1)
+    }
+
+    // Auto-advance after delay
+    setTimeout(() => nextQuestion(), 2200)
+  }
+
+  // Timer for current question (60s)
+  useEffect(() => {
+    if (phase !== 'playing' || selectedAnswer !== null) return
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          // Auto-advance when time runs out
+          handleTimeUp()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [phase, selectedAnswer, currentQ])
+
+  // Total timer (5 minutes)
+  useEffect(() => {
+    if (phase !== 'playing') return
+
+    const interval = setInterval(() => {
+      setTotalTimeLeft((prev) => {
+        if (prev <= 1) {
+          finishChallenge()
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [phase, finishChallenge])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)

@@ -20,6 +20,8 @@ import {
   TrendingUp,
   Activity,
   Bookmark,
+  BookText,
+  Headphones,
 } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { cn } from '@/lib/utils'
@@ -35,12 +37,14 @@ const primaryNavItems = [
 const moreNavItems = [
   { icon: FileText, label: 'Notes', page: 'notes' as const },
   { icon: Bookmark, label: 'Saved Notes', page: 'bookmarks' as const },
+  { icon: BookText, label: 'Formulas', page: 'formulas' as const },
   { icon: BarChart3, label: 'Analytics', page: 'analytics' as const },
   { icon: Activity, label: 'Activity', page: 'heatmap' as const },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' as const },
   { icon: CalendarDays, label: 'Planner', page: 'planner' as const },
   { icon: Zap, label: 'Daily Challenge', page: 'challenge' as const },
   { icon: TrendingUp, label: 'Reports', page: 'reports' as const },
+  { icon: Headphones, label: 'Focus Mode', page: 'focus' as const },
 ]
 
 export default function BottomNav() {
@@ -58,12 +62,14 @@ export default function BottomNav() {
       'profile': ['profile'],
       'notes': ['notes', 'bookmarks', 'research'],
       'bookmarks': ['bookmarks'],
+      'formulas': ['formulas'],
       'analytics': ['analytics'],
       'heatmap': ['heatmap'],
       'flashcards': ['flashcards'],
       'planner': ['planner'],
       'challenge': ['challenge'],
       'reports': ['reports'],
+      'focus': ['focus'],
     }
     return relatedPages[page]?.includes(currentPage) || false
   }
@@ -77,7 +83,7 @@ export default function BottomNav() {
         transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.2 }}
         className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
       >
-        <div className="mx-3 mb-3 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.5)] relative">
+        <div className="mx-3 mb-3 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-xl border border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.5)] relative card-glass-frost">
           {/* Gradient line at top */}
           <div className="absolute -top-px left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-[#00f0ff]/40 to-transparent" />
           <nav className="flex items-center justify-around px-1 py-2">
@@ -202,7 +208,7 @@ export default function BottomNav() {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               className="fixed bottom-24 left-3 right-3 z-50 lg:hidden"
             >
-              <div className="glass-strong rounded-2xl border border-white/10 shadow-[0_-4px_40px_rgba(0,0,0,0.6)] overflow-hidden">
+              <div className="glass-strong rounded-2xl border border-white/10 shadow-[0_-4px_40px_rgba(0,0,0,0.6)] overflow-hidden card-glass-frost">
                 <div className="p-3 border-b border-white/5">
                   <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">Quick Access</p>
                 </div>
@@ -224,7 +230,7 @@ export default function BottomNav() {
                         className={cn(
                           'flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200',
                           isActive
-                            ? 'bg-[#00f0ff]/10 text-[#00f0ff]'
+                            ? 'bg-[#00f0ff]/10 text-[#00f0ff] neon-border-cyan'
                             : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
                         )}
                       >
@@ -268,7 +274,7 @@ export default function BottomNav() {
                         className={cn(
                           'flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200',
                           isActive
-                            ? 'bg-[#00f0ff]/10 text-[#00f0ff]'
+                            ? 'bg-[#00f0ff]/10 text-[#00f0ff] neon-border-cyan'
                             : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
                         )}
                       >

@@ -250,7 +250,7 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 pt-16">
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 pt-16 bg-gradient-mesh">
         {/* Glow effects */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00f0ff]/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-[#a855f7]/5 rounded-full blur-[120px] pointer-events-none" />
@@ -275,7 +275,7 @@ export default function LandingPage() {
           </motion.div>
 
           {/* Title with typing cursor */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.9]">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.9] text-neon-glow-cyan">
             <span className="gradient-text typing-cursor">ICSEasy</span>
           </h1>
 
@@ -388,7 +388,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
-                  className="glass rounded-2xl p-6 card-glow feature-card-enhanced group relative overflow-hidden"
+                  className="glass rounded-2xl p-6 card-glow card-hover-lift feature-card-enhanced group relative overflow-hidden"
                 >
                   {/* Gradient overlay */}
                   <div className={`absolute inset-0 bg-gradient-to-b ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />

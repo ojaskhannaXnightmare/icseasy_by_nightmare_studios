@@ -90,7 +90,7 @@ export default function LoginForm() {
           >
             <Bot className="w-9 h-9 text-[#0a0a0f]" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-gradient-animated">Welcome Back</h1>
+          <h1 className="text-2xl font-bold text-gradient-animated text-neon-glow-cyan">Welcome Back</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Sign in to continue learning
           </p>
@@ -102,7 +102,7 @@ export default function LoginForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onSubmit={handleSubmit}
-          className="glass-card rounded-2xl p-6 sm:p-8"
+          className="glass-card card-glass-frost rounded-2xl p-6 sm:p-8"
           style={{ boxShadow: '0 0 40px rgba(0,240,255,0.04), 0 25px 60px rgba(0,0,0,0.4)' }}
         >
           <div className="space-y-5">

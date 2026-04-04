@@ -1767,3 +1767,301 @@
 .icon-container-ring:hover::after {
   opacity: 1;
 }
+
+/* ========================================
+   Task 5: Comprehensive styling enhancement pass
+   ======================================== */
+
+/* Neon glow border effects */
+.neon-border-cyan { border: 1px solid rgba(0,240,255,0.3); box-shadow: 0 0 10px rgba(0,240,255,0.1), inset 0 0 10px rgba(0,240,255,0.05); }
+.neon-border-pink { border: 1px solid rgba(236,72,153,0.3); box-shadow: 0 0 10px rgba(236,72,153,0.1), inset 0 0 10px rgba(236,72,153,0.05); }
+
+/* Animated gradient backgrounds */
+.bg-gradient-flow { background: linear-gradient(135deg, var(--bg) 0%, rgba(0,240,255,0.05) 50%, rgba(168,85,247,0.05) 100%); }
+.bg-gradient-mesh { background: radial-gradient(at 20% 80%, rgba(0,240,255,0.08) 0%, transparent 50%), radial-gradient(at 80% 20%, rgba(168,85,247,0.08) 0%, transparent 50%), var(--bg); }
+
+/* Text effects */
+.text-neon-glow-cyan { text-shadow: 0 0 10px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.1); }
+.text-neon-glow-purple { text-shadow: 0 0 10px rgba(168,85,247,0.5), 0 0 20px rgba(168,85,247,0.3), 0 0 40px rgba(168,85,247,0.1); }
+.text-outline-glow { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
+
+/* Card enhancements */
+.card-hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card-hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.card-glass-frost { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); }
+
+/* Input enhancements */
+.input-neon-focus { transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.input-neon-focus:focus { border-color: rgba(0,240,255,0.5); box-shadow: 0 0 0 3px rgba(0,240,255,0.1); outline: none; }
+
+/* Scrollbar styling */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Skeleton shimmer */
+.skeleton-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 2s infinite; }
+
+/* Badge variants */
+.badge-cyan { background: rgba(0,240,255,0.1); color: #00f0ff; border: 1px solid rgba(0,240,255,0.2); }
+.badge-purple { background: rgba(168,85,247,0.1); color: #a855f7; border: 1px solid rgba(168,85,247,0.2); }
+.badge-pink { background: rgba(236,72,153,0.1); color: #ec4899; border: 1px solid rgba(236,72,153,0.2); }
+.badge-green { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+.badge-amber { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+
+/* Tooltip glow */
+.tooltip-glow { position: relative; }
+.tooltip-glow::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; opacity: 0; transition: opacity 0.3s; background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2)); pointer-events: none; z-index: -1; }
+.tooltip-glow:hover::after { opacity: 1; }
+
+/* Page transition */
+.page-enter { animation: pageSlideIn 0.3s ease-out; }
+@keyframes pageSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Progress ring animation */
+.progress-ring-animated { transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Number count-up */
+.number-animate { display: inline-block; animation: numberPop 0.3s ease-out; }
+@keyframes numberPop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+/* Separator variants */
+.separator-neon { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,240,255,0.3), transparent); }
+.separator-neon-purple { height: 1px; background: linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent); }
+
+/* ========================================
+   Task ID: 2 — XP & Level System
+   ======================================== */
+
+/* XP bar fill with animated gradient shimmer */
+.xp-bar-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.xp-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: xp-shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes xp-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Level badge rotating conic gradient border */
+.xp-level-badge {
+  position: relative;
+}
+
+.xp-level-badge::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(0,240,255,0.5), transparent 30%, rgba(168,85,247,0.4) 60%, transparent 90%);
+  animation: level-badge-spin 6s linear infinite;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+@keyframes level-badge-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* XP popup celebration glow */
+.xp-celebration {
+  animation: xp-pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes xp-pop-in {
+  0% { transform: scale(0.8) translateY(10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* XP dropdown glow border */
+.xp-dropdown-glow {
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,240,255,0.08);
+}
+
+.xp-dropdown-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0,240,255,0.06), transparent 50%, rgba(168,85,247,0.06));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========================================
+   Round 6: Enhanced styling utilities
+   ======================================== */
+
+/* Animated gradient backgrounds */
+.bg-gradient-flow {
+  background: linear-gradient(135deg, #0a0a0f 0%, rgba(0,240,255,0.05) 50%, rgba(168,85,247,0.05) 100%);
+}
+
+.bg-gradient-mesh {
+  background:
+    radial-gradient(at 20% 80%, rgba(0,240,255,0.08) 0%, transparent 50%),
+    radial-gradient(at 80% 20%, rgba(168,85,247,0.08) 0%, transparent 50%),
+    #0a0a0f;
+}
+
+/* Text glow effects */
+.text-neon-glow-cyan {
+  text-shadow: 0 0 10px rgba(0,240,255,0.5), 0 0 20px rgba(0,240,255,0.3), 0 0 40px rgba(0,240,255,0.1);
+}
+
+.text-neon-glow-purple {
+  text-shadow: 0 0 10px rgba(168,85,247,0.5), 0 0 20px rgba(168,85,247,0.3), 0 0 40px rgba(168,85,247,0.1);
+}
+
+/* Card frost glass */
+.card-glass-frost {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Card hover lift */
+.card-hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+/* Input neon focus */
+.input-neon-focus {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-neon-focus:focus {
+  border-color: rgba(0,240,255,0.5);
+  box-shadow: 0 0 0 3px rgba(0,240,255,0.1);
+  outline: none;
+}
+
+/* Badge color variants */
+.badge-cyan {
+  background: rgba(0,240,255,0.1);
+  color: #00f0ff;
+  border: 1px solid rgba(0,240,255,0.2);
+}
+
+.badge-purple {
+  background: rgba(168,85,247,0.1);
+  color: #a855f7;
+  border: 1px solid rgba(168,85,247,0.2);
+}
+
+.badge-pink {
+  background: rgba(236,72,153,0.1);
+  color: #ec4899;
+  border: 1px solid rgba(236,72,153,0.2);
+}
+
+.badge-green {
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
+}
+
+.badge-amber {
+  background: rgba(245,158,11,0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.2);
+}
+
+/* Separator variants */
+.separator-neon {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.3), transparent);
+}
+
+.separator-neon-purple {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent);
+}
+
+/* Number animation */
+.number-animate {
+  display: inline-block;
+  animation: numberPop 0.3s ease-out;
+}
+
+@keyframes numberPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Thin scrollbar */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Page enter animation */
+.page-enter {
+  animation: pageSlideIn 0.3s ease-out;
+}
+
+@keyframes pageSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Neon border variants */
+.neon-border-cyan {
+  border: 1px solid rgba(0,240,255,0.3);
+  box-shadow: 0 0 10px rgba(0,240,255,0.1), inset 0 0 10px rgba(0,240,255,0.05);
+}
+
+.neon-border-pink {
+  border: 1px solid rgba(236,72,153,0.3);
+  box-shadow: 0 0 10px rgba(236,72,153,0.1), inset 0 0 10px rgba(236,72,153,0.05);
+}
+
+/* Tooltip glow */
+.tooltip-glow {
+  position: relative;
+}
+
+.tooltip-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: linear-gradient(135deg, rgba(0,240,255,0.2), rgba(168,85,247,0.2));
+  pointer-events: none;
+  z-index: -1;
+}
+
+.tooltip-glow:hover::after {
+  opacity: 1;
+}

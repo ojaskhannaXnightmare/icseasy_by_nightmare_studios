@@ -19,6 +19,7 @@ import {
   Timer,
   Trophy,
   Award,
+  Star,
   Layers,
   BarChart3,
   History,
@@ -28,6 +29,8 @@ import {
   TrendingUp,
   Activity,
   Bookmark,
+  BookText,
+  Headphones,
 } from 'lucide-react'
 import { useStore, type PageType } from '@/store/useStore'
 import { Button } from '@/components/ui/button'
@@ -54,6 +57,7 @@ const navItems: NavItem[] = [
   { icon: BookOpen, label: 'Subjects', page: 'subjects' },
   { icon: FileText, label: 'Notes', page: 'notes' },
   { icon: Bookmark, label: 'Saved Notes', page: 'bookmarks' },
+  { icon: BookText, label: 'Formulas', page: 'formulas' },
   { icon: Search, label: 'Research', page: 'research' },
   { icon: Brain, label: 'Quiz', page: 'quiz-setup' },
   { icon: History, label: 'Quiz History', page: 'quiz-history' },
@@ -61,8 +65,10 @@ const navItems: NavItem[] = [
   { icon: Activity, label: 'Activity', page: 'heatmap' },
   { icon: Layers, label: 'Flashcards', page: 'flashcards' },
   { icon: Timer, label: 'Study Timer', page: 'timer' },
+  { icon: Headphones, label: 'Focus Mode', page: 'focus' },
   { icon: Trophy, label: 'Leaderboard', page: 'leaderboard' },
   { icon: Award, label: 'Achievements', page: 'achievements' },
+  { icon: Star, label: 'XP Progress', page: 'dashboard' },
   { icon: Users, label: 'Friends', page: 'friends' },
   { icon: MessageSquare, label: 'Groups', page: 'groups' },
   { icon: CalendarDays, label: 'Study Planner', page: 'planner' },
@@ -310,7 +316,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
             animate={{ opacity: 1, x: 0 }}
             className="min-w-0 flex-1"
           >
-            <h1 className="text-lg font-bold gradient-text leading-tight">ICSEasy</h1>
+            <h1 className="text-lg font-bold gradient-text text-neon-glow-cyan leading-tight">ICSEasy</h1>
             <p className="text-[10px] text-muted-foreground tracking-widest uppercase">
               Nightmare Studios
             </p>
@@ -335,7 +341,7 @@ function SidebarContent({ collapsed = false }: { collapsed?: boolean }) {
                   'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
                   'hover:bg-white/5',
                   isActive
-                    ? 'bg-[#00f0ff]/10 text-[#00f0ff] shadow-[inset_0_0_20px_rgba(0,240,255,0.05)]'
+                    ? 'bg-[#00f0ff]/10 text-[#00f0ff] shadow-[inset_0_0_20px_rgba(0,240,255,0.05)] neon-border-cyan'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -402,7 +408,7 @@ export default function Sidebar() {
       <motion.aside
         initial={{ x: -280 }}
         animate={{ x: 0 }}
-        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[260px] glass-strong z-40 flex-col"
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-[260px] glass-strong card-glass-frost z-40 flex-col"
       >
         <SidebarContent />
       </motion.aside>

@@ -116,7 +116,7 @@ export default function SignupForm() {
           >
             <Bot className="w-9 h-9 text-[#0a0a0f]" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-gradient-animated">Create Account</h1>
+          <h1 className="text-2xl font-bold text-gradient-animated text-neon-glow-cyan">Create Account</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Start your ICSE learning journey
           </p>
@@ -128,7 +128,7 @@ export default function SignupForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           onSubmit={handleSubmit}
-          className="glass-card rounded-2xl p-6 sm:p-8"
+          className="glass-card card-glass-frost neon-border-cyan rounded-2xl p-6 sm:p-8"
           style={{ boxShadow: '0 0 40px rgba(168,85,247,0.04), 0 25px 60px rgba(0,0,0,0.4)' }}
         >
           <div className="space-y-5">
