@@ -676,3 +676,36 @@ Create a GitHub-style contribution heatmap showing daily study activity over the
 5. **MEDIUM: PDF export** — Export reports and notes as PDF
 6. **LOW: Email notifications** — Achievement unlock and streak reminders
 7. **LOW: Data visualization enhancements** — More chart types in analytics
+
+---
+
+## Vercel Deployment Preparation
+
+### Assessment: READY for Vercel (with caveats)
+
+**Changes made to prepare for deployment:**
+
+1. **`src/lib/db.ts`** — Removed hardcoded Turso credentials. Now uses `process.env.TURSO_DATABASE_URL` + `process.env.TURSO_AUTH_TOKEN` in production (`NODE_ENV === 'production'`), local SQLite in development.
+2. **`src/lib/auth.ts`** — JWT secret now reads from `process.env.JWT_SECRET` with fallback to development default.
+3. **`package.json`** — Added `postinstall: "prisma generate"` for automatic client generation on Vercel. Build script now includes `prisma generate`.
+4. **`next.config.ts`** — Added `output: "standalone"` for Vercel compatibility.
+5. **`.env.example`** — Created template with all required environment variables documented.
+6. **`.env`** — Updated local dev environment (removed Turso vars from local .env).
+
+### Vercel Deployment Steps
+
+1. **Push to GitHub** — `git add . && git commit -m "Vercel deployment ready" && git push`
+2. **Connect to Vercel** — Go to vercel.com → Import Project → Select GitHub repo
+3. **Set Environment Variables** in Vercel Dashboard → Settings → Environment Variables:
+   - `TURSO_DATABASE_URL` = `libsql://icseasy-ojaskhannaxnightmare.aws-ap-northeast-1.turso.io`
+   - `TURSO_AUTH_TOKEN` = your Turso auth token
+   - `JWT_SECRET` = a strong random string (generate with `openssl rand -base64 32`)
+   - `DATABASE_URL` = `file:./db/custom.db` (fallback, not used in production)
+4. **Deploy** — Vercel will auto-detect Next.js, run `bun install` (which triggers `postinstall` → `prisma generate`), then `bun run build`
+5. **Database schema** — Run `prisma db push` against Turso to ensure schema is up to date
+
+### Known Limitations on Vercel
+- **Socket.io chat** — Vercel serverless cannot run persistent WebSocket servers. The chat mini-service needs a separate hosting solution (Railway, Fly.io, Render) or migrate to HTTP-based polling.
+- **SPA routing** — All pages share URL `/` by design (Zustand state-based navigation). No deep linking or browser back/forward.
+- **Local SQLite fallback** — Won't work on Vercel. Turso env vars are REQUIRED in production.
+- **Mini-services** — The `mini-services/` folder (chat-service) is not deployed to Vercel. It needs separate hosting.

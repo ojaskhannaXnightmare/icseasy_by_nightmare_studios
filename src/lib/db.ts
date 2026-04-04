@@ -7,20 +7,26 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  if (process.env.NODE_ENV === 'production') {
+  // Use Turso cloud database in production when credentials are set
+  // In development, always use local SQLite for fast iteration
+  if (process.env.NODE_ENV === 'production' && process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
     const libsql = createClient({
-      url: 'libsql://icseasy-ojaskhannaxnightmare.aws-ap-northeast-1.turso.io',
-      authToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzUxOTgwMzUsImlkIjoiMDE5ZDRmMTItZDMwMS03MmE4LWEzNjItNjY3N2U2NGZmNGMyIiwicmlkIjoiOTllYWE1ZjMtODU2YS00MzgwLWI1MzQtZWYxZDZlNzgwY2ZiIn0.ir-Mmne1cph9B4IC4Z_ys_FESdLadRRHgfnBn6Npq1ayOl9TSzJJ-UfhQ5PLdJsKTznuntFwfFWvlZZIoh3JDQ',
+      url: process.env.TURSO_DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
     })
     const adapter = new PrismaLibSql(libsql)
     return new PrismaClient({ adapter })
   }
 
+  // Local SQLite database (development)
   return new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL || 'file:/home/z/my-project/db/custom.db',
+    datasourceUrl: process.env.DATABASE_URL || 'file:./db/custom.db',
   })
 }
 
-// Always create a fresh client in dev to pick up schema/model changes
-// In production, the singleton pattern prevents connection pool exhaustion
-export const db = createPrismaClient()
+// Singleton pattern — prevents connection pool exhaustion in production
+// In dev, picks up fresh schema/model changes on each server restart
+const prisma = globalForPrisma.prisma ?? createPrismaClient()
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+export const db = prisma
