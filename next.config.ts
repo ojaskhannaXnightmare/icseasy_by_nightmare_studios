@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // These packages connect to Turso at runtime — do NOT bundle them.
   // Without this, webpack traces @libsql/client and crashes during build
   // when env vars are absent (createClient receives undefined URL).
-  serverExternalPackages: ["@libsql/client", "@prisma/adapter-libsql"],
+  serverExternalPackages: ["@libsql/client", "@prisma/adapter-libsql", "z-ai-web-dev-sdk"],
   typescript: {
     ignoreBuildErrors: true,
   },

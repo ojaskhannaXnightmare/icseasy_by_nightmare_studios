@@ -114,6 +114,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-background text-foreground;
@@ -122,6 +123,92 @@
       linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 50px 50px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ========================================
+   Mobile optimization utilities
+   ======================================== */
+
+/* iOS safe area — padding-bottom for notch/home indicator */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-bottom-full {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+
+/* Bottom nav safe area padding — accounts for both nav height + safe area */
+.mobile-safe-bottom {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Touch-friendly minimum sizes */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Disable text selection on interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Improve scrolling on mobile — prevent overscroll bounce on fixed elements */
+.scroll-lock {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Full-screen dialog on mobile */
+@media (max-width: 639px) {
+  .mobile-fullscreen-dialog {
+    max-width: 100vw;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+  .mobile-fullscreen-dialog [data-radix-dialog-content] {
+    max-height: 100dvh;
+  }
+}
+
+/* Ensure inputs are at least 44px touch target on mobile */
+@media (max-width: 639px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="url"],
+  input[type="tel"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Disable hover effects on touch devices to prevent sticky states */
+@media (hover: none) and (pointer: coarse) {
+  .tilt-card:hover {
+    transform: none;
+  }
+  .note-card-hover:hover {
+    transform: none;
+  }
+  .stat-card-lift:hover {
+    transform: none;
+  }
+  .stat-card-enhanced:hover {
+    transform: none;
+  }
+  .feature-card-enhanced:hover {
+    transform: none;
   }
 }
 

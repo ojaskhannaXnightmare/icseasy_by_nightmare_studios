@@ -247,7 +247,7 @@ export default function SubjectHub() {
   }
 
   return (
-    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8">
+    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 pb-24 lg:pb-8">
       {/* Background effects */}
       <div className="fixed top-0 left-1/3 w-96 h-96 bg-[#00f0ff]/3 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-1/4 right-0 w-80 h-80 bg-[#a855f7]/3 rounded-full blur-[150px] pointer-events-none" />

@@ -74,10 +74,23 @@ export default function AITutor() {
 
       const data = await res.json()
 
+      // Check for API error response first
+      if (!res.ok || data.error) {
+        const errorMsg = data.error || 'Something went wrong. Please try again.'
+        toast.error(errorMsg)
+        addChatMessage({
+          id: `error-${chatMessages.length + 2}`,
+          role: 'assistant' as const,
+          content: `⚠️ ${errorMsg}`,
+          timestamp: Date.now(),
+        })
+        return
+      }
+
       const assistantMessage = {
         id: `assistant-${chatMessages.length + 2}`,
         role: 'assistant' as const,
-        content: data.message || data.response || data.content || 'Sorry, I could not process your request. Please try again.',
+        content: data.message || data.response || data.content || 'No response received. Please try again.',
         timestamp: Date.now(),
       }
       addChatMessage(assistantMessage)
@@ -103,7 +116,7 @@ export default function AITutor() {
   }
 
   return (
-    <div className="min-h-screen lg:pl-[260px] flex flex-col pt-14 lg:pt-0">
+    <div className="min-h-screen lg:pl-[260px] flex flex-col pt-14 lg:pt-0 pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
       {/* Background effects */}
       <div className="fixed top-1/4 right-0 w-96 h-96 bg-[#00f0ff]/3 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-0 left-1/3 w-80 h-80 bg-[#a855f7]/3 rounded-full blur-[150px] pointer-events-none" />

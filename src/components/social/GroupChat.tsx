@@ -126,7 +126,7 @@ export default function GroupChat() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen lg:pl-[260px] flex items-center justify-center"
+        className="min-h-screen lg:pl-[260px] flex items-center justify-center pb-24 lg:pb-0"
       >
         <div className="text-center">
           <p className="text-gray-400 mb-4">No group selected</p>

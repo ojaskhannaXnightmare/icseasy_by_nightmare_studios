@@ -263,7 +263,7 @@ export default function NotesPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-7xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 pb-24 lg:pb-8 max-w-7xl mx-auto"
     >
       {/* Animated orbs */}
       <motion.div

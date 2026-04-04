@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
-import ZAI from 'z-ai-web-dev-sdk'
+import { getAI } from '@/lib/ai'
 
 async function authenticate(request: NextRequest) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
@@ -96,7 +96,11 @@ export async function POST(request: NextRequest) {
       selectedTopic = availableTopics[altIndex].name
     }
 
-    const zai = await ZAI.create()
+    const ai = await getAI()
+    if ('error' in ai) {
+      return NextResponse.json({ error: ai.error }, { status: 503 })
+    }
+    const zai = ai.zai
 
     const systemPrompt = `You are an expert ICSE exam question generator for the subject "${subject.name}".
 Generate exactly 5 multiple choice questions about "${selectedTopic}" following the ICSE syllabus pattern.

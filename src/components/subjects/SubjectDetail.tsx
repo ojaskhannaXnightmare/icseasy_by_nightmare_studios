@@ -36,7 +36,7 @@ export default function SubjectDetail() {
 
   if (!selectedSubject) {
     return (
-      <div className="min-h-screen lg:pl-[260px] flex items-center justify-center p-4">
+      <div className="min-h-screen lg:pl-[260px] flex items-center justify-center p-4 pb-24 lg:pb-4">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">No subject selected</p>
           <Button
@@ -71,7 +71,7 @@ export default function SubjectDetail() {
   }
 
   return (
-    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 relative overflow-hidden">
+    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 pb-24 lg:pb-8 relative overflow-hidden">
       {/* Animated background glow orbs matching subject color */}
       <motion.div
         className="fixed top-10 right-10 w-[400px] h-[400px] rounded-full pointer-events-none floating-orb"

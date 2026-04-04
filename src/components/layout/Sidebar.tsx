@@ -427,7 +427,7 @@ export default function Sidebar() {
           </SheetTrigger>
           <SheetContent
             side="left"
-            className="w-[280px] bg-[#0a0a0f]/95 backdrop-blur-xl border-r border-white/10 p-0"
+            className="w-[300px] sm:w-[320px] bg-[#0a0a0f]/95 backdrop-blur-xl border-r border-white/10 p-0"
           >
             <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <SidebarContent />

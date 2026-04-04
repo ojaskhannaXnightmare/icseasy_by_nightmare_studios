@@ -73,7 +73,7 @@ export default function QuizActive() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen lg:pl-[260px] flex items-center justify-center"
+        className="min-h-screen lg:pl-[260px] flex items-center justify-center pb-24 lg:pb-8"
       >
         <div className="text-center">
           <p className="text-gray-400 mb-4">No quiz questions loaded</p>
@@ -89,7 +89,7 @@ export default function QuizActive() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-3xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 pb-24 lg:pb-8 max-w-3xl mx-auto"
     >
       {/* Top Bar */}
       <div className="glass rounded-xl p-4 mb-6">
@@ -112,7 +112,7 @@ export default function QuizActive() {
       </div>
 
       {/* Navigation Dots */}
-      <div className="flex items-center justify-center gap-1.5 mb-6 flex-wrap">
+      <div className="flex items-center justify-center gap-1 mb-6 flex-wrap overflow-x-auto pb-1 -mx-2 px-2">
         {quizQuestions.map((_, idx) => (
           <button
             key={idx}
@@ -157,7 +157,7 @@ export default function QuizActive() {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={() => handleSelectOption(idx)}
-                className={`w-full text-left p-4 rounded-xl border transition-all flex items-start gap-4 group option-btn ${
+                className={`w-full text-left p-4 sm:p-4 rounded-xl border transition-all flex items-start gap-4 group option-btn touch-target ${
                   selectedAnswer === idx
                     ? 'border-cyan-500/50 bg-cyan-500/10 shadow-[0_0_20px_rgba(0,240,255,0.08)] option-btn-selected'
                     : 'border-white/10 bg-white/[0.02] hover:bg-white/5 hover:border-white/20'
@@ -185,12 +185,12 @@ export default function QuizActive() {
       </AnimatePresence>
 
       {/* Bottom Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 pb-2">
         <Button
           variant="ghost"
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="text-gray-400 hover:text-white disabled:opacity-30 gap-2"
+          className="text-gray-400 hover:text-white disabled:opacity-30 gap-2 min-h-[44px]"
         >
           <ChevronLeft className="w-4 h-4" />
           Previous
@@ -206,12 +206,12 @@ export default function QuizActive() {
         </div>
 
         {currentIndex < totalQuestions - 1 ? (
-          <Button onClick={handleNext} disabled={selectedAnswer === null} className="btn-neon gap-2 btn-shimmer-hover">
+          <Button onClick={handleNext} disabled={selectedAnswer === null} className="btn-neon gap-2 btn-shimmer-hover min-h-[44px]">
             Next
             <ChevronRight className="w-4 h-4" />
           </Button>
         ) : (
-          <Button onClick={() => setShowSubmitDialog(true)} className="btn-neon-solid gap-2">
+          <Button onClick={() => setShowSubmitDialog(true)} className="btn-neon-solid gap-2 min-h-[44px]">
             <Send className="w-4 h-4" />
             Submit Quiz
           </Button>

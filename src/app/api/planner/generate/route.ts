@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
-import ZAI from 'z-ai-web-dev-sdk'
+import { getAI } from '@/lib/ai'
 
 async function authenticate(request: NextRequest) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
@@ -63,7 +63,11 @@ export async function POST(request: NextRequest) {
 
     const userStats = `Total notes created: ${notesCount}, Total quizzes taken: ${quizAttempts.length}, Total study time: ${totalFocusMinutes} minutes`
 
-    const zai = await ZAI.create()
+    const ai = await getAI()
+    if ('error' in ai) {
+      return NextResponse.json({ error: ai.error }, { status: 503 })
+    }
+    const zai = ai.zai
 
     const systemPrompt = `You are an ICSE study planner for Indian Certificate of Secondary Education students. Create a personalized weekly study plan based on the student's performance data.
 

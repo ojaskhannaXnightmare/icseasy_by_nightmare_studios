@@ -135,7 +135,7 @@ export default function ChatPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen lg:pl-[260px] flex items-center justify-center"
+        className="min-h-screen lg:pl-[260px] flex items-center justify-center pb-24 lg:pb-8"
       >
         <div className="text-center">
           <motion.div

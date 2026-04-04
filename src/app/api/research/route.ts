@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
-import ZAI from 'z-ai-web-dev-sdk'
+import { getAI } from '@/lib/ai'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const zai = await ZAI.create()
+    const ai = await getAI()
+    if ('error' in ai) {
+      return NextResponse.json({ error: ai.error }, { status: 503 })
+    }
+    const zai = ai.zai
 
     const systemPrompt = `You are a comprehensive research assistant for ICSE (Indian Certificate of Secondary Education) students. 
 You specialize in "${subject}" and provide in-depth, well-structured research content.

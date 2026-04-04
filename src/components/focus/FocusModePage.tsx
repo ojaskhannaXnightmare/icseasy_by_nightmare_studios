@@ -252,7 +252,7 @@ export default function FocusModePage() {
   const activeCount = Object.values(soundActive).filter(Boolean).length
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0f]">
+    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0f] pb-24 lg:pb-0">
       {/* Animated background gradient */}
       <div className="fixed inset-0 z-0">
         <div

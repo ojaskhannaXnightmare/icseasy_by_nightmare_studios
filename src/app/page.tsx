@@ -216,7 +216,7 @@ function AppRouter() {
               new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true })
             )
           }}
-          className="lg:hidden fixed bottom-24 right-4 z-50 w-10 h-10 rounded-full glass-card flex items-center justify-center shadow-lg hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] transition-all duration-200 active:scale-95"
+          className="lg:hidden fixed bottom-[calc(6rem+env(safe-area-inset-bottom,0px))] right-4 z-50 w-10 h-10 rounded-full glass-card flex items-center justify-center shadow-lg hover:shadow-[0_0_15px_rgba(0,240,255,0.15)] transition-all duration-200 active:scale-95"
           aria-label="Open keyboard shortcuts"
         >
           <span className="text-sm font-mono font-bold text-[#00f0ff]/70">?</span>

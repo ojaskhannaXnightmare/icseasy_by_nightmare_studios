@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
-import ZAI from 'z-ai-web-dev-sdk'
+import { getAI } from '@/lib/ai'
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +38,11 @@ Guidelines:
 - Always be supportive and motivate students to learn
 - Keep responses concise but thorough`
 
-    const zai = await ZAI.create()
+    const ai = await getAI()
+    if ('error' in ai) {
+      return NextResponse.json({ error: ai.error }, { status: 503 })
+    }
+    const zai = ai.zai
 
     const chatMessages = [
       { role: 'system' as const, content: systemPrompt },

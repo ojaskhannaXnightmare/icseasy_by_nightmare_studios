@@ -326,7 +326,7 @@ export default function FormulaSheetsPage() {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="min-h-screen relative">
+      <div className="min-h-screen lg:pl-[260px] relative pb-24 lg:pb-0 pt-14 lg:pt-0">
         {/* Decorative background orbs */}
         {DECORATIVE_ORBS.map((orb, i) => (
           <div

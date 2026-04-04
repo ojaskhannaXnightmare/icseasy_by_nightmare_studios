@@ -158,7 +158,7 @@ function EmptyBookmarksState() {
 
 function BookmarksSkeleton() {
   return (
-    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-0">
+    <div className="min-h-screen lg:pl-[260px] p-4 sm:p-6 lg:p-8 pt-16 lg:pt-0 pb-24 lg:pb-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Skeleton className="h-8 w-56 mb-2 bg-white/5" />
@@ -306,7 +306,7 @@ export default function BookmarksPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 max-w-7xl mx-auto"
+      className="min-h-screen lg:pl-[260px] p-4 md:p-6 lg:p-8 pt-14 lg:pt-0 pb-24 lg:pb-8 max-w-7xl mx-auto"
     >
       {/* Animated background orbs */}
       <motion.div
