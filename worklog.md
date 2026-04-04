@@ -1146,3 +1146,25 @@ Stage Summary:
 - All 5 AI-powered API routes (chat, quiz/generate, research, planner/generate, challenge/generate) are functional
 - z-ai-web-dev-sdk reads config from /etc/.z-ai-config in sandbox environment
 - Key files changed: src/lib/ai.ts, src/lib/db.ts
+
+---
+Task ID: 16 — Switch AI Backend to Google Gemini API
+Agent: Main Agent
+Task: Replace z-ai-web-dev-sdk with Google Gemini API for AI features
+
+Work Log:
+- Rewrote `src/lib/ai.ts` to call Gemini REST API directly via fetch
+- Uses `gemini-2.0-flash` model with OpenAI-compatible wrapper interface
+- ICSEasy AI identity injected into ALL system prompts via ICSEASY_IDENTITY constant
+- If asked "who are you?" → always responds as "ICSEasy AI by NIGHTMARE STUDIOS", never mentions Google/Gemini
+- Zero route changes needed — mock `zai` object maintains same `.chat.completions.create()` interface
+- Supports `GEMINI_API_KEY` and `GEMINI_MODEL` env vars for configuration
+- Proper error handling for quota/rate-limit API errors
+- Verified: Gemini API is reachable from sandbox, returns proper error messages for quota issues
+
+Stage Summary:
+- All 5 AI routes (chat, quiz/generate, research, planner/generate, challenge/generate) now use Gemini
+- The provided API key (`AIzaSy...`) has 0 free tier quota — user needs to enable billing at ai.google.dev
+- To configure on Vercel: set `GEMINI_API_KEY` env var (optionally `GEMINI_MODEL`)
+- Key file changed: src/lib/ai.ts
+- Lint clean, pushed to GitHub (commit 44d5c0b)
