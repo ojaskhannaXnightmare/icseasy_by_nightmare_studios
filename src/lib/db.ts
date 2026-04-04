@@ -5,50 +5,54 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 /**
- * Creates a Prisma client.
- * In production with valid Turso credentials: uses Turso cloud DB.
- * Otherwise (build, dev, missing creds): uses local SQLite.
- *
- * Turso adapter is loaded via `new Function()` to prevent
- * any bundler (webpack/turbopack) from tracing or including
- * @libsql/client when credentials are not set.
+ * Validates that a Turso URL is properly formatted (libsql:// or https://)
  */
+function isValidTursoUrl(url: string | undefined): url is string {
+  if (!url || url === 'undefined' || url === 'null') return false
+  return url.startsWith('libsql://') || url.startsWith('https://')
+}
+
 function createPrismaClient(): PrismaClient {
   const tursoUrl = process.env.TURSO_DATABASE_URL
   const tursoToken = process.env.TURSO_AUTH_TOKEN
 
-  // Only attempt Turso if URL is a real libsql:// or https:// URL
   const hasValidTurso =
     tursoUrl &&
     tursoUrl !== 'undefined' &&
     tursoUrl !== 'null' &&
-    (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://')) &&
+    isValidTursoUrl(tursoUrl) &&
     tursoToken &&
-    tursoToken !== 'undefined' &&
-    process.env.NODE_ENV === 'production'
+    tursoToken !== 'undefined'
 
   if (hasValidTurso) {
     try {
-      // new Function() is NOT statically analyzable by bundlers.
-      // This guarantees @libsql/client is never touched during build.
+      // new Function() is opaque to all bundlers — @libsql/client will
+      // never be included in the build output when env vars are absent.
       const createAdapter = new Function('url', 'token', `
         "use strict";
         const { createClient } = require("@libsql/client");
         const { PrismaLibSql } = require("@prisma/adapter-libsql");
-        const libsql = createClient({ url, authToken: token });
+        const libsql = createClient({ url: url, authToken: token });
         return new PrismaLibSql(libsql);
       `)
       const adapter = createAdapter(tursoUrl, tursoToken)
-      return new PrismaClient({ adapter })
+      // IMPORTANT: Must pass a dummy datasourceUrl when using an adapter,
+      // because Prisma's SQLite provider requires a file: URL in the schema.
+      // The adapter overrides this at the driver level.
+      return new PrismaClient({
+        adapter,
+        datasourceUrl: 'file:/tmp/dummy.db',
+      })
     } catch {
-      // Adapter creation failed — fall through to SQLite
+      // Fall through to local SQLite
     }
   }
 
-  // Local SQLite (dev + build fallback)
-  const isBuild = process.env.NEXT_PHASE === 'phase-production-build'
-  const dbUrl = isBuild
-    ? 'file:/tmp/prisma-build.db'
+  // Local SQLite (development + build fallback)
+  // In Vercel serverless, use /tmp which is writable
+  const isVercel = !!process.env.VERCEL || !!process.env.NEXT_PHASE
+  const dbUrl = isVercel
+    ? 'file:/tmp/icseasy-local.db'
     : (process.env.DATABASE_URL || 'file:./db/custom.db')
 
   return new PrismaClient({
@@ -56,7 +60,7 @@ function createPrismaClient(): PrismaClient {
   })
 }
 
-// Singleton — prevents connection pool exhaustion
+// Singleton pattern
 const prisma = globalForPrisma.prisma ?? createPrismaClient()
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
