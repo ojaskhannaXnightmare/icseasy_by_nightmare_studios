@@ -1070,3 +1070,27 @@ git push --force origin main
 1. Git push requires external credentials (blocked in sandbox)
 2. Socket.io not compatible with Vercel serverless (MEDIUM)
 3. Chat messages not persisted (LOW)
+
+---
+Task ID: 13 — Fix Turso Database Connection for Vercel Deployment
+Agent: Main Agent
+Task: Fix "The table main.User does not exist in the current database" error on Vercel deployment
+
+Work Log:
+- Diagnosed root cause: THREE bugs in the Turso DB connection layer
+  1. **Version mismatch**: `@prisma/adapter-libsql@7.6.0` was incompatible with `@prisma/client@6.19.3` (major version difference)
+  2. **Wrong API usage**: `PrismaLibSQL` is a FACTORY class that takes `{url, authToken}` config — code was passing a libsql client instance, causing `URL_INVALID: The URL 'undefined'` error
+  3. **Silent failure**: The `new Function()` hack to hide imports from bundler was failing silently in Vercel serverless, causing fallback to empty local SQLite
+- Fixed `next.config.ts`: Added `serverExternalPackages: ["@libsql/client", "@prisma/adapter-libsql"]` to properly externalize Turso packages from webpack bundle
+- Fixed `package.json`: Downgraded `@prisma/adapter-libsql` from `^7.6.0` to `6` (resolved to 6.19.3, matching client)
+- Rewrote `src/lib/db.ts`: Clean `require()` + `serverExternalPackages` approach, correct `PrismaLibSQL({ url, authToken })` factory usage
+- Verified all 14 tables exist in Turso (User, Note, QuizAttempt, ChatHistory, Subject, Topic, FriendRequest, Message, Group, GroupMember, GroupMessage, Flashcard, Notification, StudySession)
+- Seeded Turso with 8 subjects and 80 topics (Physics, Chemistry, Mathematics, Biology, English, History, Geography, Computer Science × 10 topics each)
+- Tested Prisma+Turso connection end-to-end: user.count(), subject.count(), raw SQL all working
+- Pushed fix to GitHub: `ojaskhannaXnightmare/icseasy_by_nightmare_studios` (commit 31d6791)
+
+Stage Summary:
+- Turso DB connection now works correctly — the three underlying bugs are all fixed
+- Vercel deployment should connect to Turso when `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` env vars are set
+- User must also set `DATABASE_URL` on Vercel to any valid SQLite path (e.g., `file:/tmp/dummy.db`) since Prisma schema references it
+- Key files changed: `next.config.ts`, `package.json`, `src/lib/db.ts`
