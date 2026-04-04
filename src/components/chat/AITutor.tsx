@@ -5,10 +5,8 @@ import { motion } from 'framer-motion'
 import { Bot, Send, Trash2, Loader2, Sparkles, ArrowLeft } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { useStore } from '@/store/useStore'
 import { authFetch } from '@/lib/api'
-import { toast } from 'sonner'
 import ReactMarkdown from 'react-markdown'
 
 const suggestedPrompts = [
@@ -74,14 +72,12 @@ export default function AITutor() {
 
       const data = await res.json()
 
-      // Check for API error response first
+      // Check for API error response — show friendly message, not raw error
       if (!res.ok || data.error) {
-        const errorMsg = data.error || 'Something went wrong. Please try again.'
-        toast.error(errorMsg)
         addChatMessage({
           id: `error-${chatMessages.length + 2}`,
           role: 'assistant' as const,
-          content: `⚠️ ${errorMsg}`,
+          content: "I'm having trouble connecting right now. Please try again in a moment! 🔄",
           timestamp: Date.now(),
         })
         return
@@ -95,11 +91,10 @@ export default function AITutor() {
       }
       addChatMessage(assistantMessage)
     } catch {
-      toast.error('Failed to get response. Please try again.')
       addChatMessage({
         id: `error-${chatMessages.length + 2}`,
         role: 'assistant' as const,
-        content: 'Something went wrong. Please check your connection and try again.',
+        content: "Something went wrong. Please check your connection and try again! 🔄",
         timestamp: Date.now(),
       })
     } finally {
