@@ -1033,3 +1033,40 @@ Applied CSS classes across 5 of 6 requested files (1 file not found — skipped 
 **Verification:**
 - `npm run lint` — Zero errors, zero warnings
 - Dev server compiles successfully
+
+---
+## Round 6.5 — Vercel Deployment Fix
+
+### Bug: Build Crash — TURSO_DATABASE_URL undefined
+**Error:** `Error [LibsqlError]: URL_INVALID: The URL 'undefined' is not in a valid format`
+
+**Root Cause:** During `npm run build` on Vercel, `NODE_ENV === 'production'` is true, but `TURSO_DATABASE_URL` was either not set or set to the literal string `"undefined"`. The `createClient()` was called with an invalid URL before the condition could protect against it.
+
+**Fix Applied in `src/lib/db.ts`:**
+- Added `isValidTursoUrl()` validator — rejects empty, `"undefined"`, `"null"`, and any URL not starting with `libsql://` or `https://`
+- Added check that `TURSO_AUTH_TOKEN` is not the string `"undefined"`
+- Added build-phase detection via `process.env.NEXT_PHASE === 'phase-production-build'`
+- Build fallback: uses `file:/tmp/prisma-build.db` (avoids file system issues in Vercel build env)
+
+**Verification:**
+- `bun run lint` — Zero errors
+- Dev server running fine (200 on localhost:3000)
+- Commit: `5a4494f` — "fix: prevent Vercel build crash from undefined TURSO_DATABASE_URL"
+
+**Note:** Git push failed (no GitHub credentials in sandbox). User needs to push manually:
+```bash
+git push --force origin main
+```
+
+### Vercel Deployment Checklist
+1. Set environment variables in Vercel dashboard:
+   - `TURSO_DATABASE_URL` = `libsql://your-project.turso.io`
+   - `TURSO_AUTH_TOKEN` = your token
+   - `JWT_SECRET` = `openssl rand -base64 32`
+2. Push this commit to trigger rebuild
+3. Socket.io chat service (port 3003) won't work on Vercel — known limitation
+
+### Unresolved Issues
+1. Git push requires external credentials (blocked in sandbox)
+2. Socket.io not compatible with Vercel serverless (MEDIUM)
+3. Chat messages not persisted (LOW)
